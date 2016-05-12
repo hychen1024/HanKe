@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="uhh-Bd-nPK">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I7Q-Ni-xZq">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="371"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="水疗设备" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ctc-9G-JCb">
+                            <rect key="frame" x="62" y="24" width="152" height="25"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="(已连接)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yXa-pO-chf">
+                            <rect key="frame" x="216" y="24" width="100" height="25"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.12941176470588234" green="0.51372549019607838" blue="0.8901960784313725" alpha="1" colorSpace="calibratedRGB"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xz6-CT-eGw">
+                    <rect key="frame" x="0.0" y="371" width="375" height="296"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="I7Q-Ni-xZq" firstAttribute="leading" secondItem="uhh-Bd-nPK" secondAttribute="leading" id="6kh-3u-Y12"/>
+                <constraint firstAttribute="trailing" secondItem="Xz6-CT-eGw" secondAttribute="trailing" id="7yi-pQ-JKG"/>
+                <constraint firstItem="I7Q-Ni-xZq" firstAttribute="top" secondItem="uhh-Bd-nPK" secondAttribute="top" id="AhW-7v-Wa2"/>
+                <constraint firstItem="Xz6-CT-eGw" firstAttribute="top" secondItem="uhh-Bd-nPK" secondAttribute="top" constant="371" id="HpO-BP-7fJ"/>
+                <constraint firstItem="Xz6-CT-eGw" firstAttribute="leading" secondItem="uhh-Bd-nPK" secondAttribute="leading" id="Ikc-Oc-9fB"/>
+                <constraint firstAttribute="bottom" secondItem="I7Q-Ni-xZq" secondAttribute="bottom" constant="296" id="LIt-G2-man"/>
+                <constraint firstAttribute="trailing" secondItem="I7Q-Ni-xZq" secondAttribute="trailing" id="df6-kb-3Sm"/>
+                <constraint firstAttribute="bottom" secondItem="Xz6-CT-eGw" secondAttribute="bottom" id="hlZ-I3-W7A"/>
+            </constraints>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <point key="canvasLocation" x="331.5" y="451.5"/>
+        </view>
+    </objects>
+</document>

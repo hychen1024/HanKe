@@ -1,0 +1,44 @@
+//
+//  HanKe.pch
+//  HanKe
+//
+//  Created by Just-h on 16/4/28.
+//  Copyright © 2016年 JUST-HYC. All rights reserved.
+//
+
+#ifndef HanKe_pch
+#define HanKe_pch
+
+#endif /* HanKe_pch */
+
+#ifdef __OBJC__
+// 导入头文件
+#endif
+
+
+#ifdef DEBUG // 调试阶段
+#define YCLog(...) NSLog(__VA_ARGS__)
+#else // 发布阶段
+#define YCLog(...)
+#endif
+
+
+// 屏幕宽
+#define kScreenW [UIScreen mainScreen].bounds.size.width
+// 屏幕高
+#define kScreenH [UIScreen mainScreen].bounds.size.height
+
+// 写数据服务
+#define HK_SERVICE_UUID_WRITE @"FFE0"
+// 写数据特征
+#define HK_CHARACTERISTIC_UUID_WRITE @"FFE1" //writewithoutresponse
+
+
+// 设备信息服务
+#define HK_SERVICE_UUID_DEVICEINFO @"180A"
+// MAC地址特征
+#define HK_CHARACTERISTIC_UUID_MACADDRESS @"2A23"
+
+#define MACADDRESSKEY @"mackey"
+// 蓝牙频道
+#define channelOnPeropheralView @"peripheralView"

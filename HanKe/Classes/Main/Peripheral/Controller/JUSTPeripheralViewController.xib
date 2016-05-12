@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="JUSTPeripheralViewController">
+            <connections>
+                <outlet property="bigBtn" destination="GJg-b2-DzW" id="ezt-mN-tYa"/>
+                <outlet property="circleProgressView" destination="zud-g4-8pc" id="lfX-Gn-zZP"/>
+                <outlet property="connectStatus" destination="9X4-is-6I8" id="Dtx-PP-tRN"/>
+                <outlet property="consumeLb" destination="h6K-kJ-n9B" id="tUX-4h-lSn"/>
+                <outlet property="disinfectBtn" destination="t5F-pC-Kyq" id="Ocx-P8-Eee"/>
+                <outlet property="exhaustTipLb" destination="q3O-hw-9LZ" id="lZT-FB-LC3"/>
+                <outlet property="hydroName" destination="g19-GA-uSl" id="4v5-PK-8dx"/>
+                <outlet property="hydroOffBtn" destination="CWB-bb-Zcg" id="7bn-pE-ZAo"/>
+                <outlet property="hydroOnBtn" destination="ZUR-B3-JAy" id="dNG-qs-AoY"/>
+                <outlet property="hydroStatus" destination="TRh-oO-hbI" id="ynF-zK-FdL"/>
+                <outlet property="midBtn" destination="evW-zc-Pdu" id="edM-Uj-CBv"/>
+                <outlet property="muteBtn" destination="6lR-3M-cKu" id="MhV-1S-Ldn"/>
+                <outlet property="retryBtn" destination="r8t-z0-ciD" id="y02-zx-OTl"/>
+                <outlet property="smallBtn" destination="xxa-9b-fCW" id="HIT-Ck-moI"/>
+                <outlet property="view" destination="7hW-9b-6eL" id="oNA-nv-6VW"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="7hW-9b-6eL">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k2T-Kd-OW0">
+                    <rect key="frame" x="0.0" y="370" width="375" height="297"/>
+                    <subviews>
+                        <button opaque="NO" tag="106" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t5F-pC-Kyq" userLabel="xiaodu">
+                            <rect key="frame" x="41" y="61" width="54" height="27"/>
+                            <state key="normal" backgroundImage="kill_virus_n"/>
+                            <state key="selected" backgroundImage="kill_virus_p"/>
+                            <state key="highlighted" backgroundImage="kill_virus_p"/>
+                            <connections>
+                                <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="Xje-pK-vA5"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZUR-B3-JAy" userLabel="shuiliao">
+                            <rect key="frame" x="160" y="61" width="54" height="27"/>
+                            <state key="normal" backgroundImage="hydrotherapy_n"/>
+                            <state key="selected" backgroundImage="hydrotherapy_p"/>
+                            <state key="highlighted" backgroundImage="hydrotherapy_p"/>
+                            <connections>
+                                <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="0fZ-FC-WZy"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" tag="105" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6lR-3M-cKu" userLabel="jingyin">
+                            <rect key="frame" x="274" y="61" width="54" height="27"/>
+                            <state key="normal" backgroundImage="volume_n"/>
+                            <state key="selected" backgroundImage="volume_p"/>
+                            <state key="highlighted" backgroundImage="volume_p"/>
+                            <connections>
+                                <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="6uj-Sz-bHE"/>
+                            </connections>
+                        </button>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="arc" translatesAutoresizingMaskIntoConstraints="NO" id="ovM-rW-RCT">
+                            <rect key="frame" x="97" y="158" width="180" height="83"/>
+                        </imageView>
+                        <button opaque="NO" tag="101" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CWB-bb-Zcg">
+                            <rect key="frame" x="159" y="209" width="57" height="57"/>
+                            <state key="normal" backgroundImage="shut_n"/>
+                            <state key="selected" backgroundImage="shut_p"/>
+                            <state key="highlighted" backgroundImage="shut_p"/>
+                            <connections>
+                                <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="Pmz-0S-9zM"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" tag="104" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GJg-b2-DzW">
+                            <rect key="frame" x="85" y="222" width="32" height="32"/>
+                            <state key="normal" title="大" backgroundImage="text_bg_n">
+                                <color key="titleColor" red="0.72941176470000002" green="0.72941176470000002" blue="0.72941176470000002" alpha="1" colorSpace="calibratedRGB"/>
+                            </state>
+                            <state key="selected" title="大" backgroundImage="text_bg_p">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <state key="highlighted" title="大" backgroundImage="text_bg_p">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="W2b-WQ-7cQ"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" tag="102" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xxa-9b-fCW">
+                            <rect key="frame" x="258" y="222" width="32" height="32"/>
+                            <state key="normal" title="小" backgroundImage="text_bg_n">
+                                <color key="titleColor" red="0.72941176470000002" green="0.72941176470000002" blue="0.72941176470000002" alpha="1" colorSpace="calibratedRGB"/>
+                            </state>
+                            <state key="selected" title="小" backgroundImage="text_bg_p">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <state key="highlighted" title="小" backgroundImage="text_bg_p">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="5Gx-AX-MVS"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" tag="103" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="evW-zc-Pdu">
+                            <rect key="frame" x="171" y="147" width="32" height="32"/>
+                            <state key="normal" title="中" backgroundImage="text_bg_n">
+                                <color key="titleColor" red="0.72941176470000002" green="0.72941176470000002" blue="0.72941176470000002" alpha="1" colorSpace="calibratedRGB"/>
+                            </state>
+                            <state key="selected" title="中" backgroundImage="text_bg_p">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <state key="highlighted" title="中" backgroundImage="text_bg_p">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="aOb-wz-7ld"/>
+                            </connections>
+                        </button>
+                        <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="耗材余量已用完,暂时无法使用" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q3O-hw-9LZ">
+                            <rect key="frame" x="0.0" y="-30" width="375" height="30"/>
+                            <color key="backgroundColor" red="1" green="0.36862745098039218" blue="0.36862745098039218" alpha="1" colorSpace="calibratedRGB"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zrd-Rg-Xis">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="370"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="水疗设备" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g19-GA-uSl">
+                            <rect key="frame" x="80" y="30" width="120" height="30"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="(未连接)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9X4-is-6I8">
+                            <rect key="frame" x="205" y="30" width="80" height="30"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zud-g4-8pc" userLabel="CircleProgressView" customClass="THCircularProgressView">
+                            <rect key="frame" x="92" y="86" width="190" height="190"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        </view>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="circle" translatesAutoresizingMaskIntoConstraints="NO" id="Gb5-uO-HJC">
+                            <rect key="frame" x="102" y="96" width="170" height="170"/>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h6K-kJ-n9B" customClass="UICountingLabel">
+                            <rect key="frame" x="108" y="101" width="159" height="159"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="80"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="%" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bJ4-cY-Y03">
+                            <rect key="frame" x="219" y="137" width="42" height="26"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TRh-oO-hbI">
+                            <rect key="frame" x="147" y="304" width="80" height="32"/>
+                            <state key="normal" title="水疗状态" backgroundImage="status">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WsS-x5-7EW">
+                            <rect key="frame" x="14" y="34" width="21" height="21"/>
+                            <state key="normal" title="Button" backgroundImage="back1_n">
+                                <color key="titleColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </state>
+                            <state key="selected" backgroundImage="back1_p">
+                                <color key="titleColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </state>
+                            <state key="highlighted" backgroundImage="back1_p"/>
+                            <connections>
+                                <action selector="backBtnDidClick:" destination="-1" eventType="touchUpInside" id="fuv-bu-wCD"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r8t-z0-ciD">
+                            <rect key="frame" x="321" y="30" width="46" height="30"/>
+                            <state key="normal" title="重试">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="retryBtnDidClick:" destination="-1" eventType="touchUpInside" id="9ik-is-Pvp"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" red="0.12941176469999999" green="0.51372549020000002" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="tintColor" red="0.12941176469999999" green="0.51372549020000002" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <point key="canvasLocation" x="416.5" y="-498.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="arc" width="169" height="83"/>
+        <image name="back1_n" width="18" height="18"/>
+        <image name="back1_p" width="18" height="18"/>
+        <image name="circle" width="136" height="136"/>
+        <image name="hydrotherapy_n" width="54" height="27"/>
+        <image name="hydrotherapy_p" width="54" height="27"/>
+        <image name="kill_virus_n" width="54" height="27"/>
+        <image name="kill_virus_p" width="54" height="27"/>
+        <image name="shut_n" width="57" height="57"/>
+        <image name="shut_p" width="57" height="57"/>
+        <image name="status" width="61" height="22"/>
+        <image name="text_bg_n" width="32" height="32"/>
+        <image name="text_bg_p" width="32" height="32"/>
+        <image name="volume_n" width="54" height="27"/>
+        <image name="volume_p" width="54" height="27"/>
+    </resources>
+</document>
