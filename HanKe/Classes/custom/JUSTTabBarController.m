@@ -7,11 +7,10 @@
 //
 
 #import "JUSTTabBarController.h"
-#import "JUSTSearchViewController.h"
 #import "JUSTNavController.h"
 #import "JUSTTabBar.h"
 
-@interface JUSTTabBarController ()<JUSTTabBarDelegate>
+@interface JUSTTabBarController ()
 
 @end
 
@@ -40,13 +39,6 @@
 }
 
 #pragma mark - sources and delegates 代理、协议方法
-#pragma mark JUSTTabBar
-- (void)tabBarDidClickAddBtn:(JUSTTabBar *)tabBar{
-    JUSTSearchViewController *searchVc = [[JUSTSearchViewController alloc] init];
-    JUSTNavController *navVc = [[JUSTNavController alloc] initWithRootViewController:searchVc];
-    searchVc.title = @"扫描设备";
-    [self presentViewController:navVc animated:YES completion:nil];
-}
 
 #pragma mark - getters and setters 属性的设置和获取方法
 

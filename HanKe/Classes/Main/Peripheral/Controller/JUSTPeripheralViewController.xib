@@ -9,8 +9,10 @@
             <connections>
                 <outlet property="bigBtn" destination="GJg-b2-DzW" id="ezt-mN-tYa"/>
                 <outlet property="circleProgressView" destination="zud-g4-8pc" id="lfX-Gn-zZP"/>
+                <outlet property="circleView" destination="Gb5-uO-HJC" id="hS8-De-n4j"/>
                 <outlet property="connectStatus" destination="9X4-is-6I8" id="Dtx-PP-tRN"/>
                 <outlet property="consumeLb" destination="h6K-kJ-n9B" id="tUX-4h-lSn"/>
+                <outlet property="disconnectView" destination="kXj-jr-uJP" id="Aes-nn-1xS"/>
                 <outlet property="disinfectBtn" destination="t5F-pC-Kyq" id="Ocx-P8-Eee"/>
                 <outlet property="exhaustTipLb" destination="q3O-hw-9LZ" id="lZT-FB-LC3"/>
                 <outlet property="hydroName" destination="g19-GA-uSl" id="4v5-PK-8dx"/>
@@ -19,6 +21,7 @@
                 <outlet property="hydroStatus" destination="TRh-oO-hbI" id="ynF-zK-FdL"/>
                 <outlet property="midBtn" destination="evW-zc-Pdu" id="edM-Uj-CBv"/>
                 <outlet property="muteBtn" destination="6lR-3M-cKu" id="MhV-1S-Ldn"/>
+                <outlet property="percentage" destination="bJ4-cY-Y03" id="eJS-S5-fvQ"/>
                 <outlet property="retryBtn" destination="r8t-z0-ciD" id="y02-zx-OTl"/>
                 <outlet property="smallBtn" destination="xxa-9b-fCW" id="HIT-Ck-moI"/>
                 <outlet property="view" destination="7hW-9b-6eL" id="oNA-nv-6VW"/>
@@ -188,6 +191,9 @@
                                 <action selector="retryBtnDidClick:" destination="-1" eventType="touchUpInside" id="9ik-is-Pvp"/>
                             </connections>
                         </button>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="ununited" translatesAutoresizingMaskIntoConstraints="NO" id="kXj-jr-uJP">
+                            <rect key="frame" x="87" y="81" width="200" height="200"/>
+                        </imageView>
                     </subviews>
                     <color key="backgroundColor" red="0.12941176469999999" green="0.51372549020000002" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
                     <color key="tintColor" red="0.12941176469999999" green="0.51372549020000002" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
@@ -195,7 +201,7 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-            <point key="canvasLocation" x="416.5" y="-498.5"/>
+            <point key="canvasLocation" x="516.5" y="-547.5"/>
         </view>
     </objects>
     <resources>
@@ -212,6 +218,7 @@
         <image name="status" width="61" height="22"/>
         <image name="text_bg_n" width="32" height="32"/>
         <image name="text_bg_p" width="32" height="32"/>
+        <image name="ununited" width="165" height="165"/>
         <image name="volume_n" width="54" height="27"/>
         <image name="volume_p" width="54" height="27"/>
     </resources>

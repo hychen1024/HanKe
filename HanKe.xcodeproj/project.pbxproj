@@ -12,6 +12,7 @@
 		4A32B1C21CD0B9C20025CBA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A32B1C11CD0B9C20025CBA4 /* Assets.xcassets */; };
 		4A32B1C51CD0B9C20025CBA4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A32B1C31CD0B9C20025CBA4 /* LaunchScreen.storyboard */; };
 		4A4851ED1CE42A2200C26A21 /* JUSTPeripheralViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A4851EC1CE42A2200C26A21 /* JUSTPeripheralViewController.xib */; };
+		4A4852191CE48BFA00C26A21 /* UICountingLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4852181CE48BFA00C26A21 /* UICountingLabel.m */; };
 		4A495B9D1CDAE7200056CB1B /* JUSTViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A495B9C1CDAE7200056CB1B /* JUSTViewController.m */; };
 		4A496D811CDC6D680084E69B /* JUSTAboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A496D801CDC6D680084E69B /* JUSTAboutViewController.m */; };
 		4A52D0791CD1A91A00D2F534 /* BabyBluetooth.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D06A1CD1A91A00D2F534 /* BabyBluetooth.m */; };
@@ -23,7 +24,6 @@
 		4A52D07F1CD1A91A00D2F534 /* BabySpeaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D0761CD1A91A00D2F534 /* BabySpeaker.m */; };
 		4A52D0801CD1A91A00D2F534 /* BabyToy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D0781CD1A91A00D2F534 /* BabyToy.m */; };
 		4A52D0841CD1AD6B00D2F534 /* JUSTDevicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D0831CD1AD6B00D2F534 /* JUSTDevicesViewController.m */; };
-		4A52D0871CD1ADA700D2F534 /* JUSTSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D0861CD1ADA700D2F534 /* JUSTSearchViewController.m */; };
 		4A52D0911CD1B0A300D2F534 /* JUSTDeviceTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D08F1CD1B0A300D2F534 /* JUSTDeviceTableViewCell.m */; };
 		4A52D0921CD1B0A300D2F534 /* JUSTDeviceTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D0901CD1B0A300D2F534 /* JUSTDeviceTableViewCell.xib */; };
 		4A52D0961CD1DB0500D2F534 /* RTDragCellTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D0951CD1DB0500D2F534 /* RTDragCellTableView.m */; };
@@ -49,8 +49,6 @@
 		4AFE09931CD2F93200B5517E /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4AFE098F1CD2F93200B5517E /* SVProgressHUD.bundle */; };
 		4AFE09941CD2F93200B5517E /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AFE09911CD2F93200B5517E /* SVProgressHUD.m */; };
 		4AFE09971CD2FEBA00B5517E /* JUSTPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AFE09961CD2FEBA00B5517E /* JUSTPeripheral.m */; };
-		4AFE099B1CD2FFB300B5517E /* JUSTSearchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AFE09991CD2FFB300B5517E /* JUSTSearchCell.m */; };
-		4AFE099C1CD2FFB300B5517E /* JUSTSearchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AFE099A1CD2FFB300B5517E /* JUSTSearchCell.xib */; };
 		4AFE099F1CD30CDB00B5517E /* WaterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AFE099E1CD30CDB00B5517E /* WaterView.m */; };
 /* End PBXBuildFile section */
 
@@ -63,6 +61,8 @@
 		4A32B1C41CD0B9C20025CBA4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4A32B1C61CD0B9C20025CBA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A4851EC1CE42A2200C26A21 /* JUSTPeripheralViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = JUSTPeripheralViewController.xib; sourceTree = "<group>"; };
+		4A4852171CE48BFA00C26A21 /* UICountingLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UICountingLabel.h; sourceTree = "<group>"; };
+		4A4852181CE48BFA00C26A21 /* UICountingLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UICountingLabel.m; sourceTree = "<group>"; };
 		4A495B9B1CDAE7200056CB1B /* JUSTViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JUSTViewController.h; sourceTree = "<group>"; };
 		4A495B9C1CDAE7200056CB1B /* JUSTViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JUSTViewController.m; sourceTree = "<group>"; };
 		4A496D7F1CDC6D680084E69B /* JUSTAboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JUSTAboutViewController.h; sourceTree = "<group>"; };
@@ -86,8 +86,6 @@
 		4A52D0811CD1A9F400D2F534 /* HanKe.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HanKe.pch; sourceTree = "<group>"; };
 		4A52D0821CD1AD6B00D2F534 /* JUSTDevicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JUSTDevicesViewController.h; sourceTree = "<group>"; };
 		4A52D0831CD1AD6B00D2F534 /* JUSTDevicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JUSTDevicesViewController.m; sourceTree = "<group>"; };
-		4A52D0851CD1ADA700D2F534 /* JUSTSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JUSTSearchViewController.h; sourceTree = "<group>"; };
-		4A52D0861CD1ADA700D2F534 /* JUSTSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JUSTSearchViewController.m; sourceTree = "<group>"; };
 		4A52D08E1CD1B0A300D2F534 /* JUSTDeviceTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JUSTDeviceTableViewCell.h; sourceTree = "<group>"; };
 		4A52D08F1CD1B0A300D2F534 /* JUSTDeviceTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JUSTDeviceTableViewCell.m; sourceTree = "<group>"; };
 		4A52D0901CD1B0A300D2F534 /* JUSTDeviceTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = JUSTDeviceTableViewCell.xib; sourceTree = "<group>"; };
@@ -136,9 +134,6 @@
 		4AFE09911CD2F93200B5517E /* SVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressHUD.m; sourceTree = "<group>"; };
 		4AFE09951CD2FEBA00B5517E /* JUSTPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JUSTPeripheral.h; path = ../../Searching/Model/JUSTPeripheral.h; sourceTree = "<group>"; };
 		4AFE09961CD2FEBA00B5517E /* JUSTPeripheral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JUSTPeripheral.m; path = ../../Searching/Model/JUSTPeripheral.m; sourceTree = "<group>"; };
-		4AFE09981CD2FFB300B5517E /* JUSTSearchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JUSTSearchCell.h; sourceTree = "<group>"; };
-		4AFE09991CD2FFB300B5517E /* JUSTSearchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JUSTSearchCell.m; sourceTree = "<group>"; };
-		4AFE099A1CD2FFB300B5517E /* JUSTSearchCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = JUSTSearchCell.xib; sourceTree = "<group>"; };
 		4AFE099D1CD30CDB00B5517E /* WaterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaterView.h; sourceTree = "<group>"; };
 		4AFE099E1CD30CDB00B5517E /* WaterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WaterView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -269,7 +264,6 @@
 				4A496D7D1CDC6D4A0084E69B /* About(关于界面) */,
 				4A5B073D1CD87AB3001525A0 /* Peripheral(水疗界面) */,
 				4A52D05A1CD1A87E00D2F534 /* Devices(设备界面) */,
-				4A52D05E1CD1A87E00D2F534 /* Searching(扫描界面) */,
 			);
 			name = "Main(主要)";
 			path = Main;
@@ -310,43 +304,6 @@
 				4A52D08E1CD1B0A300D2F534 /* JUSTDeviceTableViewCell.h */,
 				4A52D08F1CD1B0A300D2F534 /* JUSTDeviceTableViewCell.m */,
 				4A52D0901CD1B0A300D2F534 /* JUSTDeviceTableViewCell.xib */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		4A52D05E1CD1A87E00D2F534 /* Searching(扫描界面) */ = {
-			isa = PBXGroup;
-			children = (
-				4A52D05F1CD1A87E00D2F534 /* Controller */,
-				4A52D0601CD1A87E00D2F534 /* Model */,
-				4A52D0611CD1A87E00D2F534 /* View */,
-			);
-			name = "Searching(扫描界面)";
-			path = Searching;
-			sourceTree = "<group>";
-		};
-		4A52D05F1CD1A87E00D2F534 /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				4A52D0851CD1ADA700D2F534 /* JUSTSearchViewController.h */,
-				4A52D0861CD1ADA700D2F534 /* JUSTSearchViewController.m */,
-			);
-			path = Controller;
-			sourceTree = "<group>";
-		};
-		4A52D0601CD1A87E00D2F534 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		4A52D0611CD1A87E00D2F534 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				4AFE09981CD2FFB300B5517E /* JUSTSearchCell.h */,
-				4AFE09991CD2FFB300B5517E /* JUSTSearchCell.m */,
-				4AFE099A1CD2FFB300B5517E /* JUSTSearchCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -408,6 +365,8 @@
 				4AFE099E1CD30CDB00B5517E /* WaterView.m */,
 				4A62B2DC1CE1E57800468BC3 /* THCircularProgressView.h */,
 				4A62B2DD1CE1E57800468BC3 /* THCircularProgressView.m */,
+				4A4852171CE48BFA00C26A21 /* UICountingLabel.h */,
+				4A4852181CE48BFA00C26A21 /* UICountingLabel.m */,
 			);
 			name = "custom(自定义)";
 			path = custom;
@@ -569,7 +528,6 @@
 				4A52D0921CD1B0A300D2F534 /* JUSTDeviceTableViewCell.xib in Resources */,
 				4A4851ED1CE42A2200C26A21 /* JUSTPeripheralViewController.xib in Resources */,
 				4A32B1C21CD0B9C20025CBA4 /* Assets.xcassets in Resources */,
-				4AFE099C1CD2FFB300B5517E /* JUSTSearchCell.xib in Resources */,
 				4AFE09931CD2F93200B5517E /* SVProgressHUD.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -586,15 +544,14 @@
 				4A32B1BA1CD0B9C20025CBA4 /* AppDelegate.m in Sources */,
 				4A52D07C1CD1A91A00D2F534 /* BabyOptions.m in Sources */,
 				4A6FF1AC1CE1866700EB750F /* SWUtilityButtonView.m in Sources */,
+				4A4852191CE48BFA00C26A21 /* UICountingLabel.m in Sources */,
 				4A62B2DE1CE1E57800468BC3 /* THCircularProgressView.m in Sources */,
 				4AFE09971CD2FEBA00B5517E /* JUSTPeripheral.m in Sources */,
 				4AFE099F1CD30CDB00B5517E /* WaterView.m in Sources */,
-				4AFE099B1CD2FFB300B5517E /* JUSTSearchCell.m in Sources */,
 				4A52D09D1CD1F02800D2F534 /* JUSTTabBarController.m in Sources */,
 				4A5B07491CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.m in Sources */,
 				4A52D0791CD1A91A00D2F534 /* BabyBluetooth.m in Sources */,
 				4A52D09A1CD1EF2000D2F534 /* JUSTTabBar.m in Sources */,
-				4A52D0871CD1ADA700D2F534 /* JUSTSearchViewController.m in Sources */,
 				4A52D07B1CD1A91A00D2F534 /* BabyCentralManager.m in Sources */,
 				4A52D0A01CD20A9B00D2F534 /* JUSTNavController.m in Sources */,
 				4A52D0841CD1AD6B00D2F534 /* JUSTDevicesViewController.m in Sources */,

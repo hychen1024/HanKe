@@ -35,4 +35,9 @@
  *  写特征
  */
 @property (nonatomic, strong) CBCharacteristic *writeCharacteristic;
+
+/**
+ *  是否连接状态
+ */
+@property (nonatomic, assign) BOOL isConnected;
 @end

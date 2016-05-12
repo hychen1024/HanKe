@@ -14,7 +14,6 @@
 #import "JUSTDeviceTableViewCell.h"
 #import "JUSTAboutViewController.h"
 #import "SVProgressHUD.h"
-#import "JUSTHydroViewController.h"
 #import "BabyBluetooth.h"
 
 #define reuseIdentify @"device"
@@ -300,6 +299,7 @@
     
     periVc.currPeripheral = peripheral;
     periVc->BLE = self.BLE;
+    periVc.isConnected = NO;
     [self.navigationController pushViewController:periVc animated:YES];
 }
 

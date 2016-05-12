@@ -15,6 +15,8 @@
 
 #define channelOnPeropheralView @"peripheralView"
 
+
+
 @interface JUSTPeripheralViewController ()
 {
     CGFloat currPer;
@@ -36,13 +38,16 @@
  *  全局圆环百分比View
  */
 @property (nonatomic, strong) THCircularProgressView *circleNumV;
-
+/**
+ *  断开连接显示的图片
+ */
+@property (weak, nonatomic) IBOutlet UIImageView *disconnectView;
 /**
  *  水疗机名
  */
 @property (weak, nonatomic) IBOutlet UILabel *hydroName;
 /**
- *  连接状态
+ *  连接状态Lb
  */
 @property (weak, nonatomic) IBOutlet UILabel *connectStatus;
 /**
@@ -52,7 +57,15 @@
 /**
  *  耗材显示数字Lb
  */
+@property (weak, nonatomic) IBOutlet UILabel *percentage;
+/**
+ *  百分比符号
+ */
 @property (weak, nonatomic) IBOutlet UICountingLabel *consumeLb;
+/**
+ *  数字底图
+ */
+@property (weak, nonatomic) IBOutlet UIImageView *circleView;
 /**
  *  重试按钮
  */
@@ -125,23 +138,11 @@
 #pragma mark - custom methods  自定义方法
 - (void)init_View{
     lastPer = 0;
+ 
+    [self initViewType:_isConnected];
     
-    CGRect circleProgressVFrame = self.circleProgressView.frame;
-    // 百分比圆环
-    THCircularProgressView *circleNumV = [[THCircularProgressView alloc] initWithFrame:circleProgressVFrame];
-    circleNumV.lineWidth = 5;
-    circleNumV.radius = circleProgressVFrame.size.width * 0.5;
-    circleNumV.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
-    circleNumV.progressColor = [UIColor whiteColor];
-    circleNumV.percentage = [self.consumeLb.text floatValue] * 0.01;
-    [self.circleProgressView.superview addSubview:circleNumV];
-    self.circleNumV = circleNumV;
-    
-    self.consumeLb.format = @"%d";
-    self.consumeLb.method = UILabelCountingMethodLinear;
-    
+    // KVO
     [self.consumeLb addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
-    
 
 }
 
@@ -156,7 +157,12 @@
     //设置设备连接成功的委托,同一个baby对象，使用不同的channel切换委托回调
     [BLE setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
         [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--连接成功",peripheral.name]];
-        weakSelf.connectStatus.text = @"(已连接)";
+        _isConnected = YES;
+        // 显示已连接视图
+        [weakSelf initViewType:weakSelf.isConnected];
+        
+        // 连接成功发送读取机器信息指令
+        [weakSelf writeValue:@"2A07"];
     }];
     
     //设置设备连接失败的委托
@@ -165,6 +171,8 @@
         [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--连接失败",peripheral.name]];
         [weakSelf.navigationController dismissViewControllerAnimated:YES completion:nil];
         weakSelf.connectStatus.text = @"(未连接)";
+        _isConnected = NO;
+        [weakSelf initViewType:weakSelf.isConnected];
     }];
     
     //设置设备断开连接的委托
@@ -173,6 +181,8 @@
         [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--断开连接",peripheral.name]];
         [weakSelf.navigationController dismissViewControllerAnimated:YES completion:nil];
         weakSelf.connectStatus.text = @"(未连接)";
+        _isConnected = NO;
+        [weakSelf initViewType:weakSelf.isConnected];
     }];
     
     //设置发现设备的Services的委托
@@ -257,6 +267,40 @@
     BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
 }
 
+- (void)initViewType:(BOOL)isConnect{
+    if (isConnect) { //已连接 显示某些控件
+        // 百分比圆环
+        CGRect circleProgressVFrame = self.circleProgressView.frame;
+        THCircularProgressView *circleNumV = [[THCircularProgressView alloc] initWithFrame:circleProgressVFrame];
+        circleNumV.lineWidth = 5;
+        circleNumV.radius = circleProgressVFrame.size.width * 0.5;
+        circleNumV.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
+        circleNumV.progressColor = [UIColor whiteColor];
+        circleNumV.percentage = [self.consumeLb.text floatValue] * 0.01;
+        [self.circleProgressView.superview addSubview:circleNumV];
+        self.circleNumV = circleNumV;
+        
+        self.connectStatus.text = @"(已连接)";
+        
+        self.consumeLb.format = @"%d";
+        self.consumeLb.method = UILabelCountingMethodLinear;
+        
+        self.disconnectView.hidden = YES;
+        self.circleProgressView.hidden = NO;
+        self.consumeLb.hidden = NO;
+        self.circleView.hidden = NO;
+        self.percentage.hidden = NO;
+    }else{ //未连接 隐藏某些控件
+        self.circleProgressView.hidden = YES;
+        self.consumeLb.hidden = YES;
+        self.circleView.hidden = YES;
+        self.percentage.hidden = YES;
+        
+        self.exhaustTipLb.hidden = YES;
+        self.connectStatus.text = @"未连接";
+    }
+}
+
 #pragma mark 水疗按钮响应
 /**
  *  101 水疗开关
@@ -298,7 +342,7 @@
 }
 
 // 写数据 这里的数据只需要写2AXX就行 后面12位会自动补齐日期
-- (void)writeValue:(NSString *)value{
+- (void)writeValue:(NSString *)value{ // response:(void (^)(NSString *responseStr))response
 
     NSData *data = [ConvertTool appendDateInstructFromStrToData:value];
     [self.currPeripheral writeValue:data forCharacteristic:self.writeCharacteristic type:CBCharacteristicWriteWithoutResponse];
