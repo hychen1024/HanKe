@@ -27,6 +27,10 @@
 }
 @property (nonatomic, strong) NSTimer *timer;
 /**
+ *  缓存发送的命令
+ */
+@property (nonatomic, strong) NSString *writeValue;
+/**
  *  耗材百分比
  */
 @property (nonatomic, assign) NSInteger consumePer;
@@ -150,7 +154,7 @@
     [self performSelector:@selector(connectPeripheral) withObject:nil afterDelay:0.2];
     // 开始连接设备
     [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"准备连接:%@",self.currPeripheral.name]];
-    
+    __weak typeof(BLE) weakBLE = BLE;
     __weak typeof(self)weakSelf = self;
     BabyRhythm *rhythm = [[BabyRhythm alloc]init];
     
@@ -161,8 +165,6 @@
         // 显示已连接视图
         [weakSelf initViewType:weakSelf.isConnected];
         
-        // 连接成功发送读取机器信息指令
-        [weakSelf writeValue:@"2A07"];
     }];
     
     //设置设备连接失败的委托
@@ -188,7 +190,7 @@
     //设置发现设备的Services的委托
     [BLE setBlockOnDiscoverServicesAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, NSError *error) {
         for (CBService *service in peripheral.services) {
-            YCLog(@"===service name:---%@",service.UUID);
+//            YCLog(@"===service name:---%@",service.UUID);
             if ([service.UUID.UUIDString isEqual:HK_SERVICE_UUID_WRITE]) {
                 weakSelf.writeService = service;
             }
@@ -203,21 +205,42 @@
     //设置发现设service的Characteristics的委托
     [BLE setBlockOnDiscoverCharacteristicsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
         for (CBCharacteristic *c in service.characteristics) {
-            YCLog(@"========characteristic name:=========%@",c.UUID);
+//            YCLog(@"========characteristic name:=========%@",c.UUID);
+            // 获取写特征
             if ([c.UUID.UUIDString isEqual:HK_CHARACTERISTIC_UUID_WRITE]) {
+                // 保存写特征
                 weakSelf.writeCharacteristic = c;
+                // 写特征开始Nofity
+                [weakSelf.currPeripheral setNotifyValue:YES forCharacteristic:weakSelf.writeCharacteristic];
+#warning 设备Notify返回的信息
+                // 写特征Notify回调数据
+                [weakBLE notify:weakSelf.currPeripheral characteristic:weakSelf.writeCharacteristic block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
+
+                    YCLog(@"notify%@",[NSString stringWithFormat:@"writeCharacteristic:%@/characteristics:%@",weakSelf.writeCharacteristic.value,characteristics.value]);
+                    [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"%@",weakSelf.writeCharacteristic.value] maskType:SVProgressHUDMaskTypeNone];
+
+                    NSString *valueStr = [NSString stringWithFormat:@"%@",characteristics.value];
+                    valueStr = [ConvertTool removeTrimmingCharactersWithStr:valueStr];
+#warning 返回的数据不匹配
+                    if(valueStr == nil) return;
+                    
+                    [weakSelf initDataWithSuccessedConnection:valueStr];
+                }];
+                
+//                 获取写特征成功后发送读取机器信息指令
+                [weakSelf writeValue:@"2A07"];
             }
         }
     }];
     
     //设置读取characteristics的委托
     [BLE setBlockOnReadValueForCharacteristicAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
-        YCLog(@"characteristic name:%@ value is:%@",characteristics.UUID,characteristics.value);
+//        YCLog(@"characteristic name:%@ value is:%@",characteristics.UUID,characteristics.value);
     }];
     
     //设置发现characteristics的descriptors的委托
     [BLE setBlockOnDiscoverDescriptorsForCharacteristicAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBCharacteristic *characteristic, NSError *error) {
-        YCLog(@"===characteristic name:%@",characteristic.service.UUID);
+//        YCLog(@"===characteristic name:%@",characteristic.service.UUID);
         for (CBDescriptor *d in characteristic.descriptors) {
             YCLog(@"CBDescriptor name is :%@",d.UUID);
         }
@@ -225,7 +248,7 @@
     
     //设置读取Descriptor的委托
     [BLE setBlockOnReadValueForDescriptorsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBDescriptor *descriptor, NSError *error) {
-        YCLog(@"Descriptor name:%@ value is:%@",descriptor.characteristic.UUID, descriptor.value);
+//        YCLog(@"Descriptor name:%@ value is:%@",descriptor.characteristic.UUID, descriptor.value);
     }];
     
     //设置通知状态改变的委托
@@ -238,7 +261,7 @@
     
     //设置写数据成功的委托
     [BLE setBlockOnDidWriteValueForCharacteristicAtChannel:channelOnPeropheralView block:^(CBCharacteristic *characteristic, NSError *error) {
-        NSLog(@"setBlockOnDidWriteValueForCharacteristicAtChannel characteristic:%@ and new value:%@",characteristic.UUID, characteristic.value);
+        NSLog(@"写入数据成功:characteristic:%@ and new value:%@",characteristic.UUID, characteristic.value);
     }];
     
 
@@ -258,6 +281,42 @@
 
 }
 
+/**
+ *  成功连接并获取到写特征后 初始化界面数据
+ *
+ *  @param backValue 返回的机器信息
+ */
+- (void)initDataWithSuccessedConnection:(NSString *)backValue{
+    // 数据不符合
+    if (backValue.length != 12) {
+//        [self writeValue:@"2A07"];
+        return;
+    }
+    // 命令字
+    NSString *commandStr = [backValue substringWithRange:NSMakeRange(2, 2)];
+    // 设备状态
+    NSString *dataStr1 = [backValue substringWithRange:NSMakeRange(4, 2)];
+    // 水流量
+    NSString *dataStr2 = [backValue substringWithRange:NSMakeRange(6, 2)];
+    // 耗材信息
+    NSString *dataStr3 = [backValue substringWithRange:NSMakeRange(8, 2)];
+    // 保留字
+    NSString *dataStr4 = [backValue substringWithRange:NSMakeRange(10, 2)];
+#warning 发送的命令字与得到的回调命令字不匹配
+    if (![commandStr isEqualToString:[self.writeValue substringWithRange:NSMakeRange(2, 2)]]) {
+        
+    }
+    
+    // 耗材信息
+    self.consumeLb.text = dataStr3;
+    [self.consumeLb countFromCurrentValueTo:[dataStr3 doubleValue]  withDuration:1.0];
+    
+    // 设备状态 待机,消毒,水疗
+}
+
+/**
+ *  连接外设
+ */
 - (void)connectPeripheral{
     [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"开始连接:%@",self.currPeripheral.name]];
     if (self.currPeripheral == nil) {
@@ -267,6 +326,11 @@
     BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
 }
 
+/**
+ *  根据是否连接初始化水疗界面
+ *
+ *  @param isConnect 是否连接
+ */
 - (void)initViewType:(BOOL)isConnect{
     if (isConnect) { //已连接 显示某些控件
         // 百分比圆环
@@ -343,17 +407,11 @@
 
 // 写数据 这里的数据只需要写2AXX就行 后面12位会自动补齐日期
 - (void)writeValue:(NSString *)value{ // response:(void (^)(NSString *responseStr))response
-
+    // 缓存发送命令
+    self.writeValue = value;
     NSData *data = [ConvertTool appendDateInstructFromStrToData:value];
     [self.currPeripheral writeValue:data forCharacteristic:self.writeCharacteristic type:CBCharacteristicWriteWithoutResponse];
-    [BLE notify:self.currPeripheral characteristic:self.writeCharacteristic block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
-        NSString *str = [[NSString alloc] initWithData:characteristics.value encoding:NSUTF8StringEncoding];
-        YCLog(@"%lu",(unsigned long)characteristics.properties);
-        YCLog(@"%@",str);
-#warning 设备返回的信息
-        YCLog(@"notify%@",[NSString stringWithFormat:@"%@",self.writeCharacteristic.value]);
-        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"%@",self.writeCharacteristic.value] maskType:SVProgressHUDMaskTypeNone];
-    }];
+
 }
 
 // KVO回调

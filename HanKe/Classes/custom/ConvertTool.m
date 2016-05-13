@@ -208,6 +208,11 @@
     return [ConvertTool hexToBytes:tmpStr];
 }
 
+/**
+ *  NSInteger to NSString
+ *
+ *  @return NSString
+ */
 + (NSString *)integerToNSString:(int)num{
     NSString *tmpStr = nil;
     if (num < 10) {
@@ -243,5 +248,41 @@
     [[NSUserDefaults standardUserDefaults] setObject:macString forKey:MACADDRESSKEY];
     YCLog(@"MacString:%@",macString);
     return [macString copy];
+}
+
+/**
+ *  去除返回数据中的空格,<,>符号并去除重复的数据,将两组变为一组
+ *
+ *  @param str Notify数据
+ *
+ *  @return 无格式符的单组数据Str
+ */
++ (NSString *)removeTrimmingCharactersWithStr:(NSString *)str{
+    str = [str stringByReplacingOccurrencesOfString:@"<" withString:@""];
+    str = [str stringByReplacingOccurrencesOfString:@">" withString:@""];
+    str = [str stringByReplacingOccurrencesOfString:@" " withString:@""];
+    if (str.length == 12) { //去除格式符后的数据直接就是单组回调数据
+        return str;
+    }
+    if (str.length == 32 || str.length == 24) {
+        if ([ConvertTool isEqualWithStrOnForeAndBack:str]) {
+            return [str substringWithRange:NSMakeRange(0, str.length * 0.5)];
+        }
+    }
+    return nil;
+}
+
+/**
+ *  将字符串平分,判断前后是否相等
+ *
+ *  @param str 数据
+ *
+ *  @return 是否相等
+ */
++ (BOOL)isEqualWithStrOnForeAndBack:(NSString *)str{
+    NSUInteger middle = str.length * 0.5;
+    NSString *foreStr = [str substringWithRange:NSMakeRange(0, middle)];
+    NSString *backStr = [str substringWithRange:NSMakeRange(middle, middle)];
+    return [foreStr isEqualToString:backStr];
 }
 @end

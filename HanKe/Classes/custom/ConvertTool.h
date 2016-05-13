@@ -96,4 +96,22 @@
  *  @return MAC地址
  */
 + (NSString *)getMacAddressWithData:(NSData *)data;
+
+/**
+ *  去除返回数据中的空格,<,>符号
+ *
+ *  @param str Notify数据
+ *
+ *  @return 无格式符的数据Str
+ */
++ (NSString *)removeTrimmingCharactersWithStr:(NSString *)str;
+
+/**
+ *  将字符串平分,判断前后是否相等
+ *
+ *  @param str 数据
+ *
+ *  @return 是否相等
+ */
++ (BOOL)isEqualWithStrOnForeAndBack:(NSString *)str;
 @end

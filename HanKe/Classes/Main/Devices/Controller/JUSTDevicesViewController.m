@@ -272,6 +272,7 @@
 
 #pragma mark - sources and delegates 代理、协议方法
 #pragma mark UITableView
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return self.peripherals.count;
 }
@@ -322,11 +323,10 @@
         case 1://删除按钮
         {
             YCLog(@"deleteBtnDidClick");
-            NSMutableArray *tmpArr = [self.peripherals mutableCopy];
+//            NSMutableArray *tmpArr = [self.peripherals mutableCopy];
             NSIndexPath *cellIndexPath = [self.tableV indexPathForCell:cell];
-            [tmpArr removeObjectAtIndex:cellIndexPath.row];
-                    self.peripherals = [tmpArr copy];
-                    [self.tableV deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.peripherals removeObjectAtIndex:cellIndexPath.row];
+            [self.tableV deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationFade];
             break;
         }
         case 0://编辑按钮
