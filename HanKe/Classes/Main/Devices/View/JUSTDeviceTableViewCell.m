@@ -49,9 +49,12 @@
     self.periName.text = peri.name;
     // 分段表示信号强度
     if (rssi == 127 || rssi == -127) {
+        if (self.signView.image == nil) {
+            self.signView.image = [UIImage imageNamed:@"signal_bg"];
+        }
         return;
     }
-    if (rssi >= -100 && rssi < -90) {
+    if (rssi >= -127 && rssi < -90) {
         self.signView.image = [UIImage imageNamed:@"signal_bg"];
     }else if (rssi >= -90 && rssi <- 80){
         self.signView.image = [UIImage imageNamed:@"signal_01"];

@@ -19,11 +19,20 @@
 
 @interface JUSTPeripheralViewController ()
 {
+    // 当前耗材百分比
     CGFloat currPer;
+    // 上次耗材百分比
     CGFloat lastPer;
+    // lastPer -> currPer 是加还是减
     BOOL isSum;
+    
     CGFloat tmpNum;
+    // 间隔
     CGFloat interval;
+    // 水量缓冲按钮
+    UIButton *tmpWaterBtn;
+    // 功能缓冲按钮
+    UIButton *tmpFuncBtn;
 }
 @property (nonatomic, strong) NSTimer *timer;
 /**
@@ -142,11 +151,16 @@
 #pragma mark - custom methods  自定义方法
 - (void)init_View{
     lastPer = 0;
- 
+    
+    tmpWaterBtn = nil;
+    tmpFuncBtn = nil;
+    
     [self initViewType:_isConnected];
     
     // KVO
     [self.consumeLb addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
+    [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
+    [self.hydroOnBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
 
 }
 
@@ -158,11 +172,24 @@
     __weak typeof(self)weakSelf = self;
     BabyRhythm *rhythm = [[BabyRhythm alloc]init];
     
+    // 设置状态改变的委托
+    [BLE setBlockOnCentralManagerDidUpdateStateAtChannel:channelOnPeropheralView block:^(CBCentralManager *central) {
+        if (central.state != CBCentralManagerStatePoweredOn) {
+            // 显示未连接视图
+            _isConnected = NO;
+            [weakSelf initViewType:weakSelf.isConnected];
+        }
+        if (central.state == CBCentralManagerStatePoweredOn) {
+            [weakSelf connectPeripheral];
+        }
+    }];
+    
     //设置设备连接成功的委托,同一个baby对象，使用不同的channel切换委托回调
     [BLE setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
         [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--连接成功",peripheral.name]];
-        _isConnected = YES;
+        
         // 显示已连接视图
+        _isConnected = YES;
         [weakSelf initViewType:weakSelf.isConnected];
         
     }];
@@ -172,7 +199,7 @@
         YCLog(@"设备：%@--连接失败",peripheral.name);
         [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--连接失败",peripheral.name]];
         [weakSelf.navigationController dismissViewControllerAnimated:YES completion:nil];
-        weakSelf.connectStatus.text = @"(未连接)";
+        // 显示未连接视图
         _isConnected = NO;
         [weakSelf initViewType:weakSelf.isConnected];
     }];
@@ -182,7 +209,7 @@
         YCLog(@"设备：%@--断开连接",peripheral.name);
         [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--断开连接",peripheral.name]];
         [weakSelf.navigationController dismissViewControllerAnimated:YES completion:nil];
-        weakSelf.connectStatus.text = @"(未连接)";
+        // 显示未连接视图
         _isConnected = NO;
         [weakSelf initViewType:weakSelf.isConnected];
     }];
@@ -306,12 +333,32 @@
     if (![commandStr isEqualToString:[self.writeValue substringWithRange:NSMakeRange(2, 2)]]) {
         
     }
-    
     // 耗材信息
     self.consumeLb.text = dataStr3;
     [self.consumeLb countFromCurrentValueTo:[dataStr3 doubleValue]  withDuration:1.0];
     
-    // 设备状态 待机,消毒,水疗
+    // 设备状态
+    if ([dataStr1 isEqualToString:@"01"]) { // 待机
+        [self.hydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"02"]){ // 水疗
+        self.hydroOnBtn.selected = YES;
+        [self.hydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"03"]){ // 消毒
+        self.disinfectBtn.selected = YES;
+        [self.hydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
+    }
+    
+    // 水流量
+    if ([dataStr2 isEqualToString:@"01"]) { // 小水量
+        self.smallBtn.selected = YES;
+        tmpWaterBtn = self.smallBtn;
+    }else if ([dataStr2 isEqualToString:@"02"]){ // 中水量
+        self.midBtn.selected = YES;
+        tmpWaterBtn = self.midBtn;
+    }else if ([dataStr2 isEqualToString:@"03"]){ // 大水量
+        self.bigBtn.selected = YES;
+        tmpWaterBtn = self.bigBtn;
+    }
 }
 
 /**
@@ -359,15 +406,17 @@
         self.consumeLb.hidden = YES;
         self.circleView.hidden = YES;
         self.percentage.hidden = YES;
-        
+        self.circleNumV.hidden = YES;
         self.exhaustTipLb.hidden = YES;
-        self.connectStatus.text = @"未连接";
+        self.connectStatus.text = @"(未连接)";
+        self.disconnectView.hidden = NO;
     }
 }
 
 #pragma mark 水疗按钮响应
 /**
- *  101 水疗开关
+    按钮对应tag值
+ *  101 水疗开  1001 水疗关 (指令都是同一个,一个开一个关)
     102 小水量
     103 中水量
     104 大水量
@@ -386,7 +435,53 @@
 
 // 水疗功能按钮点击响应
 - (IBAction)hydroBtnDidClick:(UIButton *)sender {
+    // 水量开关逻辑控制
+    if (sender.tag == 102 || sender.tag == 103 || sender.tag == 104) {
+        if (tmpWaterBtn == sender) {
+            return;
+        }
+        if (tmpWaterBtn == nil) {
+            sender.selected = YES;
+            tmpWaterBtn = sender;
+        }
+        if (tmpWaterBtn != sender) {
+            tmpWaterBtn.selected = NO;
+            sender.selected = YES;
+            tmpWaterBtn = sender;
+        }
+    }
+    
+    // 功能开关逻辑控制
+    if (sender.tag == 101 || sender.tag == 105 || sender.tag == 106) {
+        sender.selected = !sender.selected;
+        if (sender.selected) {
+            switch (sender.tag) {
+                case 101:{
+                    [self.hydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
+                    break;
+                }
+                case 105:{ // 静音
+                    
+                    break;
+                }
+                case 106:{
+                    [self.hydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
+    
+    if (sender.tag == 1001) {
+        [self.hydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
+        self.hydroOnBtn.enabled = YES;
+        self.disinfectBtn.enabled = YES;
+    }
+
     [self waterBtnDidClick:sender];
+  
 }
 
 // 返回按钮点击响应
@@ -397,14 +492,10 @@
 
 // 重试按钮点击响应
 - (IBAction)retryBtnDidClick:(UIButton *)sender {
-    
-    if (!self.isShowTip) {
-        [self.consumeLb countFromCurrentValueTo:0 withDuration:1.0];
-    }else{
-        [self.consumeLb countFromCurrentValueTo:80 withDuration:1.0];
-    }
+    [self connectPeripheral];
 }
 
+#pragma mark 发送指令
 // 写数据 这里的数据只需要写2AXX就行 后面12位会自动补齐日期
 - (void)writeValue:(NSString *)value{ // response:(void (^)(NSString *responseStr))response
     // 缓存发送命令
@@ -414,29 +505,7 @@
 
 }
 
-// KVO回调
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
-    // 获取缓存设备数组的最新数据
-#warning 没写完全
-//    if ([keyPath isEqualToString:@"peripherals"]) {
-//        YCLog(@"%@",[object class]);
-//    }
-    
-    // 获取耗材信息
-    if ([keyPath isEqualToString:@"text"]) {
-        if ([change[@"new"] isEqualToString:@"0"]) { //显示耗材用尽提示
-            [self showExhaustTip:YES];
-        }
-        if (![change[@"new"] isEqualToString:@"0"] && self.isShowTip) { // 关闭耗材用尽提示
-            [self showExhaustTip:NO];
-        }
-        if ([change[@"new"] isEqualToString:[NSString stringWithFormat:@"%f",self.circleNumV.percentage * 100]]) { // 值未改变
-            return;
-        }
-        [self animatedChangePercentageWithCurrPer:[change[@"new"] floatValue]*0.01];
-    }
-}
-
+#pragma mark 显示/隐藏耗材提示
 /**
  *  显示or隐藏耗材用尽提示
  *
@@ -463,6 +532,7 @@
     }
 }
 
+#pragma mark 百分比动画效果
 // 圆环百分比动画效果
 - (void)animatedChangePercentageWithCurrPer:(CGFloat)currP{
     currPer = currP;
@@ -498,10 +568,72 @@
     }
 }
 
+// KVO回调
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
+    // 获取缓存设备数组的最新数据
+#warning 没写完全
+    //    if ([keyPath isEqualToString:@"peripherals"]) {
+    //        YCLog(@"%@",[object class]);
+    //    }
+    
+    // 获取耗材信息
+    if ([keyPath isEqualToString:@"text"] && object == self.consumeLb) {
+        if ([change[@"new"] isEqualToString:@"0"]) { //显示耗材用尽提示
+            [self showExhaustTip:YES];
+        }
+        if (![change[@"new"] isEqualToString:@"0"] && self.isShowTip) { // 关闭耗材用尽提示
+            [self showExhaustTip:NO];
+        }
+        if ([change[@"new"] isEqualToString:[NSString stringWithFormat:@"%f",self.circleNumV.percentage * 100]]) { // 值未改变
+            return;
+        }
+        [self animatedChangePercentageWithCurrPer:[change[@"new"] floatValue]*0.01];
+    }
+    
+    BOOL b = nil;
+    // 获取消毒按钮的选中状态
+    if (object == self.disinfectBtn && [keyPath isEqualToString:@"selected"]) {
+        b = [change[@"new"] boolValue];
+        if (b) {
+            [self.disinfectBtn removeObserver:self forKeyPath:@"selected"];
+            [self.hydroOnBtn removeObserver:self forKeyPath:@"selected"];
+            self.hydroOnBtn.enabled = NO;
+            self.hydroOffBtn.enabled = NO;
+            self.hydroOnBtn.selected = NO;
+            [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
+            [self.hydroOnBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
+        }
+        if (!b){
+            self.hydroOnBtn.enabled = YES;
+            self.hydroOffBtn.enabled = YES;
+        }
+    }
+    
+    // 获取水疗开按钮的选中状态
+    if (object == self.hydroOnBtn && [keyPath isEqualToString:@"selected"]) {
+        b = [change[@"new"] boolValue];
+        if (b) {
+            [self.disinfectBtn removeObserver:self forKeyPath:@"selected"];
+            [self.hydroOnBtn removeObserver:self forKeyPath:@"selected"];
+            self.disinfectBtn.enabled = NO;
+            self.disinfectBtn.selected = NO;
+            self.hydroOnBtn.enabled = NO;
+            self.hydroOnBtn.selected = NO;
+            [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
+            [self.hydroOnBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
+        }
+        if (!b){
+            self.disinfectBtn.enabled = YES;
+        }
+    }
+}
+
 - (void)dealloc{
-    [BLE cancelPeripheralConnection:self.currPeripheral];
-    [BLE cancelScan];
+//    [BLE cancelPeripheralConnection:self.currPeripheral];
+//    [BLE cancelScan];
     [self.consumeLb removeObserver:self forKeyPath:@"text"];
+    [self.disinfectBtn removeObserver:self forKeyPath:@"selected"];
+    [self.hydroOnBtn removeObserver:self forKeyPath:@"selected"];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 #pragma mark - sources and delegates 代理、协议方法

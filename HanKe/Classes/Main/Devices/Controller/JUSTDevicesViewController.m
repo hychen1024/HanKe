@@ -150,9 +150,10 @@
     
     __weak typeof(self) weakSelf = self;
     
+    // 设置状态改变的委托
     [self.BLE setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
+        weakSelf.BLE.scanForPeripherals().begin().stop(scanTime);
         if (central.state == CBCentralManagerStatePoweredOn) {
-            weakSelf.BLE.scanForPeripherals().begin().stop(scanTime);
             [SVProgressHUD showInfoWithStatus:@"蓝牙打开成功,开始扫描设备"];
         }if (central.state != CBCentralManagerStatePoweredOn) {
             [SVProgressHUD showInfoWithStatus:@"请打开蓝牙"];
@@ -168,18 +169,21 @@
         return NO;
     }];
     
-    __block JUSTPeripheral *justPeripheral = nil;
     __block BOOL isContain = nil;
 
     // 设置扫描到外设的委托
     [self.BLE setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
-        YCLog(@"扫描到了设备:%@,,,%f,,,%@",peripheral.name,[RSSI floatValue],peripheral.identifier);
+        
+        YCLog(@"扫描到了设备:%@,,,%f,,,",peripheral.name,[RSSI floatValue]);
         isContain = NO;
-        justPeripheral = [JUSTPeripheral peripheralWithName:peripheral.name RSSI:RSSI peripheral:peripheral];
+        JUSTPeripheral *justPeripheral = [JUSTPeripheral peripheralWithName:peripheral.name RSSI:RSSI peripheral:peripheral];
+        
         for (__strong JUSTPeripheral *peri in weakSelf.peripheralModels) {
             if ([peri.name isEqualToString:peripheral.name]) {
                 isContain = YES;
-                peri = justPeripheral;
+//                peri = justPeripheral;
+                peri.rssi = RSSI;
+                [weakSelf.tableV reloadData];
             }
         }
         if (!isContain) {
@@ -194,6 +198,7 @@
 }
 
 - (void)startScanPeripherals{
+    [self.BLE cancelScan];
     // 扫描设备 30s停止
     self.BLE.scanForPeripherals().begin().stop(scanTime);
     // 下来刷新持续一秒效果
@@ -224,14 +229,6 @@
 - (void)updateBtnDidClick{
     
 }
-
-//#pragma mark 接收到通知响应方法
-//- (void)receiveNotification:(NSNotification *)notice{
-//    if (notice.userInfo[@"peripheral"]) {
-//        JUSTPeripheral *peripheral = notice.userInfo[@"peripheralModel"];
-//        [self.peripherals addObject:peripheral];
-//    }
-//}
 
 #pragma mark 设置分割线顶头
 - (void)viewDidLayoutSubviews
@@ -272,6 +269,8 @@
     }
 }
 
+#pragma mark KVO
+
 #pragma mark - sources and delegates 代理、协议方法
 #pragma mark UITableView
 
@@ -280,7 +279,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    JUSTDeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentify ];
+    JUSTDeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentify];
     if (cell == nil) {
         cell = [JUSTDeviceTableViewCell cellWithTableView:tableView];
         cell.delegate = self;
@@ -326,6 +325,7 @@
             NSIndexPath *cellIndexPath = [self.tableV indexPathForCell:cell];
             YCLog(@"deleteBtnDidClick,,,,,%ld",cellIndexPath.row);
             [self.peripherals removeObjectAtIndex:cellIndexPath.row];
+            [self.peripheralModels removeObjectAtIndex:cellIndexPath.row];
             [self.tableV deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationFade];
             break;
         }
@@ -343,8 +343,6 @@
 - (NSMutableArray *)peripherals{
     if (!_peripherals) {
         _peripherals = [NSMutableArray array];
-//        CBPeripheral *peri = [CBPeripheral new];
-//        _peripherals = [@[peri,peri,peri] mutableCopy];
     }
     return _peripherals;
 }
@@ -359,12 +357,9 @@
 - (NSMutableArray *)peripheralModels{
     if (!_peripheralModels) {
         _peripheralModels = [NSMutableArray array];
-//        JUSTPeripheral *peri = [JUSTPeripheral peripheralWithName:@"发发" RSSI:@(-76) peripheral:nil];
-//        [_peripheralModels addObject:peri];
-//        [_peripheralModels addObject:peri];
-//        [_peripheralModels addObject:peri];
     }
     return _peripheralModels;
 }
+
 
 @end

@@ -37,6 +37,7 @@
                     <subviews>
                         <button opaque="NO" tag="106" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t5F-pC-Kyq" userLabel="xiaodu">
                             <rect key="frame" x="41" y="61" width="54" height="27"/>
+                            <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" backgroundImage="kill_virus_n"/>
                             <state key="selected" backgroundImage="kill_virus_p"/>
                             <state key="highlighted" backgroundImage="kill_virus_p"/>
@@ -44,17 +45,9 @@
                                 <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="Xje-pK-vA5"/>
                             </connections>
                         </button>
-                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZUR-B3-JAy" userLabel="shuiliao">
-                            <rect key="frame" x="160" y="61" width="54" height="27"/>
-                            <state key="normal" backgroundImage="hydrotherapy_n"/>
-                            <state key="selected" backgroundImage="hydrotherapy_p"/>
-                            <state key="highlighted" backgroundImage="hydrotherapy_p"/>
-                            <connections>
-                                <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="0fZ-FC-WZy"/>
-                            </connections>
-                        </button>
                         <button opaque="NO" tag="105" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6lR-3M-cKu" userLabel="jingyin">
                             <rect key="frame" x="274" y="61" width="54" height="27"/>
+                            <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" backgroundImage="volume_n"/>
                             <state key="selected" backgroundImage="volume_p"/>
                             <state key="highlighted" backgroundImage="volume_p"/>
@@ -65,8 +58,9 @@
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="arc" translatesAutoresizingMaskIntoConstraints="NO" id="ovM-rW-RCT">
                             <rect key="frame" x="97" y="158" width="180" height="83"/>
                         </imageView>
-                        <button opaque="NO" tag="101" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CWB-bb-Zcg">
+                        <button opaque="NO" tag="1001" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CWB-bb-Zcg">
                             <rect key="frame" x="159" y="209" width="57" height="57"/>
+                            <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" backgroundImage="shut_n"/>
                             <state key="selected" backgroundImage="shut_p"/>
                             <state key="highlighted" backgroundImage="shut_p"/>
@@ -76,6 +70,8 @@
                         </button>
                         <button opaque="NO" tag="104" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GJg-b2-DzW">
                             <rect key="frame" x="85" y="222" width="32" height="32"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" title="大" backgroundImage="text_bg_n">
                                 <color key="titleColor" red="0.72941176470000002" green="0.72941176470000002" blue="0.72941176470000002" alpha="1" colorSpace="calibratedRGB"/>
                             </state>
@@ -91,6 +87,8 @@
                         </button>
                         <button opaque="NO" tag="102" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xxa-9b-fCW">
                             <rect key="frame" x="258" y="222" width="32" height="32"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" title="小" backgroundImage="text_bg_n">
                                 <color key="titleColor" red="0.72941176470000002" green="0.72941176470000002" blue="0.72941176470000002" alpha="1" colorSpace="calibratedRGB"/>
                             </state>
@@ -106,6 +104,7 @@
                         </button>
                         <button opaque="NO" tag="103" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="evW-zc-Pdu">
                             <rect key="frame" x="171" y="147" width="32" height="32"/>
+                            <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" title="中" backgroundImage="text_bg_n">
                                 <color key="titleColor" red="0.72941176470000002" green="0.72941176470000002" blue="0.72941176470000002" alpha="1" colorSpace="calibratedRGB"/>
                             </state>
@@ -126,6 +125,16 @@
                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <nil key="highlightedColor"/>
                         </label>
+                        <button opaque="NO" tag="101" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZUR-B3-JAy" userLabel="shuiliao">
+                            <rect key="frame" x="160" y="61" width="54" height="27"/>
+                            <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <state key="normal" backgroundImage="hydrotherapy_n"/>
+                            <state key="selected" backgroundImage="hydrotherapy_p"/>
+                            <state key="highlighted" backgroundImage="hydrotherapy_p"/>
+                            <connections>
+                                <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="0fZ-FC-WZy"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </view>
@@ -163,7 +172,7 @@
                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TRh-oO-hbI">
+                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TRh-oO-hbI">
                             <rect key="frame" x="147" y="304" width="80" height="32"/>
                             <state key="normal" title="水疗状态" backgroundImage="status">
                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
