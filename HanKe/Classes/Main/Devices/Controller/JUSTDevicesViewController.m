@@ -15,9 +15,11 @@
 #import "JUSTAboutViewController.h"
 #import "SVProgressHUD.h"
 #import "BabyBluetooth.h"
+#import "MJRefresh.h"
 
 #define reuseIdentify @"device"
 #define tabbarViewH 60
+#define scanTime 30
 @interface JUSTDevicesViewController ()<RTDragCellTableViewDataSource,RTDragCellTableViewDelegate,SWTableViewCellDelegate>
 /**
  *  蓝牙
@@ -55,8 +57,7 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated{
-    // 扫描设备 30s停止
-    self.BLE.scanForPeripherals().begin().stop(30);
+    self.BLE.scanForPeripherals().begin().stop(scanTime);
 }
 
 - (void)viewDidDisappear:(BOOL)animated{
@@ -71,7 +72,7 @@
     
     // 导航栏右边关于按钮
     UIButton *aboutBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    aboutBtn.frame = CGRectMake(0, 0, 18, 18);
+    aboutBtn.frame = CGRectMake(0, 0, 21, 21);
     [aboutBtn setBackgroundImage:[UIImage imageNamed:@"about_n"] forState:UIControlStateNormal];
     [aboutBtn setBackgroundImage:[UIImage imageNamed:@"about_p"] forState:UIControlStateHighlighted];
     [aboutBtn addTarget:self action:@selector(aboutItemClick) forControlEvents: UIControlEventTouchUpInside];
@@ -85,7 +86,12 @@
     _tableV.delegate = self;
     _tableV.dataSource = self;
     _tableV.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    _tableV.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_tableV];
+    
+    _tableV.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(startScanPeripherals)];
+    _tableV.mj_header.automaticallyChangeAlpha = YES;
+    
     
     UIView *bottomV = [[UIView alloc] initWithFrame:CGRectMake(0, kScreenH - 108, kScreenW, 44)];
     bottomV.backgroundColor = [UIColor colorWithRed:0.98 green:0.98 blue:0.98 alpha:1.00];
@@ -122,8 +128,6 @@
     [bottomV addSubview:updateBtn];
     updateBtn.frame = CGRectMake(kScreenW - 74, 11, 48, 26);
     
-
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveNotification:) name:@"peripherals" object:nil];
 }
 
 /**
@@ -148,6 +152,7 @@
     
     [self.BLE setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
         if (central.state == CBCentralManagerStatePoweredOn) {
+            weakSelf.BLE.scanForPeripherals().begin().stop(scanTime);
             [SVProgressHUD showInfoWithStatus:@"蓝牙打开成功,开始扫描设备"];
         }if (central.state != CBCentralManagerStatePoweredOn) {
             [SVProgressHUD showInfoWithStatus:@"请打开蓝牙"];
@@ -186,6 +191,15 @@
     // 忽略同一个扫描多次
     NSDictionary *scanForPeripheralsWithOptions = @{CBCentralManagerScanOptionAllowDuplicatesKey:@YES};
     [self.BLE setBabyOptionsWithScanForPeripheralsWithOptions:scanForPeripheralsWithOptions connectPeripheralWithOptions:nil scanForPeripheralsWithServices:nil discoverWithServices:nil discoverWithCharacteristics:nil];
+}
+
+- (void)startScanPeripherals{
+    // 扫描设备 30s停止
+    self.BLE.scanForPeripherals().begin().stop(scanTime);
+    // 下来刷新持续一秒效果
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [_tableV.mj_header endRefreshing];
+    });
 }
 
 #pragma mark 滑动按钮
@@ -255,19 +269,7 @@
         [self.peripherals addObject:peripheral];
         [self.peripheralsAD addObject:peripheral];
         [self.tableV insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-        
-        // KVO监听扫描到的设备
-//        [self.peripherals addObserver:self forKeyPath:@"peripherals" options:NSKeyValueObservingOptionNew context:nil];
     }
-}
-
-- (void)connectToPeripheral:(NSIndexPath *)indexPath{
-    [SVProgressHUD showWithStatus:@"正在连接设备..."];
-    CBPeripheral *currPeripheral = [self.peripherals objectAtIndex:indexPath.row];
-    [SVProgressHUD showInfoWithStatus:@"开始连接设备"];
-    
-    // 开始连接设备
-    self.BLE.having(currPeripheral).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
 }
 
 #pragma mark - sources and delegates 代理、协议方法
@@ -295,7 +297,6 @@
     [self.BLE cancelScan];
     CBPeripheral *peripheral = self.peripherals[indexPath.row];
     
-//    JUSTPeripheralViewController *periVc = [[[NSBundle mainBundle] loadNibNamed:@"JUSTPeripheralViewController" owner:self options:nil]firstObject];
     JUSTPeripheralViewController *periVc = [[JUSTPeripheralViewController alloc] init];
     
     periVc.currPeripheral = peripheral;
@@ -322,9 +323,8 @@
     switch (index) {
         case 1://删除按钮
         {
-            YCLog(@"deleteBtnDidClick");
-//            NSMutableArray *tmpArr = [self.peripherals mutableCopy];
             NSIndexPath *cellIndexPath = [self.tableV indexPathForCell:cell];
+            YCLog(@"deleteBtnDidClick,,,,,%ld",cellIndexPath.row);
             [self.peripherals removeObjectAtIndex:cellIndexPath.row];
             [self.tableV deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationFade];
             break;
@@ -343,6 +343,8 @@
 - (NSMutableArray *)peripherals{
     if (!_peripherals) {
         _peripherals = [NSMutableArray array];
+//        CBPeripheral *peri = [CBPeripheral new];
+//        _peripherals = [@[peri,peri,peri] mutableCopy];
     }
     return _peripherals;
 }
@@ -357,6 +359,10 @@
 - (NSMutableArray *)peripheralModels{
     if (!_peripheralModels) {
         _peripheralModels = [NSMutableArray array];
+//        JUSTPeripheral *peri = [JUSTPeripheral peripheralWithName:@"发发" RSSI:@(-76) peripheral:nil];
+//        [_peripheralModels addObject:peri];
+//        [_peripheralModels addObject:peri];
+//        [_peripheralModels addObject:peri];
     }
     return _peripheralModels;
 }

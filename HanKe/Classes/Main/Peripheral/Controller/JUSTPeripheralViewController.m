@@ -418,19 +418,19 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
     // 获取缓存设备数组的最新数据
 #warning 没写完全
-    if ([keyPath isEqualToString:@"peripherals"]) {
-        YCLog(@"%@",[object class]);
-    }
+//    if ([keyPath isEqualToString:@"peripherals"]) {
+//        YCLog(@"%@",[object class]);
+//    }
     
+    // 获取耗材信息
     if ([keyPath isEqualToString:@"text"]) {
-        // 显示隐藏exhaustTip
-        if ([change[@"new"] isEqualToString:@"0"]) {
+        if ([change[@"new"] isEqualToString:@"0"]) { //显示耗材用尽提示
             [self showExhaustTip:YES];
         }
-        if (![change[@"new"] isEqualToString:@"0"] && self.isShowTip) {
+        if (![change[@"new"] isEqualToString:@"0"] && self.isShowTip) { // 关闭耗材用尽提示
             [self showExhaustTip:NO];
         }
-        if ([change[@"new"] isEqualToString:[NSString stringWithFormat:@"%f",self.circleNumV.percentage * 100]]) {
+        if ([change[@"new"] isEqualToString:[NSString stringWithFormat:@"%f",self.circleNumV.percentage * 100]]) { // 值未改变
             return;
         }
         [self animatedChangePercentageWithCurrPer:[change[@"new"] floatValue]*0.01];

@@ -22,7 +22,7 @@
                             <constraint firstAttribute="width" constant="24" id="hkk-cx-Dus"/>
                         </constraints>
                     </imageView>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3KL-vv-9Pg">
+                    <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3KL-vv-9Pg">
                         <rect key="frame" x="224" y="17" width="52" height="26"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -39,41 +39,42 @@
                         </state>
                     </button>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="v0I-Fn-Fmm">
-                        <rect key="frame" x="12" y="16" width="24" height="24"/>
+                        <rect key="frame" x="18" y="17" width="24" height="24"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="MIi-r4-DWG"/>
                             <constraint firstAttribute="height" constant="24" id="Zod-BV-uGt"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="水疗机" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sg4-3h-Hp6">
-                        <rect key="frame" x="52" y="9" width="120" height="42"/>
+                        <rect key="frame" x="58" y="9" width="120" height="42"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="42" id="HWU-2n-mJD"/>
                             <constraint firstAttribute="width" constant="120" id="lHI-Np-Roy"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="signal_bg" translatesAutoresizingMaskIntoConstraints="NO" id="m3E-Nx-exT">
-                        <rect key="frame" x="12" y="16" width="24" height="24"/>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Su7-fO-6av">
+                        <rect key="frame" x="10" y="57" width="300" height="1"/>
+                        <color key="backgroundColor" red="0.94117647058823528" green="0.94117647058823528" blue="0.94117647058823528" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="24" id="1AO-Z2-cUg"/>
-                            <constraint firstAttribute="height" constant="24" id="TDl-kA-Con"/>
+                            <constraint firstAttribute="height" constant="1" id="iR8-Og-ePz"/>
                         </constraints>
-                    </imageView>
+                    </view>
                 </subviews>
                 <constraints>
                     <constraint firstItem="b8a-32-bUH" firstAttribute="leading" secondItem="3KL-vv-9Pg" secondAttribute="trailing" constant="10" id="2vj-Vo-e5j"/>
                     <constraint firstItem="Sg4-3h-Hp6" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="9" id="5Ir-A1-vvy"/>
                     <constraint firstAttribute="trailing" secondItem="b8a-32-bUH" secondAttribute="trailing" constant="10" id="9Pp-ot-LFZ"/>
                     <constraint firstItem="b8a-32-bUH" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="18" id="Bft-ME-9t8"/>
-                    <constraint firstItem="Sg4-3h-Hp6" firstAttribute="leading" secondItem="m3E-Nx-exT" secondAttribute="trailing" constant="16" id="G7O-ZC-htg"/>
                     <constraint firstItem="3KL-vv-9Pg" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="9" id="H17-aH-jGJ"/>
-                    <constraint firstItem="v0I-Fn-Fmm" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="12" id="IiC-Fn-VHF"/>
-                    <constraint firstItem="m3E-Nx-exT" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="Z4r-su-zes"/>
-                    <constraint firstItem="v0I-Fn-Fmm" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="fTf-4h-cPH"/>
-                    <constraint firstItem="m3E-Nx-exT" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="12" id="qbi-Sa-CXe"/>
+                    <constraint firstItem="v0I-Fn-Fmm" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="18" id="IiC-Fn-VHF"/>
+                    <constraint firstItem="Sg4-3h-Hp6" firstAttribute="leading" secondItem="v0I-Fn-Fmm" secondAttribute="trailing" constant="16" id="Zkw-Ay-dil"/>
+                    <constraint firstAttribute="bottom" secondItem="Su7-fO-6av" secondAttribute="bottom" constant="1" id="cmc-BF-uNl"/>
+                    <constraint firstItem="v0I-Fn-Fmm" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="17" id="fTf-4h-cPH"/>
+                    <constraint firstItem="Su7-fO-6av" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="ifL-PG-kZV"/>
+                    <constraint firstAttribute="trailing" secondItem="Su7-fO-6av" secondAttribute="trailing" constant="10" id="xFO-FH-OGy"/>
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -81,15 +82,13 @@
                 <outlet property="connectBtn" destination="3KL-vv-9Pg" id="T5s-oU-tMY"/>
                 <outlet property="periName" destination="Sg4-3h-Hp6" id="Wag-g4-fdT"/>
                 <outlet property="signView" destination="v0I-Fn-Fmm" id="qGb-ni-ick"/>
-                <outlet property="signbgView" destination="m3E-Nx-exT" id="cXd-KD-JwB"/>
             </connections>
-            <point key="canvasLocation" x="381" y="307.5"/>
+            <point key="canvasLocation" x="426" y="-319"/>
         </tableViewCell>
     </objects>
     <resources>
         <image name="arrow" width="16" height="16"/>
         <image name="connected_btn" width="43" height="19"/>
-        <image name="signal_bg" width="18" height="18"/>
         <image name="ununited_btn" width="43" height="19"/>
     </resources>
 </document>
