@@ -29,17 +29,18 @@
     self.title = @"关于";
     
     // Logo
-    UIView *topView = [[UIView alloc] initWithFrame:CGRectMake(0, 64, kScreenW, 200)];
+    UIView *topView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenW, (kScreenH - 64) * 0.37)];
     topView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:topView];
     UIImageView *cycleImageV = [[UIImageView alloc] init];
-    cycleImageV.frame = CGRectMake((kScreenW - 80)*0.5, (topView.frame.size.height - 80)*0.5, 80, 80);
+    CGFloat cycleImageVW = topView.frame.size.height * 0.5;
+    cycleImageV.frame = CGRectMake((kScreenW - cycleImageVW)*0.5, (topView.frame.size.height - cycleImageVW) * 0.5, cycleImageVW, cycleImageVW);
     cycleImageV.image = [UIImage imageNamed:@"logo"];
     [topView addSubview:cycleImageV];
     
     // app介绍文字
     UILabel *textLb = [[UILabel alloc] init];
-    textLb.text = @"爱的世界疯狂了爱的世界疯狂了； 大家是否可垃圾点时空裂缝大奖是离开；发驾驶的离开；；方法 架空历史的；发假的克里斯；发架空历史的发加上点开了房加点时空裂缝安静的时刻来了房间爱上的考虑非发就阿萨德可浪费发驾驶的离开发就是打开了房间爱上的考虑了房间爱打瞌睡了；了； 放假快乐；阿斯蒂芬jkl";
+    textLb.text = @"爱的世界疯狂了爱的世界疯狂了； 大家是否可垃圾点时空裂缝大奖是离开；发驾驶的离开；；方法 架空历史的；发假的克里斯；发架空历史的发加上点开了房加爱的世界疯狂了爱的世界疯狂了； 大家是否可垃圾点时空裂缝大奖是离开；发驾驶的离开；；方法 架空历史的；发假的克里斯；发架空历史的发加上点开了房加";
     textLb.numberOfLines = 0;
     textLb.font = [UIFont systemFontOfSize:15];
     textLb.textColor = [UIColor colorWithRed:0.65 green:0.65 blue:0.65 alpha:1.00];
@@ -50,11 +51,12 @@
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [textLb.text length])];
     textLb.attributedText = attributedString;
     [self.view addSubview:textLb];
+    CGFloat textLbH = [textLb.text boundingRectWithSize:CGSizeMake(kScreenW - 20, (kScreenH - 64) * 0.4) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15],NSParagraphStyleAttributeName:paragraphStyle} context:nil].size.height;
     textLb.sd_layout
-    .topSpaceToView(self.view,264)
+    .topSpaceToView(topView,0)
     .leftSpaceToView(self.view,20)
     .rightSpaceToView(self.view,20)
-    .heightIs(200);
+    .heightIs(textLbH);
     
     // 检查更新按钮
     UIButton *checkUpdateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -69,7 +71,7 @@
     [self.view addSubview:checkUpdateBtn];
     checkUpdateBtn.sd_layout
     .heightIs(44)
-    .widthIs(300)
+    .widthIs(kScreenW * 0.8)
     .bottomSpaceToView(self.view,70)
     .centerXEqualToView(self.view);
     

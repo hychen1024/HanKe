@@ -29,7 +29,6 @@
 #pragma mark - custom methods  自定义方法
 - (void)initView{
     JUSTTabBar *tabBar = [[JUSTTabBar alloc] initWithFrame:self.tabBar.frame];
-    tabBar.JUSTTabBarDelegate = self;
     [self setValue:tabBar forKey:@"tabBar"];
     
     UIView *bgView = [[UIView alloc] initWithFrame:self.tabBar.bounds];

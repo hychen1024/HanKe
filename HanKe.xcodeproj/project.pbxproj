@@ -54,8 +54,6 @@
 		4A5B07431CD87B33001525A0 /* JUSTPeripheralViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5B07421CD87B33001525A0 /* JUSTPeripheralViewController.m */; };
 		4A5B07491CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5B07461CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.m */; };
 		4A5B074A1CD87CC6001525A0 /* UIView+SDAutoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5B07481CD87CC6001525A0 /* UIView+SDAutoLayout.m */; };
-		4A62B2D41CE1C50300468BC3 /* JUSTTopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A62B2D31CE1C50300468BC3 /* JUSTTopView.m */; };
-		4A62B2D71CE1C50A00468BC3 /* JUSTBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A62B2D61CE1C50A00468BC3 /* JUSTBottomView.m */; };
 		4A62B2DE1CE1E57800468BC3 /* THCircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A62B2DD1CE1E57800468BC3 /* THCircularProgressView.m */; };
 		4A6FF1A71CE1866700EB750F /* NSMutableArray+SWUtilityButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6FF19C1CE1866700EB750F /* NSMutableArray+SWUtilityButtons.m */; };
 		4A6FF1A81CE1866700EB750F /* SWCellScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6FF19E1CE1866700EB750F /* SWCellScrollView.m */; };
@@ -162,10 +160,6 @@
 		4A5B07461CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+SDAutoTableViewCellHeight.m"; sourceTree = "<group>"; };
 		4A5B07471CD87CC6001525A0 /* UIView+SDAutoLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SDAutoLayout.h"; sourceTree = "<group>"; };
 		4A5B07481CD87CC6001525A0 /* UIView+SDAutoLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SDAutoLayout.m"; sourceTree = "<group>"; };
-		4A62B2D21CE1C50300468BC3 /* JUSTTopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JUSTTopView.h; sourceTree = "<group>"; };
-		4A62B2D31CE1C50300468BC3 /* JUSTTopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JUSTTopView.m; sourceTree = "<group>"; };
-		4A62B2D51CE1C50A00468BC3 /* JUSTBottomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JUSTBottomView.h; sourceTree = "<group>"; };
-		4A62B2D61CE1C50A00468BC3 /* JUSTBottomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JUSTBottomView.m; sourceTree = "<group>"; };
 		4A62B2DC1CE1E57800468BC3 /* THCircularProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THCircularProgressView.h; sourceTree = "<group>"; };
 		4A62B2DD1CE1E57800468BC3 /* THCircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THCircularProgressView.m; sourceTree = "<group>"; };
 		4A6FF19B1CE1866700EB750F /* NSMutableArray+SWUtilityButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+SWUtilityButtons.h"; sourceTree = "<group>"; };
@@ -549,10 +543,6 @@
 		4A5B07401CD87AB3001525A0 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				4A62B2D21CE1C50300468BC3 /* JUSTTopView.h */,
-				4A62B2D31CE1C50300468BC3 /* JUSTTopView.m */,
-				4A62B2D51CE1C50A00468BC3 /* JUSTBottomView.h */,
-				4A62B2D61CE1C50A00468BC3 /* JUSTBottomView.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -688,7 +678,6 @@
 			files = (
 				4A26A0731CE96E7500AE0AC9 /* MJRefreshConst.m in Sources */,
 				4A52D0801CD1A91A00D2F534 /* BabyToy.m in Sources */,
-				4A62B2D71CE1C50A00468BC3 /* JUSTBottomView.m in Sources */,
 				4A32B1BA1CD0B9C20025CBA4 /* AppDelegate.m in Sources */,
 				4A52D07C1CD1A91A00D2F534 /* BabyOptions.m in Sources */,
 				4A6FF1AC1CE1866700EB750F /* SWUtilityButtonView.m in Sources */,
@@ -736,7 +725,6 @@
 				4A52D0911CD1B0A300D2F534 /* JUSTDeviceTableViewCell.m in Sources */,
 				4A6FF1A81CE1866700EB750F /* SWCellScrollView.m in Sources */,
 				4A26A06E1CE96E7500AE0AC9 /* MJRefreshBackStateFooter.m in Sources */,
-				4A62B2D41CE1C50300468BC3 /* JUSTTopView.m in Sources */,
 				4A6FF1A71CE1866700EB750F /* NSMutableArray+SWUtilityButtons.m in Sources */,
 				4A26A0711CE96E7500AE0AC9 /* MJRefreshStateHeader.m in Sources */,
 				4A52D07D1CD1A91A00D2F534 /* BabyPeripheralManager.m in Sources */,

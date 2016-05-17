@@ -433,7 +433,7 @@
     babyCentralManager->pocket = [[NSMutableDictionary alloc]init];
     //停止扫描，断开连接
     [babyCentralManager cancelScan];
-    [babyCentralManager cancelAllPeripheralsConnection];
+//    [babyCentralManager cancelAllPeripheralsConnection];
 }
 
 //重置串行方法参数

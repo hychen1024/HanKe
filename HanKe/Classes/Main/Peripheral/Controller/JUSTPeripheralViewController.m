@@ -15,7 +15,7 @@
 
 #define channelOnPeropheralView @"peripheralView"
 
-
+#define sendChechCommandInterval 60.0
 
 @interface JUSTPeripheralViewController ()
 {
@@ -34,6 +34,13 @@
     // 功能缓冲按钮
     UIButton *tmpFuncBtn;
 }
+/**
+ *  定时发送
+ */
+@property (nonatomic, strong) NSTimer *sendTimer;
+/**
+ *  圆环动画timer
+ */
 @property (nonatomic, strong) NSTimer *timer;
 /**
  *  缓存发送的命令
@@ -130,7 +137,6 @@
     [super viewDidLoad];
     [self init_View];
     [self initBLEDelegete];
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -143,14 +149,11 @@
     [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
-- (void)viewDidAppear:(BOOL)animated{
-    [super viewDidAppear:animated];
-
-}
-
 #pragma mark - custom methods  自定义方法
 - (void)init_View{
     lastPer = 0;
+    
+    self.sendInterval = sendChechCommandInterval;
     
     tmpWaterBtn = nil;
     tmpFuncBtn = nil;
@@ -170,27 +173,34 @@
     [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"准备连接:%@",self.currPeripheral.name]];
     __weak typeof(BLE) weakBLE = BLE;
     __weak typeof(self)weakSelf = self;
-    BabyRhythm *rhythm = [[BabyRhythm alloc]init];
+//    BabyRhythm *rhythm = [[BabyRhythm alloc]init];
     
     // 设置状态改变的委托
     [BLE setBlockOnCentralManagerDidUpdateStateAtChannel:channelOnPeropheralView block:^(CBCentralManager *central) {
         if (central.state != CBCentralManagerStatePoweredOn) {
             // 显示未连接视图
-            _isConnected = NO;
-            [weakSelf initViewType:weakSelf.isConnected];
+            weakSelf.isConnected = NO;
         }
         if (central.state == CBCentralManagerStatePoweredOn) {
             [weakSelf connectPeripheral];
         }
     }];
     
+    // 设置取消所有连接委托
+    [BLE setBlockOnCancelAllPeripheralsConnectionBlock:^(CBCentralManager *centralManager) {
+        weakSelf.isConnected = NO;
+        [weakSelf.sendTimer invalidate];
+        weakSelf.sendTimer = nil;
+    }];
+    
     //设置设备连接成功的委托,同一个baby对象，使用不同的channel切换委托回调
     [BLE setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
         [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--连接成功",peripheral.name]];
-        
         // 显示已连接视图
-        _isConnected = YES;
-        [weakSelf initViewType:weakSelf.isConnected];
+        weakSelf.isConnected = YES;
+        
+//        weakSelf.sendTimer = [NSTimer scheduledTimerWithTimeInterval:weakSelf.sendInterval target:weakSelf selector:@selector(sendCheckCommand) userInfo:nil repeats:YES];
+        [weakSelf.sendTimer fire];
         
     }];
     
@@ -198,20 +208,21 @@
     [BLE setBlockOnFailToConnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
         YCLog(@"设备：%@--连接失败",peripheral.name);
         [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--连接失败",peripheral.name]];
-        [weakSelf.navigationController dismissViewControllerAnimated:YES completion:nil];
+
         // 显示未连接视图
-        _isConnected = NO;
-        [weakSelf initViewType:weakSelf.isConnected];
+        weakSelf.isConnected = NO;
+        [weakSelf.sendTimer invalidate];
+        weakSelf.sendTimer = nil;
     }];
     
     //设置设备断开连接的委托
     [BLE setBlockOnDisconnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
         YCLog(@"设备：%@--断开连接",peripheral.name);
         [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--断开连接",peripheral.name]];
-        [weakSelf.navigationController dismissViewControllerAnimated:YES completion:nil];
         // 显示未连接视图
-        _isConnected = NO;
-        [weakSelf initViewType:weakSelf.isConnected];
+        weakSelf.isConnected = NO;
+        [weakSelf.sendTimer invalidate];
+        weakSelf.sendTimer = nil;
     }];
     
     //设置发现设备的Services的委托
@@ -226,7 +237,7 @@
             }
         }
     
-        [rhythm beats];
+//        [rhythm beats];
     }];
     
     //设置发现设service的Characteristics的委托
@@ -239,12 +250,10 @@
                 weakSelf.writeCharacteristic = c;
                 // 写特征开始Nofity
                 [weakSelf.currPeripheral setNotifyValue:YES forCharacteristic:weakSelf.writeCharacteristic];
-#warning 设备Notify返回的信息
                 // 写特征Notify回调数据
                 [weakBLE notify:weakSelf.currPeripheral characteristic:weakSelf.writeCharacteristic block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
 
                     YCLog(@"notify%@",[NSString stringWithFormat:@"writeCharacteristic:%@/characteristics:%@",weakSelf.writeCharacteristic.value,characteristics.value]);
-                    [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"%@",weakSelf.writeCharacteristic.value] maskType:SVProgressHUDMaskTypeNone];
 
                     NSString *valueStr = [NSString stringWithFormat:@"%@",characteristics.value];
                     valueStr = [ConvertTool removeTrimmingCharactersWithStr:valueStr];
@@ -262,12 +271,10 @@
     
     //设置读取characteristics的委托
     [BLE setBlockOnReadValueForCharacteristicAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
-//        YCLog(@"characteristic name:%@ value is:%@",characteristics.UUID,characteristics.value);
     }];
     
     //设置发现characteristics的descriptors的委托
     [BLE setBlockOnDiscoverDescriptorsForCharacteristicAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBCharacteristic *characteristic, NSError *error) {
-//        YCLog(@"===characteristic name:%@",characteristic.service.UUID);
         for (CBDescriptor *d in characteristic.descriptors) {
             YCLog(@"CBDescriptor name is :%@",d.UUID);
         }
@@ -288,7 +295,7 @@
     
     //设置写数据成功的委托
     [BLE setBlockOnDidWriteValueForCharacteristicAtChannel:channelOnPeropheralView block:^(CBCharacteristic *characteristic, NSError *error) {
-        NSLog(@"写入数据成功:characteristic:%@ and new value:%@",characteristic.UUID, characteristic.value);
+        YCLog(@"写入数据成功:characteristic:%@ and new value:%@",characteristic.UUID, characteristic.value);
     }];
     
 
@@ -370,6 +377,10 @@
         [SVProgressHUD showInfoWithStatus:@"连接失败"];
         return;
     }
+    if (self.writeCharacteristic != nil) {
+        BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().begin();
+        return;
+    }
     BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
 }
 
@@ -401,6 +412,7 @@
         self.consumeLb.hidden = NO;
         self.circleView.hidden = NO;
         self.percentage.hidden = NO;
+        self.retryBtn.hidden = YES;
     }else{ //未连接 隐藏某些控件
         self.circleProgressView.hidden = YES;
         self.consumeLb.hidden = YES;
@@ -410,7 +422,12 @@
         self.exhaustTipLb.hidden = YES;
         self.connectStatus.text = @"(未连接)";
         self.disconnectView.hidden = NO;
+        self.retryBtn.hidden = NO;
     }
+}
+
+- (void)sendCheckCommand{
+    [self writeValue:@"2A07"];
 }
 
 #pragma mark 水疗按钮响应
@@ -486,12 +503,17 @@
 
 // 返回按钮点击响应
 - (IBAction)backBtnDidClick:(UIButton *)sender {
+    [self.timer invalidate];
+    self.timer = nil;
+    [self.sendTimer invalidate];
+    self.sendTimer = nil;
     [self.navigationController popViewControllerAnimated:YES];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
 // 重试按钮点击响应
 - (IBAction)retryBtnDidClick:(UIButton *)sender {
+    [BLE cancelAllPeripheralsConnection];
     [self connectPeripheral];
 }
 
@@ -501,6 +523,9 @@
     // 缓存发送命令
     self.writeValue = value;
     NSData *data = [ConvertTool appendDateInstructFromStrToData:value];
+    if (self.writeCharacteristic == nil) {
+        return;
+    }
     [self.currPeripheral writeValue:data forCharacteristic:self.writeCharacteristic type:CBCharacteristicWriteWithoutResponse];
 
 }
@@ -629,16 +654,23 @@
 }
 
 - (void)dealloc{
-//    [BLE cancelPeripheralConnection:self.currPeripheral];
-//    [BLE cancelScan];
     [self.consumeLb removeObserver:self forKeyPath:@"text"];
     [self.disinfectBtn removeObserver:self forKeyPath:@"selected"];
     [self.hydroOnBtn removeObserver:self forKeyPath:@"selected"];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 #pragma mark - sources and delegates 代理、协议方法
 
 
 #pragma mark - getters and setters 属性的设置和获取方法
-
+- (void)setIsConnected:(BOOL)isConnected{
+    _isConnected = isConnected;
+    // 显示连接状态视图
+    [self initViewType:isConnected];
+    NSDictionary *dict = @{
+                @"connectStatus":@(_isConnected)
+                           };
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"connectStatus" object:nil userInfo:dict];
+}
 @end

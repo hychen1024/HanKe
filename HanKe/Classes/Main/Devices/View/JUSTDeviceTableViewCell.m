@@ -18,9 +18,9 @@
  */
 @property (weak, nonatomic) IBOutlet UILabel *periName;
 /**
- *  连接按钮
+ *  连接状态图片
  */
-@property (weak, nonatomic) IBOutlet UIButton *connectBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *connectImage;
 
 @end
 @implementation JUSTDeviceTableViewCell
@@ -37,8 +37,6 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.backgroundColor = [UIColor clearColor];
-        // 设置信号默认背景
-//        cell.signbgView.image = [UIImage imageNamed:@"signal_bg"];
     }
     return cell;
 }
@@ -72,6 +70,10 @@
 
 - (void)setIsConnected:(bool)isConnected{
     _isConnected = isConnected;
-    self.connectBtn.selected = isConnected;
+    if (isConnected) {
+        self.connectImage.image = [UIImage imageNamed:@"connected"];
+    }else{
+        self.connectImage.image = [UIImage imageNamed:@"disconnected"];
+    }
 }
 @end

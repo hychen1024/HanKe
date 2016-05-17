@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -22,22 +21,6 @@
                             <constraint firstAttribute="width" constant="24" id="hkk-cx-Dus"/>
                         </constraints>
                     </imageView>
-                    <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3KL-vv-9Pg">
-                        <rect key="frame" x="224" y="17" width="52" height="26"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="26" id="1ih-f7-NZZ"/>
-                            <constraint firstAttribute="width" constant="52" id="kt2-vo-2Th"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <state key="normal" title="未连接" backgroundImage="ununited_btn">
-                            <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                        </state>
-                        <state key="selected" title="已连接" backgroundImage="connected_btn">
-                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        </state>
-                    </button>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="v0I-Fn-Fmm">
                         <rect key="frame" x="18" y="17" width="24" height="24"/>
                         <constraints>
@@ -62,33 +45,39 @@
                             <constraint firstAttribute="height" constant="1" id="iR8-Og-ePz"/>
                         </constraints>
                     </view>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="disconnected" translatesAutoresizingMaskIntoConstraints="NO" id="D3p-b9-ctm">
+                        <rect key="frame" x="224" y="18" width="52" height="24"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="24" id="QP7-4B-I4J"/>
+                            <constraint firstAttribute="width" constant="52" id="z9c-P1-fp2"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="b8a-32-bUH" firstAttribute="leading" secondItem="3KL-vv-9Pg" secondAttribute="trailing" constant="10" id="2vj-Vo-e5j"/>
                     <constraint firstItem="Sg4-3h-Hp6" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="9" id="5Ir-A1-vvy"/>
                     <constraint firstAttribute="trailing" secondItem="b8a-32-bUH" secondAttribute="trailing" constant="10" id="9Pp-ot-LFZ"/>
                     <constraint firstItem="b8a-32-bUH" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="18" id="Bft-ME-9t8"/>
-                    <constraint firstItem="3KL-vv-9Pg" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="9" id="H17-aH-jGJ"/>
                     <constraint firstItem="v0I-Fn-Fmm" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="18" id="IiC-Fn-VHF"/>
+                    <constraint firstItem="D3p-b9-ctm" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="18" id="Mch-Fy-LcW"/>
                     <constraint firstItem="Sg4-3h-Hp6" firstAttribute="leading" secondItem="v0I-Fn-Fmm" secondAttribute="trailing" constant="16" id="Zkw-Ay-dil"/>
                     <constraint firstAttribute="bottom" secondItem="Su7-fO-6av" secondAttribute="bottom" constant="1" id="cmc-BF-uNl"/>
                     <constraint firstItem="v0I-Fn-Fmm" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="17" id="fTf-4h-cPH"/>
                     <constraint firstItem="Su7-fO-6av" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="ifL-PG-kZV"/>
+                    <constraint firstItem="b8a-32-bUH" firstAttribute="leading" secondItem="D3p-b9-ctm" secondAttribute="trailing" constant="10" id="p8h-bj-Vlb"/>
                     <constraint firstAttribute="trailing" secondItem="Su7-fO-6av" secondAttribute="trailing" constant="10" id="xFO-FH-OGy"/>
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <connections>
-                <outlet property="connectBtn" destination="3KL-vv-9Pg" id="T5s-oU-tMY"/>
+                <outlet property="connectImage" destination="D3p-b9-ctm" id="EYh-Ye-5n1"/>
                 <outlet property="periName" destination="Sg4-3h-Hp6" id="Wag-g4-fdT"/>
                 <outlet property="signView" destination="v0I-Fn-Fmm" id="qGb-ni-ick"/>
             </connections>
-            <point key="canvasLocation" x="426" y="-319"/>
+            <point key="canvasLocation" x="432" y="-342"/>
         </tableViewCell>
     </objects>
     <resources>
         <image name="arrow" width="16" height="16"/>
-        <image name="connected_btn" width="43" height="19"/>
-        <image name="ununited_btn" width="43" height="19"/>
+        <image name="disconnected" width="43" height="19"/>
     </resources>
 </document>

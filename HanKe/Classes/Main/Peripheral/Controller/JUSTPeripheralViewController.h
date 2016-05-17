@@ -35,9 +35,13 @@
  *  写特征
  */
 @property (nonatomic, strong) CBCharacteristic *writeCharacteristic;
+/**
+ *  发送读机器指令间隔
+ */
+@property (nonatomic, assign) NSTimeInterval sendInterval;
 
 /**
- *  是否连接状态
+ *  是否连接状态,并显示对应的视图
  */
 @property (nonatomic, assign) BOOL isConnected;
 @end

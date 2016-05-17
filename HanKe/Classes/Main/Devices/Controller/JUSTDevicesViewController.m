@@ -19,8 +19,19 @@
 
 #define reuseIdentify @"device"
 #define tabbarViewH 60
+// 扫描时间
 #define scanTime 30
+
 @interface JUSTDevicesViewController ()<RTDragCellTableViewDataSource,RTDragCellTableViewDelegate,SWTableViewCellDelegate>
+{
+    // 记录扫到设备的时间
+    NSDate *insertingTime;
+    // 记录扫到设备时的当前设备数
+    NSUInteger insertingCount;
+    // 间隔多久没扫到新设备则断开连接
+    NSTimeInterval intervalTime;
+}
+@property (nonatomic, strong) NSTimer *timer;
 /**
  *  蓝牙
  */
@@ -30,17 +41,17 @@
  */
 @property (nonatomic, strong) NSMutableArray *peripherals;
 /**
- *
+ *  设备模型
  */
 @property (nonatomic, strong) NSMutableArray *peripheralModels;
-/**
- *  缓存扫描到设备的advertisementData
- */
-@property (nonatomic, strong) NSMutableArray *peripheralsAD;
 /**
  *  可拖动的TableView
  */
 @property (nonatomic, strong) RTDragCellTableView *tableV;
+/**
+ *  点击连接的外设
+ */
+@property (nonatomic, strong) CBPeripheral *currPeri;
 @end
 
 @implementation JUSTDevicesViewController
@@ -57,10 +68,12 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
     self.BLE.scanForPeripherals().begin().stop(scanTime);
 }
 
 - (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
     [self.BLE cancelScan];
 }
 
@@ -69,6 +82,8 @@
     self.title = @"我的设备";
     // 隐藏导航栏返回按钮
     self.navigationItem.leftBarButtonItem = nil;
+    
+    intervalTime = 5;
     
     // 导航栏右边关于按钮
     UIButton *aboutBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -128,6 +143,8 @@
     [bottomV addSubview:updateBtn];
     updateBtn.frame = CGRectMake(kScreenW - 74, 11, 48, 26);
     
+    // 注册通知 接收连接状态
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveConnectedStatus:) name:@"connectStatus" object:nil];
 }
 
 /**
@@ -160,6 +177,8 @@
         }
     }];
     
+    
+    
     // 设置扫描设备过滤器
     [self.BLE setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
         // 外设名大于1
@@ -169,19 +188,21 @@
         return NO;
     }];
     
+    [self.BLE setBlockOnCancelAllPeripheralsConnectionBlock:^(CBCentralManager *centralManager) {
+        
+    }];
+    
     __block BOOL isContain = nil;
-
+    __block JUSTPeripheral *justPeripheral = nil;
     // 设置扫描到外设的委托
     [self.BLE setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
-        
         YCLog(@"扫描到了设备:%@,,,%f,,,",peripheral.name,[RSSI floatValue]);
         isContain = NO;
-        JUSTPeripheral *justPeripheral = [JUSTPeripheral peripheralWithName:peripheral.name RSSI:RSSI peripheral:peripheral];
-        
+        justPeripheral = [JUSTPeripheral peripheralWithName:peripheral.name RSSI:RSSI peripheral:peripheral];
         for (__strong JUSTPeripheral *peri in weakSelf.peripheralModels) {
-            if ([peri.name isEqualToString:peripheral.name]) {
+            
+            if ([peripheral.identifier.UUIDString isEqualToString:peri.peri.identifier.UUIDString]) {
                 isContain = YES;
-//                peri = justPeripheral;
                 peri.rssi = RSSI;
                 [weakSelf.tableV reloadData];
             }
@@ -205,6 +226,20 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [_tableV.mj_header endRefreshing];
     });
+}
+
+- (void)receiveConnectedStatus:(NSNotification *)notice{
+    BOOL connectStatus = [notice.userInfo[@"connectStatus"] boolValue];
+    
+    if (connectStatus) {
+        self.currPeri = [[self.BLE findConnectedPeripherals] firstObject];
+    }
+    
+    NSUInteger index = [self.peripherals indexOfObject:self.currPeri];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    JUSTDeviceTableViewCell *cell = [self.tableV cellForRowAtIndexPath:indexPath];
+    cell.isConnected = connectStatus;
+    [self.tableV reloadData];
 }
 
 #pragma mark 滑动按钮
@@ -264,8 +299,29 @@
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.peripherals.count inSection:0];
         [indexPaths addObject:indexPath];
         [self.peripherals addObject:peripheral];
-        [self.peripheralsAD addObject:peripheral];
+        // 记录扫到数据时的设备总数
+        insertingCount = self.peripherals.count;
+        [self.timer invalidate];
+        [self.timer fire];
+        
+        
+        
+        // 扫到设备的时间
+//        insertingTime = [NSDate date];
+        // 间隔5s
+//        insertingTime = [NSDate dateWithTimeInterval:intervalTime sinceDate:insertingTime];
+
+
         [self.tableV insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+        
+    }
+}
+
+- (void)cancelScan{
+    if (insertingCount == self.peripherals.count) {
+        [self.BLE cancelScan];
+    }else{
+        return;
     }
 }
 
@@ -287,20 +343,22 @@
     }
     JUSTPeripheral *peripheral = self.peripheralModels[indexPath.row];
     cell.peri = peripheral;
-    cell.isConnected = YES;
+//    cell.isConnected = YES;
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     // 停止扫描
     [self.BLE cancelScan];
+    if (self.currPeri) {
+        [self.BLE cancelAllPeripheralsConnection];
+    }
     CBPeripheral *peripheral = self.peripherals[indexPath.row];
-    
     JUSTPeripheralViewController *periVc = [[JUSTPeripheralViewController alloc] init];
-    
     periVc.currPeripheral = peripheral;
     periVc->BLE = self.BLE;
     periVc.isConnected = NO;
+    
     [self.navigationController pushViewController:periVc animated:YES];
 }
 
@@ -327,6 +385,7 @@
             [self.peripherals removeObjectAtIndex:cellIndexPath.row];
             [self.peripheralModels removeObjectAtIndex:cellIndexPath.row];
             [self.tableV deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.BLE cancelAllPeripheralsConnection];
             break;
         }
         case 0://编辑按钮
@@ -347,13 +406,6 @@
     return _peripherals;
 }
 
-- (NSMutableArray *)peripheralsAD{
-    if (!_peripheralsAD) {
-        _peripheralsAD = [NSMutableArray array];
-    }
-    return _peripheralsAD;
-}
-
 - (NSMutableArray *)peripheralModels{
     if (!_peripheralModels) {
         _peripheralModels = [NSMutableArray array];
@@ -361,5 +413,8 @@
     return _peripheralModels;
 }
 
+- (void)dealloc{
 
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"connectStatus" object:nil];;
+}
 @end
