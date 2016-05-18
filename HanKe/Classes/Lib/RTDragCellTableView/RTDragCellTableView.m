@@ -25,6 +25,8 @@ typedef enum{
 /**自动滚动的方向*/
 @property (nonatomic, assign) RTSnapshotMeetsEdge autoScrollDirection;
 
+
+@property (nonatomic, strong) UILongPressGestureRecognizer *longPress;
 @end
 
 
@@ -39,11 +41,20 @@ typedef enum{
     self = [super init];
     if (self) {
         UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressGestureRecognized:)];
+        self.longPress = longPress;
         [self addGestureRecognizer:longPress];
     }
     return self;
 }
 
+
+- (void)cancelLongPress{
+    [self removeGestureRecognizer:self.longPress];
+}
+
+- (void)startLongPress{
+    [self addGestureRecognizer:self.longPress];
+}
 
 # pragma mark - Gesture methods
 

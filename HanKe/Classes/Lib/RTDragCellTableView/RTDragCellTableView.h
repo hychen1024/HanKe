@@ -35,4 +35,8 @@
 @property (nonatomic, assign) id<RTDragCellTableViewDataSource> dataSource;
 @property (nonatomic, assign) id<RTDragCellTableViewDelegate> delegate;
 
+
+- (void)cancelLongPress;
+
+- (void)startLongPress;
 @end

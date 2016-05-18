@@ -34,9 +34,11 @@
     JUSTDeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (cell == nil) {
         cell = [[[NSBundle mainBundle] loadNibNamed:@"JUSTDeviceTableViewCell" owner:self options:nil] firstObject];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.backgroundColor = [UIColor clearColor];
+        UIView *cellBg = [[UIView alloc] init];
+        cellBg.backgroundColor = RGBColor(0xf8f8f8);
+        cell.selectedBackgroundView = cellBg;
     }
     return cell;
 }

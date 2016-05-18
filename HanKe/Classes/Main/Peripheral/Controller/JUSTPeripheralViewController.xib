@@ -39,6 +39,7 @@
                             <rect key="frame" x="41" y="61" width="54" height="27"/>
                             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" backgroundImage="kill_virus_n"/>
+                            <state key="disabled" backgroundImage="kill_virus_d"/>
                             <state key="selected" backgroundImage="kill_virus_p"/>
                             <state key="highlighted" backgroundImage="kill_virus_p"/>
                             <connections>
@@ -58,12 +59,12 @@
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="arc" translatesAutoresizingMaskIntoConstraints="NO" id="ovM-rW-RCT">
                             <rect key="frame" x="97" y="158" width="180" height="83"/>
                         </imageView>
-                        <button opaque="NO" tag="1001" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CWB-bb-Zcg">
+                        <button opaque="NO" tag="1001" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CWB-bb-Zcg">
                             <rect key="frame" x="159" y="209" width="57" height="57"/>
                             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" backgroundImage="shut_n"/>
+                            <state key="disabled" backgroundImage="shut_d"/>
                             <state key="selected" backgroundImage="shut_p"/>
-                            <state key="highlighted" backgroundImage="shut_p"/>
                             <connections>
                                 <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="Pmz-0S-9zM"/>
                             </connections>
@@ -73,7 +74,7 @@
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" title="大" backgroundImage="text_bg_n">
-                                <color key="titleColor" red="0.72941176470000002" green="0.72941176470000002" blue="0.72941176470000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleColor" red="0.098039215686274508" green="0.53333333333333333" blue="0.85882352941176465" alpha="1" colorSpace="calibratedRGB"/>
                             </state>
                             <state key="selected" title="大" backgroundImage="text_bg_p">
                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -90,7 +91,7 @@
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" title="小" backgroundImage="text_bg_n">
-                                <color key="titleColor" red="0.72941176470000002" green="0.72941176470000002" blue="0.72941176470000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleColor" red="0.098039215686274508" green="0.53333333333333333" blue="0.85882352941176465" alpha="1" colorSpace="calibratedRGB"/>
                             </state>
                             <state key="selected" title="小" backgroundImage="text_bg_p">
                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -106,7 +107,7 @@
                             <rect key="frame" x="171" y="147" width="32" height="32"/>
                             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" title="中" backgroundImage="text_bg_n">
-                                <color key="titleColor" red="0.72941176470000002" green="0.72941176470000002" blue="0.72941176470000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleColor" red="0.098039215686274508" green="0.53333333333333333" blue="0.85882352941176465" alpha="1" colorSpace="calibratedRGB"/>
                             </state>
                             <state key="selected" title="中" backgroundImage="text_bg_p">
                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -125,10 +126,11 @@
                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <button opaque="NO" tag="101" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZUR-B3-JAy" userLabel="shuiliao">
+                        <button opaque="NO" tag="101" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZUR-B3-JAy" userLabel="shuiliao">
                             <rect key="frame" x="160" y="61" width="54" height="27"/>
                             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" backgroundImage="hydrotherapy_n"/>
+                            <state key="disabled" backgroundImage="hydrotherapy_d"/>
                             <state key="selected" backgroundImage="hydrotherapy_p"/>
                             <state key="highlighted" backgroundImage="hydrotherapy_p"/>
                             <connections>
@@ -210,7 +212,7 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-            <point key="canvasLocation" x="520.5" y="-725.5"/>
+            <point key="canvasLocation" x="287.5" y="-712.5"/>
         </view>
     </objects>
     <resources>
@@ -218,10 +220,13 @@
         <image name="back1_n" width="18" height="18"/>
         <image name="back1_p" width="18" height="18"/>
         <image name="circle" width="136" height="136"/>
+        <image name="hydrotherapy_d" width="54" height="27"/>
         <image name="hydrotherapy_n" width="54" height="27"/>
         <image name="hydrotherapy_p" width="54" height="27"/>
+        <image name="kill_virus_d" width="54" height="27"/>
         <image name="kill_virus_n" width="54" height="27"/>
         <image name="kill_virus_p" width="54" height="27"/>
+        <image name="shut_d" width="114" height="114"/>
         <image name="shut_n" width="57" height="57"/>
         <image name="shut_p" width="57" height="57"/>
         <image name="status" width="61" height="22"/>

@@ -15,6 +15,7 @@
     @public
     BabyBluetooth *BLE;
 }
+//@property (nonatomic, weak) JUSTPeripheralViewController *weakPeriVc;
 /**
  *
  */

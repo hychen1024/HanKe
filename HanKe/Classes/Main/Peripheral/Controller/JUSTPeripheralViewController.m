@@ -493,8 +493,10 @@
     
     if (sender.tag == 1001) {
         [self.hydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
-        self.hydroOnBtn.enabled = YES;
         self.disinfectBtn.enabled = YES;
+        self.hydroOnBtn.selected = NO;
+        self.hydroOnBtn.userInteractionEnabled = YES;
+        self.hydroOffBtn.enabled = NO;
     }
 
     [self waterBtnDidClick:sender];
@@ -630,7 +632,6 @@
         }
         if (!b){
             self.hydroOnBtn.enabled = YES;
-            self.hydroOffBtn.enabled = YES;
         }
     }
     
@@ -642,8 +643,9 @@
             [self.hydroOnBtn removeObserver:self forKeyPath:@"selected"];
             self.disinfectBtn.enabled = NO;
             self.disinfectBtn.selected = NO;
-            self.hydroOnBtn.enabled = NO;
-            self.hydroOnBtn.selected = NO;
+            self.hydroOnBtn.selected = YES;
+            self.hydroOnBtn.userInteractionEnabled = NO;
+            self.hydroOffBtn.enabled = YES;
             [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
             [self.hydroOnBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
         }

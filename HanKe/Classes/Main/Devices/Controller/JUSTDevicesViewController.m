@@ -17,6 +17,7 @@
 #import "BabyBluetooth.h"
 #import "MJRefresh.h"
 
+
 #define reuseIdentify @"device"
 #define tabbarViewH 60
 // 扫描时间
@@ -24,6 +25,7 @@
 
 @interface JUSTDevicesViewController ()<RTDragCellTableViewDataSource,RTDragCellTableViewDelegate,SWTableViewCellDelegate>
 {
+    NSMutableArray *_peripherals;
     // 记录扫到设备的时间
     NSDate *insertingTime;
     // 记录扫到设备时的当前设备数
@@ -69,7 +71,7 @@
 
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    self.BLE.scanForPeripherals().begin().stop(scanTime);
+
 }
 
 - (void)viewDidDisappear:(BOOL)animated{
@@ -79,11 +81,13 @@
 
 #pragma mark - custom methods  自定义方法
 - (void)init_View{
+    _peripherals = [NSMutableArray array];
+    
     self.title = @"我的设备";
     // 隐藏导航栏返回按钮
     self.navigationItem.leftBarButtonItem = nil;
     
-    intervalTime = 5;
+    intervalTime = 5.0;
     
     // 导航栏右边关于按钮
     UIButton *aboutBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -94,6 +98,7 @@
     UIBarButtonItem *aboutItem = [[UIBarButtonItem alloc]initWithCustomView:aboutBtn];
     self.navigationItem.rightBarButtonItem = aboutItem;
     
+    // UITableView
     _tableV = [[RTDragCellTableView alloc] init];
     _tableV.frame = CGRectMake(0, 0, kScreenW, kScreenH);
     _tableV.allowsSelection = YES;
@@ -104,10 +109,16 @@
     _tableV.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_tableV];
     
+    // 下拉
     _tableV.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(startScanPeripherals)];
     _tableV.mj_header.automaticallyChangeAlpha = YES;
     
-    
+    // 背景Image
+    UIImageView *bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_image"]];
+    bgImage.frame = CGRectMake(kScreenW * 0.1, kScreenH - 208 - kScreenH * 0.25, kScreenW * 0.8, kScreenH * 0.25);
+    [self.view addSubview:bgImage];
+
+    // 底部条
     UIView *bottomV = [[UIView alloc] initWithFrame:CGRectMake(0, kScreenH - 108, kScreenW, 44)];
     bottomV.backgroundColor = [UIColor colorWithRed:0.98 green:0.98 blue:0.98 alpha:1.00];
     [self.view addSubview:bottomV];
@@ -146,7 +157,6 @@
     // 注册通知 接收连接状态
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveConnectedStatus:) name:@"connectStatus" object:nil];
 }
-
 /**
  *  初始化蓝牙
  */
@@ -158,6 +168,8 @@
     
     // 设置蓝牙委托
     [self BLEDelegate];
+    
+    self.BLE.scanForPeripherals().begin().stop(scanTime);
 }
 
 /**
@@ -218,16 +230,26 @@
     [self.BLE setBabyOptionsWithScanForPeripheralsWithOptions:scanForPeripheralsWithOptions connectPeripheralWithOptions:nil scanForPeripheralsWithServices:nil discoverWithServices:nil discoverWithCharacteristics:nil];
 }
 
+/**
+ *  下拉刷新
+ */
 - (void)startScanPeripherals{
+    [_peripherals removeAllObjects];
     [self.BLE cancelScan];
     // 扫描设备 30s停止
     self.BLE.scanForPeripherals().begin().stop(scanTime);
+    [self.tableV cancelLongPress];
     // 下来刷新持续一秒效果
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [_tableV.mj_header endRefreshing];
     });
 }
 
+/**
+ *  连接状态改变通知回调
+ *
+ *  @param notice 通知
+ */
 - (void)receiveConnectedStatus:(NSNotification *)notice{
     BOOL connectStatus = [notice.userInfo[@"connectStatus"] boolValue];
     
@@ -235,11 +257,54 @@
         self.currPeri = [[self.BLE findConnectedPeripherals] firstObject];
     }
     
-    NSUInteger index = [self.peripherals indexOfObject:self.currPeri];
+    NSUInteger index = [_peripherals indexOfObject:self.currPeri];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
     JUSTDeviceTableViewCell *cell = [self.tableV cellForRowAtIndexPath:indexPath];
     cell.isConnected = connectStatus;
     [self.tableV reloadData];
+}
+
+/**
+ *  插入TableView数据
+ *
+ *  @param peripheral        设备
+ *  @param advertisementData 广播数据
+ */
+- (void)insertPeripheralToTableView:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData{
+    if (![_peripherals containsObject:peripheral]) {
+        
+        // 当扫到新设备的时候 重置定时器
+        if (self.timer != nil) {
+            [self.timer invalidate];
+            self.timer = nil;
+        }
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:intervalTime target:self selector:@selector(stopScanPeri:) userInfo:nil repeats:NO];
+        
+//        NSMutableArray *indexPaths = [NSMutableArray array];
+        NSInteger row = _peripherals.count;
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+//        [indexPaths addObject:indexPath];
+        [_peripherals addObject:peripheral];
+        // 记录扫到数据时的设备总数
+        insertingCount = _peripherals.count;
+        [self.tableV insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+}
+
+
+/**
+ *  规定时间内没扫描到设备则停止扫描
+ *
+ *  @param timer 定时器
+ */
+- (void)stopScanPeri:(NSTimer *)timer{
+    if (insertingCount == _peripherals.count) {
+        YCLog(@"%lfs未扫描到设备,暂停扫描",intervalTime);
+        [self.tableV startLongPress];
+        [self.BLE cancelScan];
+        [self.timer invalidate];
+        self.timer = nil;
+    }
 }
 
 #pragma mark 滑动按钮
@@ -287,51 +352,13 @@
     }
 }
 
-/**
- *  插入TableView数据
- *
- *  @param peripheral        设备
- *  @param advertisementData 广播数据
- */
-- (void)insertPeripheralToTableView:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData{
-    if (![self.peripherals containsObject:peripheral]) {
-        NSMutableArray *indexPaths = [NSMutableArray array];
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.peripherals.count inSection:0];
-        [indexPaths addObject:indexPath];
-        [self.peripherals addObject:peripheral];
-        // 记录扫到数据时的设备总数
-        insertingCount = self.peripherals.count;
-        [self.timer invalidate];
-        [self.timer fire];
-        
-        
-        
-        // 扫到设备的时间
-//        insertingTime = [NSDate date];
-        // 间隔5s
-//        insertingTime = [NSDate dateWithTimeInterval:intervalTime sinceDate:insertingTime];
-
-
-        [self.tableV insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-        
-    }
-}
-
-- (void)cancelScan{
-    if (insertingCount == self.peripherals.count) {
-        [self.BLE cancelScan];
-    }else{
-        return;
-    }
-}
-
 #pragma mark KVO
 
 #pragma mark - sources and delegates 代理、协议方法
 #pragma mark UITableView
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.peripherals.count;
+    return _peripherals.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -340,10 +367,10 @@
         cell = [JUSTDeviceTableViewCell cellWithTableView:tableView];
         cell.delegate = self;
         cell.rightUtilityButtons = [self rightBtns];
+
     }
     JUSTPeripheral *peripheral = self.peripheralModels[indexPath.row];
     cell.peri = peripheral;
-//    cell.isConnected = YES;
     return cell;
 }
 
@@ -353,7 +380,8 @@
     if (self.currPeri) {
         [self.BLE cancelAllPeripheralsConnection];
     }
-    CBPeripheral *peripheral = self.peripherals[indexPath.row];
+    CBPeripheral *peripheral = _peripherals[indexPath.row];
+    
     JUSTPeripheralViewController *periVc = [[JUSTPeripheralViewController alloc] init];
     periVc.currPeripheral = peripheral;
     periVc->BLE = self.BLE;
@@ -368,11 +396,11 @@
 
 #pragma mark RTDragCellTableView
 - (NSArray *)originalArrayDataForTableView:(RTDragCellTableView *)tableView{
-    return [self.peripherals copy];
+    return [_peripherals copy];
 }
 
 - (void)tableView:(RTDragCellTableView *)tableView newArrayDataForDataSource:(NSArray *)newArray{
-    self.peripherals = [newArray mutableCopy];
+    _peripherals = [newArray mutableCopy];
 }
 
 #pragma mark SWTableViewCell
@@ -380,12 +408,13 @@
     switch (index) {
         case 1://删除按钮
         {
+            [self.BLE cancelAllPeripheralsConnection];
             NSIndexPath *cellIndexPath = [self.tableV indexPathForCell:cell];
             YCLog(@"deleteBtnDidClick,,,,,%ld",cellIndexPath.row);
-            [self.peripherals removeObjectAtIndex:cellIndexPath.row];
+            [_peripherals removeObjectAtIndex:cellIndexPath.row];
             [self.peripheralModels removeObjectAtIndex:cellIndexPath.row];
             [self.tableV deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationFade];
-            [self.BLE cancelAllPeripheralsConnection];
+            self.currPeri = nil;
             break;
         }
         case 0://编辑按钮
@@ -398,14 +427,9 @@
     }
 }
 
-#pragma mark - getters and setters 属性的设置和获取方法
-- (NSMutableArray *)peripherals{
-    if (!_peripherals) {
-        _peripherals = [NSMutableArray array];
-    }
-    return _peripherals;
-}
+#pragma mark UIScrollView
 
+#pragma mark - getters and setters 属性的设置和获取方法
 - (NSMutableArray *)peripheralModels{
     if (!_peripheralModels) {
         _peripheralModels = [NSMutableArray array];
@@ -414,7 +438,8 @@
 }
 
 - (void)dealloc{
-
+    [self.timer invalidate];
+    self.timer = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"connectStatus" object:nil];;
 }
 @end
