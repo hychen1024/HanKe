@@ -15,7 +15,7 @@
 
 #define channelOnPeropheralView @"peripheralView"
 
-#define sendChechCommandInterval 60.0
+#define sendCheckCommandInterval 2.0
 
 @interface JUSTPeripheralViewController ()
 {
@@ -47,10 +47,6 @@
  */
 @property (nonatomic, strong) NSString *writeValue;
 /**
- *  耗材百分比
- */
-@property (nonatomic, assign) NSInteger consumePer;
-/**
  *  是否显示耗材用尽提示
  */
 @property (nonatomic, assign) bool isShowTip;
@@ -62,6 +58,10 @@
  *  断开连接显示的图片
  */
 @property (weak, nonatomic) IBOutlet UIImageView *disconnectView;
+/**
+ *  按钮遮罩View
+ */
+@property (weak, nonatomic) IBOutlet UIView *coverView;
 /**
  *  水疗机名
  */
@@ -75,11 +75,12 @@
  */
 @property (weak, nonatomic) IBOutlet UIView *circleProgressView;
 /**
- *  耗材显示数字Lb
+ *  百分比符号
  */
+
 @property (weak, nonatomic) IBOutlet UILabel *percentage;
 /**
- *  百分比符号
+ *  耗材显示数字Lb
  */
 @property (weak, nonatomic) IBOutlet UICountingLabel *consumeLb;
 /**
@@ -153,7 +154,7 @@
 - (void)init_View{
     lastPer = 0;
     
-    self.sendInterval = sendChechCommandInterval;
+    self.sendInterval = sendCheckCommandInterval;
     
     tmpWaterBtn = nil;
     tmpFuncBtn = nil;
@@ -169,8 +170,6 @@
 
 - (void)initBLEDelegete{
     [self performSelector:@selector(connectPeripheral) withObject:nil afterDelay:0.2];
-    // 开始连接设备
-    [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"准备连接:%@",self.currPeripheral.name]];
     __weak typeof(BLE) weakBLE = BLE;
     __weak typeof(self)weakSelf = self;
 //    BabyRhythm *rhythm = [[BabyRhythm alloc]init];
@@ -195,20 +194,18 @@
     
     //设置设备连接成功的委托,同一个baby对象，使用不同的channel切换委托回调
     [BLE setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
-        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--连接成功",peripheral.name]];
-        // 显示已连接视图
-        weakSelf.isConnected = YES;
-        
-//        weakSelf.sendTimer = [NSTimer scheduledTimerWithTimeInterval:weakSelf.sendInterval target:weakSelf selector:@selector(sendCheckCommand) userInfo:nil repeats:YES];
-        [weakSelf.sendTimer fire];
+        [SVProgressHUD showSuccessWithStatus:@"连接成功" maskType:SVProgressHUDMaskTypeNone];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [SVProgressHUD showWithStatus:@"正在初始化界面" maskType:SVProgressHUDMaskTypeNone];
+        });
         
     }];
     
     //设置设备连接失败的委托
     [BLE setBlockOnFailToConnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
         YCLog(@"设备：%@--连接失败",peripheral.name);
-        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--连接失败",peripheral.name]];
-
+        [SVProgressHUD showErrorWithStatus:@"连接失败" maskType:SVProgressHUDMaskTypeNone];
+        
         // 显示未连接视图
         weakSelf.isConnected = NO;
         [weakSelf.sendTimer invalidate];
@@ -218,7 +215,7 @@
     //设置设备断开连接的委托
     [BLE setBlockOnDisconnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
         YCLog(@"设备：%@--断开连接",peripheral.name);
-        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备:%@--断开连接",peripheral.name]];
+        [SVProgressHUD showErrorWithStatus:@"断开连接" maskType:SVProgressHUDMaskTypeNone];
         // 显示未连接视图
         weakSelf.isConnected = NO;
         [weakSelf.sendTimer invalidate];
@@ -248,13 +245,12 @@
             if ([c.UUID.UUIDString isEqual:HK_CHARACTERISTIC_UUID_WRITE]) {
                 // 保存写特征
                 weakSelf.writeCharacteristic = c;
-                // 写特征开始Nofity
-                [weakSelf.currPeripheral setNotifyValue:YES forCharacteristic:weakSelf.writeCharacteristic];
+                
                 // 写特征Notify回调数据
                 [weakBLE notify:weakSelf.currPeripheral characteristic:weakSelf.writeCharacteristic block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
-
+                    
                     YCLog(@"notify%@",[NSString stringWithFormat:@"writeCharacteristic:%@/characteristics:%@",weakSelf.writeCharacteristic.value,characteristics.value]);
-
+                    
                     NSString *valueStr = [NSString stringWithFormat:@"%@",characteristics.value];
                     valueStr = [ConvertTool removeTrimmingCharactersWithStr:valueStr];
 #warning 返回的数据不匹配
@@ -263,8 +259,11 @@
                     [weakSelf initDataWithSuccessedConnection:valueStr];
                 }];
                 
+                weakSelf.sendTimer = [NSTimer scheduledTimerWithTimeInterval:weakSelf.sendInterval target:weakSelf selector:@selector(sendCheckCommand) userInfo:nil repeats:YES];
+                [weakSelf.sendTimer fire];
+
 //                 获取写特征成功后发送读取机器信息指令
-                [weakSelf writeValue:@"2A07"];
+//                [weakSelf writeValue:@"2A07"];
             }
         }
     }];
@@ -336,13 +335,21 @@
     NSString *dataStr3 = [backValue substringWithRange:NSMakeRange(8, 2)];
     // 保留字
     NSString *dataStr4 = [backValue substringWithRange:NSMakeRange(10, 2)];
-#warning 发送的命令字与得到的回调命令字不匹配
+    
+    // 发送的命令字与得到的回调命令字不匹配
     if (![commandStr isEqualToString:[self.writeValue substringWithRange:NSMakeRange(2, 2)]]) {
-        
+        return;
     }
+    
+    [SVProgressHUD dismiss];
+    
+    // 显示已连接视图
+    self.isConnected = YES;
+    
     // 耗材信息
-    self.consumeLb.text = dataStr3;
-    [self.consumeLb countFromCurrentValueTo:[dataStr3 doubleValue]  withDuration:1.0];
+    NSString *newValue = [ConvertTool hexStrToDecStr:dataStr3];
+    self.consumeLb.text = newValue;
+    [self.consumeLb countFromCurrentValueTo:[newValue doubleValue]  withDuration:1.0];
     
     // 设备状态
     if ([dataStr1 isEqualToString:@"01"]) { // 待机
@@ -372,9 +379,9 @@
  *  连接外设
  */
 - (void)connectPeripheral{
-    [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"开始连接:%@",self.currPeripheral.name]];
+    [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"开始连接"]];
     if (self.currPeripheral == nil) {
-        [SVProgressHUD showInfoWithStatus:@"连接失败"];
+        [SVProgressHUD showErrorWithStatus:@"连接失败" maskType:SVProgressHUDMaskTypeNone];
         return;
     }
     if (self.writeCharacteristic != nil) {
@@ -394,7 +401,7 @@
         // 百分比圆环
         CGRect circleProgressVFrame = self.circleProgressView.frame;
         THCircularProgressView *circleNumV = [[THCircularProgressView alloc] initWithFrame:circleProgressVFrame];
-        circleNumV.lineWidth = 5;
+        circleNumV.lineWidth = 7;
         circleNumV.radius = circleProgressVFrame.size.width * 0.5;
         circleNumV.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
         circleNumV.progressColor = [UIColor whiteColor];
@@ -413,6 +420,7 @@
         self.circleView.hidden = NO;
         self.percentage.hidden = NO;
         self.retryBtn.hidden = YES;
+        self.coverView.hidden = YES;
     }else{ //未连接 隐藏某些控件
         self.circleProgressView.hidden = YES;
         self.consumeLb.hidden = YES;
@@ -505,6 +513,7 @@
 
 // 返回按钮点击响应
 - (IBAction)backBtnDidClick:(UIButton *)sender {
+    [SVProgressHUD dismiss];
     [self.timer invalidate];
     self.timer = nil;
     [self.sendTimer invalidate];

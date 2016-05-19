@@ -29,7 +29,7 @@
     self.title = @"关于";
     
     // Logo
-    UIView *topView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenW, (kScreenH - 64) * 0.37)];
+    UIView *topView = [[UIView alloc] initWithFrame:CGRectMake(0, 64, kScreenW, kScreenH * 0.37)];
     topView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:topView];
     UIImageView *cycleImageV = [[UIImageView alloc] init];
@@ -51,7 +51,7 @@
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [textLb.text length])];
     textLb.attributedText = attributedString;
     [self.view addSubview:textLb];
-    CGFloat textLbH = [textLb.text boundingRectWithSize:CGSizeMake(kScreenW - 20, (kScreenH - 64) * 0.4) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15],NSParagraphStyleAttributeName:paragraphStyle} context:nil].size.height;
+    CGFloat textLbH = [textLb.text boundingRectWithSize:CGSizeMake(kScreenW - 20, kScreenH * 0.4) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15],NSParagraphStyleAttributeName:paragraphStyle} context:nil].size.height;
     textLb.sd_layout
     .topSpaceToView(topView,0)
     .leftSpaceToView(self.view,20)

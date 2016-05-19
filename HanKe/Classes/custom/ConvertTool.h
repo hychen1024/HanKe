@@ -114,4 +114,13 @@
  *  @return 是否相等
  */
 + (BOOL)isEqualWithStrOnForeAndBack:(NSString *)str;
+
+/**
+ *  十六进制字符串数转换成十进制字符串数
+ *
+ *  @param dexStr 十六进制字符串数
+ *
+ *  @return 十进制字符串数
+ */
++ (NSString *)hexStrToDecStr:(NSString *)hexStr;
 @end

@@ -12,6 +12,7 @@
                 <outlet property="circleView" destination="Gb5-uO-HJC" id="hS8-De-n4j"/>
                 <outlet property="connectStatus" destination="9X4-is-6I8" id="Dtx-PP-tRN"/>
                 <outlet property="consumeLb" destination="h6K-kJ-n9B" id="tUX-4h-lSn"/>
+                <outlet property="coverView" destination="cpT-tx-ESr" id="btq-I5-V6n"/>
                 <outlet property="disconnectView" destination="kXj-jr-uJP" id="Aes-nn-1xS"/>
                 <outlet property="disinfectBtn" destination="t5F-pC-Kyq" id="Ocx-P8-Eee"/>
                 <outlet property="exhaustTipLb" destination="q3O-hw-9LZ" id="lZT-FB-LC3"/>
@@ -160,7 +161,7 @@
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </view>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="circle" translatesAutoresizingMaskIntoConstraints="NO" id="Gb5-uO-HJC">
-                            <rect key="frame" x="102" y="96" width="170" height="170"/>
+                            <rect key="frame" x="107" y="102" width="160" height="159"/>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h6K-kJ-n9B" customClass="UICountingLabel">
                             <rect key="frame" x="108" y="101" width="159" height="159"/>
@@ -209,10 +210,14 @@
                     <color key="backgroundColor" red="0.12941176469999999" green="0.51372549020000002" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
                     <color key="tintColor" red="0.12941176469999999" green="0.51372549020000002" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
                 </view>
+                <view alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cpT-tx-ESr" userLabel="coverV">
+                    <rect key="frame" x="0.0" y="370" width="375" height="297"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-            <point key="canvasLocation" x="287.5" y="-712.5"/>
+            <point key="canvasLocation" x="319.5" y="-899.5"/>
         </view>
     </objects>
     <resources>
@@ -226,7 +231,7 @@
         <image name="kill_virus_d" width="54" height="27"/>
         <image name="kill_virus_n" width="54" height="27"/>
         <image name="kill_virus_p" width="54" height="27"/>
-        <image name="shut_d" width="114" height="114"/>
+        <image name="shut_d" width="57" height="57"/>
         <image name="shut_n" width="57" height="57"/>
         <image name="shut_p" width="57" height="57"/>
         <image name="status" width="61" height="22"/>

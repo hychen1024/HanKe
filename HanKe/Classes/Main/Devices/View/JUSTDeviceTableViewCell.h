@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "JUSTPeripheral.h"
-#import "SWTableViewCell.h"
+#import "MGSwipeTableCell.h"
 
-@interface JUSTDeviceTableViewCell : SWTableViewCell
+@interface JUSTDeviceTableViewCell : MGSwipeTableCell
 /**
  *  外设模型
  */

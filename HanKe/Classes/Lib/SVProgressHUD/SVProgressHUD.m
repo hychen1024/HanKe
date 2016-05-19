@@ -263,7 +263,8 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
         self.accessibilityLabel = @"SVProgressHUD";
         self.isAccessibilityElement = YES;
         
-        SVProgressHUDBackgroundColor = [UIColor whiteColor];
+//        SVProgressHUDBackgroundColor = [UIColor whiteColor];
+        SVProgressHUDBackgroundColor = RGBColor(0xF7F7F7);
         SVProgressHUDForegroundColor = [UIColor blackColor];
         SVProgressHUDCornerRadius = 14;
         if ([UIFont respondsToSelector:@selector(preferredFontForTextStyle:)]) {
@@ -271,7 +272,8 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
         } else {
             SVProgressHUDFont = [UIFont systemFontOfSize:14.0f];
             SVProgressHUDBackgroundColor = [UIColor colorWithWhite:0.0f alpha:0.8f];
-            SVProgressHUDForegroundColor = [UIColor whiteColor];
+//            SVProgressHUDForegroundColor = [UIColor whiteColor];
+            SVProgressHUDBackgroundColor = RGBColor(0xF7F7F7);
         }
         
         NSBundle *bundle = [NSBundle bundleForClass:[self class]];

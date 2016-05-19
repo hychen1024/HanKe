@@ -19,10 +19,8 @@
     if (!_addBtn) {
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
         
-//        [btn setImage:[UIImage imageNamed:@"add_n"] forState:UIControlStateNormal];
         [btn setBackgroundImage:[UIImage imageNamed:@"add_n"] forState:UIControlStateNormal];
         
-//        [btn setImage:<#(nullable UIImage *)#> forState:UIControlStateHighlighted];
         [btn setBackgroundImage:[UIImage imageNamed:@"add_p"] forState:UIControlStateHighlighted];
         
         [btn addTarget:self action:@selector(addBtnDidClick) forControlEvents:UIControlEventTouchUpInside];

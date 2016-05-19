@@ -19,12 +19,14 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+    
     self.window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, kScreenW, kScreenH)];
     JUSTNavController *navVc = [[JUSTNavController alloc] initWithRootViewController:[[JUSTDevicesViewController alloc] init]];
     self.window.rootViewController = navVc;
 
     [self.window makeKeyAndVisible];
-//    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+
     return YES;
 }
 

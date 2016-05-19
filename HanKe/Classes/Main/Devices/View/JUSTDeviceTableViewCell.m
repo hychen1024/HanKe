@@ -39,6 +39,7 @@
         UIView *cellBg = [[UIView alloc] init];
         cellBg.backgroundColor = RGBColor(0xf8f8f8);
         cell.selectedBackgroundView = cellBg;
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
     }
     return cell;
 }

@@ -545,7 +545,7 @@
 - (void)cancelScan{
     // 自己加的
     [timerForStop invalidate];
-    timerForStop = nil;
+//    timerForStop = nil;
     [babyCentralManager cancelScan];
 }
 //读取Characteristic的详细信息

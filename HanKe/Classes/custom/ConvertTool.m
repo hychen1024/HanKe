@@ -285,4 +285,15 @@
     NSString *backStr = [str substringWithRange:NSMakeRange(middle, middle)];
     return [foreStr isEqualToString:backStr];
 }
+
+/**
+ *  十六进制字符串数转换成十进制字符串数
+ *
+ *  @param dexStr 十六进制字符串数
+ *
+ *  @return 十进制字符串数
+ */
++ (NSString *)hexStrToDecStr:(NSString *)hexStr{
+    return [NSString stringWithFormat:@"%lu",strtoul([hexStr UTF8String],0,16)];
+}
 @end

@@ -20,8 +20,9 @@
     // 更改导航栏文字颜色
     [self.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor colorWithRed:0.23 green:0.25 blue:0.28 alpha:1.00],NSForegroundColorAttributeName,nil]];
     // 更改导航栏颜色
-    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"title_bar"] forBarMetrics:UIBarMetricsDefault];
+//    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"title_bar"] forBarMetrics:UIBarMetricsDefault];
 
+    [[UINavigationBar appearance] setBackgroundColor:RGBColor(0xfdfdfd)];
 }
 
 - (void)didReceiveMemoryWarning {

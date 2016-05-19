@@ -1,3 +1,4 @@
+
 //
 //  JUSTDevicesViewController.m
 //  HanKe
@@ -9,21 +10,20 @@
 #import "JUSTDevicesViewController.h"
 #import "RTDragCellTableView.h"
 #import "JUSTPeripheral.h"
-#import <CoreBluetooth/CoreBluetooth.h>
 #import "JUSTPeripheralViewController.h"
 #import "JUSTDeviceTableViewCell.h"
 #import "JUSTAboutViewController.h"
 #import "SVProgressHUD.h"
 #import "BabyBluetooth.h"
 #import "MJRefresh.h"
-
+#import "MGSwipeButton.h"
 
 #define reuseIdentify @"device"
 #define tabbarViewH 60
 // 扫描时间
 #define scanTime 30
 
-@interface JUSTDevicesViewController ()<RTDragCellTableViewDataSource,RTDragCellTableViewDelegate,SWTableViewCellDelegate>
+@interface JUSTDevicesViewController ()<RTDragCellTableViewDataSource,RTDragCellTableViewDelegate,MGSwipeTableCellDelegate>
 {
     NSMutableArray *_peripherals;
     // 记录扫到设备的时间
@@ -32,6 +32,8 @@
     NSUInteger insertingCount;
     // 间隔多久没扫到新设备则断开连接
     NSTimeInterval intervalTime;
+    // 是否正在刷新
+    BOOL isRefresh;
 }
 @property (nonatomic, strong) NSTimer *timer;
 /**
@@ -119,7 +121,7 @@
     [self.view addSubview:bgImage];
 
     // 底部条
-    UIView *bottomV = [[UIView alloc] initWithFrame:CGRectMake(0, kScreenH - 108, kScreenW, 44)];
+    UIView *bottomV = [[UIView alloc] initWithFrame:CGRectMake(0, kScreenH - 44, kScreenW, 44)];
     bottomV.backgroundColor = [UIColor colorWithRed:0.98 green:0.98 blue:0.98 alpha:1.00];
     [self.view addSubview:bottomV];
     
@@ -169,7 +171,7 @@
     // 设置蓝牙委托
     [self BLEDelegate];
     
-    self.BLE.scanForPeripherals().begin().stop(scanTime);
+    [self startScanPeripherals];
 }
 
 /**
@@ -181,15 +183,13 @@
     
     // 设置状态改变的委托
     [self.BLE setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
-        weakSelf.BLE.scanForPeripherals().begin().stop(scanTime);
+        [weakSelf startScanPeripherals];
         if (central.state == CBCentralManagerStatePoweredOn) {
             [SVProgressHUD showInfoWithStatus:@"蓝牙打开成功,开始扫描设备"];
         }if (central.state != CBCentralManagerStatePoweredOn) {
             [SVProgressHUD showInfoWithStatus:@"请打开蓝牙"];
         }
     }];
-    
-    
     
     // 设置扫描设备过滤器
     [self.BLE setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
@@ -216,7 +216,7 @@
             if ([peripheral.identifier.UUIDString isEqualToString:peri.peri.identifier.UUIDString]) {
                 isContain = YES;
                 peri.rssi = RSSI;
-                [weakSelf.tableV reloadData];
+//                [weakSelf.tableV reloadData];
             }
         }
         if (!isContain) {
@@ -230,26 +230,32 @@
     [self.BLE setBabyOptionsWithScanForPeripheralsWithOptions:scanForPeripheralsWithOptions connectPeripheralWithOptions:nil scanForPeripheralsWithServices:nil discoverWithServices:nil discoverWithCharacteristics:nil];
 }
 
-/**
- *  下拉刷新
- */
+#pragma mark 下拉刷新
 - (void)startScanPeripherals{
-    [_peripherals removeAllObjects];
+    isRefresh = YES;
     [self.BLE cancelScan];
+    [self.BLE cancelAllPeripheralsConnection];
+    [self.tableV cancelLongPress];
+    [_peripherals removeAllObjects];
+    [self.peripheralModels removeAllObjects];
+    [self.tableV reloadData];
     // 扫描设备 30s停止
     self.BLE.scanForPeripherals().begin().stop(scanTime);
-    [self.tableV cancelLongPress];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(31 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (isRefresh) {
+            isRefresh = NO;
+            [self.tableV reloadData];
+        }
+    });
+    
     // 下来刷新持续一秒效果
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [_tableV.mj_header endRefreshing];
     });
 }
 
-/**
- *  连接状态改变通知回调
- *
- *  @param notice 通知
- */
+#pragma mark 连接状态改变通知回调
 - (void)receiveConnectedStatus:(NSNotification *)notice{
     BOOL connectStatus = [notice.userInfo[@"connectStatus"] boolValue];
     
@@ -280,14 +286,12 @@
         }
         self.timer = [NSTimer scheduledTimerWithTimeInterval:intervalTime target:self selector:@selector(stopScanPeri:) userInfo:nil repeats:NO];
         
-//        NSMutableArray *indexPaths = [NSMutableArray array];
-        NSInteger row = _peripherals.count;
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
-//        [indexPaths addObject:indexPath];
+//        NSNumber *row = [NSNumber numberWithUnsignedInteger:_peripherals.count];
+//        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[row integerValue] inSection:0];
         [_peripherals addObject:peripheral];
         // 记录扫到数据时的设备总数
         insertingCount = _peripherals.count;
-        [self.tableV insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.tableV reloadData];
     }
 }
 
@@ -300,22 +304,14 @@
 - (void)stopScanPeri:(NSTimer *)timer{
     if (insertingCount == _peripherals.count) {
         YCLog(@"%lfs未扫描到设备,暂停扫描",intervalTime);
+        isRefresh = NO;
+        [self.tableV reloadData];
         [self.tableV startLongPress];
         [self.BLE cancelScan];
         [self.timer invalidate];
         self.timer = nil;
-    }
-}
 
-#pragma mark 滑动按钮
-/**
- *  左滑出现的按钮
- */
-- (NSArray *)rightBtns{
-    NSMutableArray *rightBtns = [NSMutableArray new];
-    [rightBtns sw_addUtilityButtonWithColor:[UIColor clearColor] normalIcon:[UIImage imageNamed:@"rechristen_n"] selectedIcon:[UIImage imageNamed:@"rechristen_p"]];
-    [rightBtns sw_addUtilityButtonWithColor:[UIColor clearColor] normalIcon:[UIImage imageNamed:@"delete_n"] selectedIcon:[UIImage imageNamed:@"delete_p"]];
-    return [rightBtns copy];
+    }
 }
 
 #pragma mark 按钮点击事件
@@ -362,21 +358,65 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+//    if (self.peripheralModels.count == 0 || _peripherals.count == 0) {
+//        return nil;
+//    }
     JUSTDeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentify];
     if (cell == nil) {
         cell = [JUSTDeviceTableViewCell cellWithTableView:tableView];
-        cell.delegate = self;
-        cell.rightUtilityButtons = [self rightBtns];
-
     }
+    cell.delegate = self;
+    // 没有刷新状态 显示左滑按钮
+    if (!isRefresh) {
+        __weak typeof(self) weakSelf = self;
+        cell.swipeBackgroundColor = [UIColor clearColor];
+        MGSwipeButton *swipeEditBtn = [MGSwipeButton buttonWithNormalImage:@"rechristen_n" highlightedImage:@"rechristen_p" callback:^BOOL(MGSwipeTableCell *sender) {
+            UIAlertController *alertVc = [UIAlertController alertControllerWithTitle:@"修改标题" message:nil preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *sureAct = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                JUSTPeripheral *peri = self.peripheralModels[indexPath.row];
+                peri.name = alertVc.textFields.firstObject.text;
+                [self.peripheralModels replaceObjectAtIndex:indexPath.row withObject:peri];
+                [self.tableV reloadData];
+            }];
+            UIAlertAction *cancelAct = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+            [alertVc addAction:sureAct];
+            [alertVc addAction:cancelAct];
+            [alertVc addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+                textField.placeholder = @"请输入新的标题";
+            }];
+            
+            [self presentViewController:alertVc animated:YES completion:nil];
+            return YES;
+        }];
+        
+        MGSwipeButton *swipeDelBtn = [MGSwipeButton buttonWithNormalImage:@"delete_n" highlightedImage:@"delete_p" callback:^BOOL(MGSwipeTableCell *sender) {
+            [weakSelf.BLE cancelAllPeripheralsConnection];
+            NSIndexPath *cellIndexPath = [weakSelf.tableV indexPathForCell:cell];
+            [_peripherals removeObjectAtIndex:cellIndexPath.row];
+            [weakSelf.peripheralModels removeObjectAtIndex:cellIndexPath.row];
+            [weakSelf.tableV deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+            weakSelf.currPeri = nil;
+            return YES;
+        }];
+        cell.rightButtons = @[swipeDelBtn,swipeEditBtn];
+        cell.rightSwipeSettings.transition = MGSwipeTransitionClipCenter;
+    }
+
     JUSTPeripheral *peripheral = self.peripheralModels[indexPath.row];
     cell.peri = peripheral;
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    isRefresh = NO;
+    [self.tableV reloadData];
+    [self.tableV startLongPress];
     // 停止扫描
     [self.BLE cancelScan];
+    [self.timer invalidate];
+    self.timer = nil;
+    
     if (self.currPeri) {
         [self.BLE cancelAllPeripheralsConnection];
     }
@@ -402,32 +442,6 @@
 - (void)tableView:(RTDragCellTableView *)tableView newArrayDataForDataSource:(NSArray *)newArray{
     _peripherals = [newArray mutableCopy];
 }
-
-#pragma mark SWTableViewCell
-- (void)swipeableTableViewCell:(SWTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index{
-    switch (index) {
-        case 1://删除按钮
-        {
-            [self.BLE cancelAllPeripheralsConnection];
-            NSIndexPath *cellIndexPath = [self.tableV indexPathForCell:cell];
-            YCLog(@"deleteBtnDidClick,,,,,%ld",cellIndexPath.row);
-            [_peripherals removeObjectAtIndex:cellIndexPath.row];
-            [self.peripheralModels removeObjectAtIndex:cellIndexPath.row];
-            [self.tableV deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationFade];
-            self.currPeri = nil;
-            break;
-        }
-        case 0://编辑按钮
-        {
-            YCLog(@"editBtnDidClick");
-            break;
-        }
-        default:
-            break;
-    }
-}
-
-#pragma mark UIScrollView
 
 #pragma mark - getters and setters 属性的设置和获取方法
 - (NSMutableArray *)peripheralModels{
