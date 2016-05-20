@@ -48,6 +48,11 @@
     _peri = peri;
     float rssi = [peri.rssi floatValue];
     self.periName.text = peri.name;
+    if (peri.isConnected) {
+        self.connectImage.image = [UIImage imageNamed:@"connected"];
+    }else{
+        self.connectImage.image = [UIImage imageNamed:@"disconnected"];
+    }
     // 分段表示信号强度
     if (rssi == 127 || rssi == -127) {
         if (self.signView.image == nil) {
@@ -71,12 +76,4 @@
         self.signView.image = nil;
 }
 
-- (void)setIsConnected:(bool)isConnected{
-    _isConnected = isConnected;
-    if (isConnected) {
-        self.connectImage.image = [UIImage imageNamed:@"connected"];
-    }else{
-        self.connectImage.image = [UIImage imageNamed:@"disconnected"];
-    }
-}
 @end

@@ -15,9 +15,6 @@
  *  外设模型
  */
 @property (nonatomic, strong) JUSTPeripheral *peri;
-/**
- *  是否连接
- */
-@property (nonatomic, assign) bool isConnected;
+
 + (instancetype)cellWithTableView:(UITableView *)tableView;
 @end

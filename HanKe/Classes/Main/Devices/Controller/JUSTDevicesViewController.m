@@ -232,9 +232,10 @@
 
 #pragma mark 下拉刷新
 - (void)startScanPeripherals{
+    [self.BLE cancelAllPeripheralsConnection];
     isRefresh = YES;
     [self.BLE cancelScan];
-    [self.BLE cancelAllPeripheralsConnection];
+   
     [self.tableV cancelLongPress];
     [_peripherals removeAllObjects];
     [self.peripheralModels removeAllObjects];
@@ -261,12 +262,14 @@
     
     if (connectStatus) {
         self.currPeri = [[self.BLE findConnectedPeripherals] firstObject];
+    }else{
+        return;
     }
-    
     NSUInteger index = [_peripherals indexOfObject:self.currPeri];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-    JUSTDeviceTableViewCell *cell = [self.tableV cellForRowAtIndexPath:indexPath];
-    cell.isConnected = connectStatus;
+//    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+//    JUSTDeviceTableViewCell *cell = [self.tableV cellForRowAtIndexPath:indexPath];
+    JUSTPeripheral *peri = self.peripheralModels[index];
+    peri.isConnected = connectStatus;
     [self.tableV reloadData];
 }
 
@@ -358,10 +361,8 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-//    if (self.peripheralModels.count == 0 || _peripherals.count == 0) {
-//        return nil;
-//    }
-    JUSTDeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentify];
+//    JUSTDeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentify];
+    JUSTDeviceTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     if (cell == nil) {
         cell = [JUSTDeviceTableViewCell cellWithTableView:tableView];
     }
@@ -410,7 +411,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     isRefresh = NO;
-    [self.tableV reloadData];
+    
     [self.tableV startLongPress];
     // 停止扫描
     [self.BLE cancelScan];
@@ -420,6 +421,7 @@
     if (self.currPeri) {
         [self.BLE cancelAllPeripheralsConnection];
     }
+    [self.tableV reloadData];
     CBPeripheral *peripheral = _peripherals[indexPath.row];
     
     JUSTPeripheralViewController *periVc = [[JUSTPeripheralViewController alloc] init];

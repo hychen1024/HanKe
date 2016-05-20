@@ -24,6 +24,10 @@
  */
 @property (nonatomic, strong) CBPeripheral *peri;
 /**
+ *  是否连接
+ */
+@property (nonatomic, assign) BOOL isConnected;
+/**
  *  初始化方法
  *
  *  @param name 设备名
