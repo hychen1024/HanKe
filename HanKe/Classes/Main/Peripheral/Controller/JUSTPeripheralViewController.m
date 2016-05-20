@@ -239,6 +239,7 @@
     
     //设置发现设service的Characteristics的委托
     [BLE setBlockOnDiscoverCharacteristicsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
+  
         for (CBCharacteristic *c in service.characteristics) {
 //            YCLog(@"========characteristic name:=========%@",c.UUID);
             // 获取写特征
@@ -261,21 +262,21 @@
                 
                 weakSelf.sendTimer = [NSTimer scheduledTimerWithTimeInterval:weakSelf.sendInterval target:weakSelf selector:@selector(sendCheckCommand) userInfo:nil repeats:YES];
                 [weakSelf.sendTimer fire];
-
-//                 获取写特征成功后发送读取机器信息指令
-//                [weakSelf writeValue:@"2A07"];
             }
         }
-        if (!weakSelf.writeCharacteristic) {
-            [SVProgressHUD showErrorWithStatus:@"设备不匹配"];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf backBtnDidClick:nil];
-            });
-        }
+
     }];
-    
     //设置读取characteristics的委托
     [BLE setBlockOnReadValueForCharacteristicAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
+        if (weakSelf.writeCharacteristic == nil) {
+            static dispatch_once_t onceToken;
+            dispatch_once(&onceToken, ^{
+                [SVProgressHUD showErrorWithStatus:@"设备不匹配"];
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [weakSelf backBtnDidClick:nil];
+                });
+            });
+        }
     }];
     
     //设置发现characteristics的descriptors的委托
@@ -520,6 +521,9 @@
 // 返回按钮点击响应
 - (IBAction)backBtnDidClick:(UIButton *)sender {
     [SVProgressHUD dismiss];
+    if (self.writeCharacteristic) {
+        [BLE cancelNotify:self.currPeripheral characteristic:self.writeCharacteristic];
+    }
     [self.timer invalidate];
     self.timer = nil;
     [self.sendTimer invalidate];

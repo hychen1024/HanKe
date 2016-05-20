@@ -216,7 +216,7 @@
             if ([peripheral.identifier.UUIDString isEqualToString:peri.peri.identifier.UUIDString]) {
                 isContain = YES;
                 peri.rssi = RSSI;
-//                [weakSelf.tableV reloadData];
+                [weakSelf.tableV reloadData];
             }
         }
         if (!isContain) {
