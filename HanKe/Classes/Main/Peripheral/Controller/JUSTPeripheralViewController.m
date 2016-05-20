@@ -266,6 +266,12 @@
 //                [weakSelf writeValue:@"2A07"];
             }
         }
+        if (!weakSelf.writeCharacteristic) {
+            [SVProgressHUD showErrorWithStatus:@"设备不匹配"];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf backBtnDidClick:nil];
+            });
+        }
     }];
     
     //设置读取characteristics的委托
@@ -606,11 +612,6 @@
 
 // KVO回调
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
-    // 获取缓存设备数组的最新数据
-#warning 没写完全
-    //    if ([keyPath isEqualToString:@"peripherals"]) {
-    //        YCLog(@"%@",[object class]);
-    //    }
     
     // 获取耗材信息
     if ([keyPath isEqualToString:@"text"] && object == self.consumeLb) {
