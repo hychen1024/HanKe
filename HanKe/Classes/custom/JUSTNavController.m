@@ -22,7 +22,7 @@
     // 更改导航栏颜色
 //    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"title_bar"] forBarMetrics:UIBarMetricsDefault];
 
-    [[UINavigationBar appearance] setBackgroundColor:RGBColor(0xfdfdfd)];
+    [[UINavigationBar appearance] setBackgroundColor:RGBColor(0xfafafa)];
 }
 
 - (void)didReceiveMemoryWarning {

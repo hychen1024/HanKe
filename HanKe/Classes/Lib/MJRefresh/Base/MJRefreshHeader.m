@@ -38,6 +38,7 @@
     
     // 设置高度
     self.mj_h = MJRefreshHeaderHeight;
+    self.backgroundColor = RGBColor(0xe5e5e5);
 }
 
 - (void)placeSubviews

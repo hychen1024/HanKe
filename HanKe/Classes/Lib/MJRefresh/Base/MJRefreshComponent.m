@@ -23,7 +23,6 @@
     if (self = [super initWithFrame:frame]) {
         // 准备工作
         [self prepare];
-        
         // 默认是普通状态
         self.state = MJRefreshStateIdle;
     }
@@ -68,7 +67,6 @@
         _scrollView.alwaysBounceVertical = YES;
         // 记录UIScrollView最开始的contentInset
         _scrollViewOriginalInset = _scrollView.contentInset;
-        
         // 添加监听
         [self addObservers];
     }

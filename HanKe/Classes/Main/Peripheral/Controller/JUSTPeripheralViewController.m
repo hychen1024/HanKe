@@ -195,7 +195,7 @@
     //设置设备连接成功的委托,同一个baby对象，使用不同的channel切换委托回调
     [BLE setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
         [SVProgressHUD showSuccessWithStatus:@"连接成功" maskType:SVProgressHUDMaskTypeNone];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [SVProgressHUD showWithStatus:@"正在初始化界面" maskType:SVProgressHUDMaskTypeNone];
         });
         
@@ -225,7 +225,6 @@
     //设置发现设备的Services的委托
     [BLE setBlockOnDiscoverServicesAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, NSError *error) {
         for (CBService *service in peripheral.services) {
-//            YCLog(@"===service name:---%@",service.UUID);
             if ([service.UUID.UUIDString isEqual:HK_SERVICE_UUID_WRITE]) {
                 weakSelf.writeService = service;
             }
@@ -233,13 +232,21 @@
                 weakSelf.systemInfoService = service;
             }
         }
-    
-//        [rhythm beats];
+        
+        if (weakSelf.writeService == nil) {
+            [SVProgressHUD showErrorWithStatus:@"设备不匹配"];
+            static dispatch_once_t onceToken;
+            dispatch_once(&onceToken, ^{
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [weakSelf backBtnDidClick:nil];
+                });
+            });
+        }
     }];
     
     //设置发现设service的Characteristics的委托
     [BLE setBlockOnDiscoverCharacteristicsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-  
+        
         for (CBCharacteristic *c in service.characteristics) {
 //            YCLog(@"========characteristic name:=========%@",c.UUID);
             // 获取写特征
@@ -268,15 +275,7 @@
     }];
     //设置读取characteristics的委托
     [BLE setBlockOnReadValueForCharacteristicAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
-        if (weakSelf.writeCharacteristic == nil) {
-            static dispatch_once_t onceToken;
-            dispatch_once(&onceToken, ^{
-                [SVProgressHUD showErrorWithStatus:@"设备不匹配"];
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    [weakSelf backBtnDidClick:nil];
-                });
-            });
-        }
+
     }];
     
     //设置发现characteristics的descriptors的委托
@@ -341,7 +340,7 @@
     // 耗材信息
     NSString *dataStr3 = [backValue substringWithRange:NSMakeRange(8, 2)];
     // 保留字
-    NSString *dataStr4 = [backValue substringWithRange:NSMakeRange(10, 2)];
+//    NSString *dataStr4 = [backValue substringWithRange:NSMakeRange(10, 2)];
     
     // 发送的命令字与得到的回调命令字不匹配
     if (![commandStr isEqualToString:[self.writeValue substringWithRange:NSMakeRange(2, 2)]]) {
@@ -386,7 +385,7 @@
  *  连接外设
  */
 - (void)connectPeripheral{
-    [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"开始连接"]];
+    [SVProgressHUD showWithStatus:@"正在连接..."];
     if (self.currPeripheral == nil) {
         [SVProgressHUD showErrorWithStatus:@"连接失败" maskType:SVProgressHUDMaskTypeNone];
         return;
@@ -528,8 +527,9 @@
     self.timer = nil;
     [self.sendTimer invalidate];
     self.sendTimer = nil;
-    [self.navigationController popViewControllerAnimated:YES];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
+
 }
 
 // 重试按钮点击响应
