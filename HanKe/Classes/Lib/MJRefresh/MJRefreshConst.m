@@ -14,9 +14,9 @@ NSString *const MJRefreshKeyPathPanState = @"state";
 
 NSString *const MJRefreshHeaderLastUpdatedTimeKey = @"MJRefreshHeaderLastUpdatedTimeKey";
 
-NSString *const MJRefreshHeaderIdleText = @"下拉可以刷新";
-NSString *const MJRefreshHeaderPullingText = @"松开立即刷新";
-NSString *const MJRefreshHeaderRefreshingText = @"正在刷新数据中...";
+NSString *const MJRefreshHeaderIdleText = @"下拉可以扫描设备";
+NSString *const MJRefreshHeaderPullingText = @"松开立即扫描设备";
+NSString *const MJRefreshHeaderRefreshingText = @"正在扫描水疗设备中...";
 
 NSString *const MJRefreshAutoFooterIdleText = @"点击或上拉加载更多";
 NSString *const MJRefreshAutoFooterRefreshingText = @"正在加载更多的数据...";

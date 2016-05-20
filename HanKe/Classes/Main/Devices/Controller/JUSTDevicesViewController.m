@@ -117,7 +117,7 @@
     
     // 背景Image
     UIImageView *bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_image"]];
-    bgImage.frame = CGRectMake(kScreenW * 0.1, kScreenH - 208 - kScreenH * 0.25, kScreenW * 0.8, kScreenH * 0.25);
+    bgImage.frame = CGRectMake(kScreenW * 0.1, kScreenH - kScreenH * 0.45, kScreenW * 0.8, kScreenH * 0.25);
     [self.view addSubview:bgImage];
 
     // 底部条
@@ -245,14 +245,10 @@
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(31 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if (isRefresh) {
+            [_tableV.mj_header endRefreshing];
             isRefresh = NO;
             [self.tableV reloadData];
         }
-    });
-    
-    // 下来刷新持续一秒效果
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [_tableV.mj_header endRefreshing];
     });
 }
 
@@ -306,6 +302,7 @@
  */
 - (void)stopScanPeri:(NSTimer *)timer{
     if (insertingCount == _peripherals.count) {
+        [_tableV.mj_header endRefreshing];
         YCLog(@"%lfs未扫描到设备,暂停扫描",intervalTime);
         isRefresh = NO;
         [self.tableV reloadData];
