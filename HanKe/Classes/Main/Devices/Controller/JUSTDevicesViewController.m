@@ -97,12 +97,16 @@
 
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-
 }
 
 - (void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
     [self.BLE cancelScan];
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+
 }
 
 #pragma mark - custom methods  自定义方法
@@ -277,7 +281,7 @@
 #pragma mark 下拉刷新
 - (void)startScanPeripherals{
     if (self.BLE.centralManager.state != CBCentralManagerStatePoweredOn) {
-        [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)self.navigationController];
+        [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)self.navigationController tableView:self.tableV];
     }
     [self.BLE cancelAllPeripheralsConnection];
     isRefresh = YES;
@@ -392,6 +396,8 @@
         cell = [JUSTDeviceTableViewCell cellWithTableView:tableView];
     }
     cell.delegate = self;
+    
+    JUSTPeripheral *peripheral = self.peripheralModels[indexPath.row];
     // 没有刷新状态 显示左滑按钮
     if (!isRefresh) {
         __weak typeof(self) weakSelf = self;
@@ -420,6 +426,7 @@
                 
                 textField.placeholder = @"请输入新的标题";
                 
+                textField.text = peripheral.name;
             }];
             
             [self presentViewController:alertVc animated:YES completion:nil];
@@ -427,6 +434,12 @@
         }];
         
         MGSwipeButton *swipeDelBtn = [MGSwipeButton buttonWithNormalImage:@"delete_n" highlightedImage:@"delete_p" callback:^BOOL(MGSwipeTableCell *sender) {
+            JUSTPeripheral *peri = self.peripheralModels[indexPath.row];
+            NSString *identify = peri.peri.identifier.UUIDString;
+            [weakSelf.nameDict setObject:peri.peri.name forKey:identify];
+            // 写入存储
+            [weakSelf.nameDict writeToFile:nameFilePath atomically:YES];
+            
             [weakSelf.BLE cancelAllPeripheralsConnection];
             NSIndexPath *cellIndexPath = [weakSelf.tableV indexPathForCell:cell];
             [weakSelf.peripheralModels removeObjectAtIndex:cellIndexPath.row];
@@ -440,7 +453,7 @@
     
     // 读存储
     self.nameDict = [NSMutableDictionary dictionaryWithContentsOfFile:nameFilePath];
-    JUSTPeripheral *peripheral = self.peripheralModels[indexPath.row];
+    
     if (self.nameDict[peripheral.peri.identifier.UUIDString]) {
         peripheral.name = self.nameDict[peripheral.peri.identifier.UUIDString];
     }

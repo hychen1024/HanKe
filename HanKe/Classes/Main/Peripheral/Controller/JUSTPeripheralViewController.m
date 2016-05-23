@@ -165,6 +165,10 @@
     if (hasVc && ![self.sendTimer isValid] && self.currPeripheral.state == CBPeripheralStateConnected) {
         self.sendTimer = [NSTimer scheduledTimerWithTimeInterval:self.sendInterval target:self selector:@selector(sendCheckCommand) userInfo:nil repeats:YES];
     }
+    
+    if (hasVc && self.currPeripheral.state == CBPeripheralStateDisconnected) {
+        [self connectPeripheral];
+    }
 }
 
 #pragma mark - custom methods  自定义方法
@@ -206,7 +210,7 @@
             [weakSelf.sendTimer invalidate];
             weakSelf.sendTimer = nil;
             if (weakBLE.centralManager.state != CBCentralManagerStatePoweredOn) {
-                [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)weakSelf.navigationController];
+                [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)weakSelf.navigationController tableView:nil];
             }
         }
         if (central.state == CBCentralManagerStatePoweredOn) {
@@ -303,8 +307,9 @@
                     
                     [weakSelf initDataWithSuccessedConnection:valueStr];
                 }];
-                
-                weakSelf.sendTimer = [NSTimer scheduledTimerWithTimeInterval:weakSelf.sendInterval target:weakSelf selector:@selector(sendCheckCommand) userInfo:nil repeats:YES];
+                if (weakSelf.sendTimer == nil) {
+                    weakSelf.sendTimer = [NSTimer scheduledTimerWithTimeInterval:weakSelf.sendInterval target:weakSelf selector:@selector(sendCheckCommand) userInfo:nil repeats:YES];
+                }
             }
         }
 
@@ -422,6 +427,10 @@
 - (void)connectPeripheral{
     [BLE cancelAllPeripheralsConnection];
     [SVProgressHUD showWithStatus:@"正在连接..."];
+    if (BLE.centralManager.state != CBCentralManagerStatePoweredOn) {
+        [SVProgressHUD dismiss];
+        [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)self.navigationController tableView:nil];
+    }
     if (self.currPeripheral == nil) {
         [SVProgressHUD showErrorWithStatus:@"连接失败" maskType:SVProgressHUDMaskTypeNone];
         return;
@@ -558,8 +567,6 @@
 // 返回按钮点击响应
 - (IBAction)backBtnDidClick:(UIButton *)sender {
     
-    [SVProgressHUD dismiss];
-    
     if (self.writeCharacteristic) {
         [BLE cancelNotify:self.currPeripheral characteristic:self.writeCharacteristic];
     }
@@ -569,16 +576,17 @@
     self.sendTimer = nil;
     
     hasVc = YES;
-    
-    [self.navigationController setNavigationBarHidden:NO animated:YES];
+    [SVProgressHUD dismiss];
     [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
+    
 
 }
 
 // 重试按钮点击响应
 - (IBAction)retryBtnDidClick:(UIButton *)sender {
     if (BLE.centralManager.state != CBCentralManagerStatePoweredOn) {
-        [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)self.navigationController];
+        [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)self.navigationController tableView:nil];
         return;
     }
     if (BLE.centralManager.state == CBCentralManagerStatePoweredOn) {

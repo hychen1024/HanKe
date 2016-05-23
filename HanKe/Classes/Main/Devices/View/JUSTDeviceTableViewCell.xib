@@ -29,10 +29,10 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="水疗机" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sg4-3h-Hp6">
-                        <rect key="frame" x="58" y="9" width="120" height="42"/>
+                        <rect key="frame" x="58" y="9" width="150" height="42"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="42" id="HWU-2n-mJD"/>
-                            <constraint firstAttribute="width" constant="120" id="lHI-Np-Roy"/>
+                            <constraint firstAttribute="width" constant="150" id="lHI-Np-Roy"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="18"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>

@@ -14,5 +14,5 @@
 /**
  *  ActionSheet提示打开蓝牙
  */
-+ (void)showOpenBlueToothTip:(JUSTNavController *)nav;
++ (void)showOpenBlueToothTip:(JUSTNavController *)nav tableView:(UITableView *)tableV;
 @end
