@@ -40,7 +40,7 @@
     
     // app介绍文字
     UILabel *textLb = [[UILabel alloc] init];
-    textLb.text = @"爱的世界疯狂了爱的世界疯狂了； 大家是否可垃圾点时空裂缝大奖是离开；发驾驶的离开；；方法 架空历史的；发假的克里斯；发架空历史的发加上点开了房加爱的世界疯狂了爱的世界疯狂了； 大家是否可垃圾点时空裂缝大奖是离开；发驾驶的离开；；方法 架空历史的；发假的克里斯；发架空历史的发加上点开了房加";
+    textLb.text = @"瀚科水疗是由广州市瀚科电子科技有限公司针对该司的水疗设备提供的一款智能控制移动应用软件。它通过采用蓝牙通信的方式来动态扫描识别身边的水疗设备进行配对，进而实现远程操控，让用户通过移动终端来方便形象的展示出水疗设备当前的运行状态情况。";
     textLb.numberOfLines = 0;
     textLb.font = [UIFont systemFontOfSize:15];
     textLb.textColor = [UIColor colorWithRed:0.65 green:0.65 blue:0.65 alpha:1.00];
@@ -70,7 +70,7 @@
     [checkUpdateBtn addTarget:self action:@selector(checkUpdateBtnDidClick) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:checkUpdateBtn];
     checkUpdateBtn.sd_layout
-    .heightIs(44)
+    .heightIs(36)
     .widthIs(kScreenW * 0.8)
     .bottomSpaceToView(self.view,70)
     .centerXEqualToView(self.view);

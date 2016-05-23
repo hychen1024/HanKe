@@ -17,6 +17,8 @@
 #import "BabyBluetooth.h"
 #import "MJRefresh.h"
 #import "MGSwipeButton.h"
+#import "BlueToothTool.h"
+#import "JUSTNavController.h"
 
 #define reuseIdentify @"device"
 #define tabbarViewH 60
@@ -67,13 +69,17 @@
  */
 @property (nonatomic, strong) RTDragCellTableView *tableV;
 /**
- *  点击连接的外设
+ *  当前连接的外设
  */
 @property (nonatomic, strong) CBPeripheral *currPeri;
 /**
- *  点击连接的外设
+ *  当前连接外设的控制器
  */
-@property (nonatomic, strong) CBPeripheral *currPeriModel;
+@property (nonatomic, strong) JUSTPeripheralViewController *currPeriVc;
+/**
+ *  当前连接外设的模型
+ */
+@property (nonatomic, strong) JUSTPeripheral *currPeriModel;
 @end
 
 @implementation JUSTDevicesViewController
@@ -192,7 +198,17 @@
     // 设置蓝牙委托
     [self BLEDelegate];
     
-    [self startScanPeripherals];
+    // 扫描设备 30s停止
+    self.BLE.scanForPeripherals().begin().stop(scanTime);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(31 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (isRefresh) {
+            [_tableV.mj_header endRefreshing];
+            isRefresh = NO;
+            [self.tableV reloadData];
+        }
+    });
+
 }
 
 /**
@@ -204,11 +220,12 @@
     
     // 设置状态改变的委托
     [self.BLE setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
-        [weakSelf startScanPeripherals];
         if (central.state == CBCentralManagerStatePoweredOn) {
             [SVProgressHUD showInfoWithStatus:@"蓝牙打开成功,开始扫描设备"];
+            [weakSelf startScanPeripherals];
         }if (central.state != CBCentralManagerStatePoweredOn) {
-            [SVProgressHUD showInfoWithStatus:@"请打开蓝牙"];
+            [weakSelf.tableV reloadData];
+            [SVProgressHUD showErrorWithStatus:@"蓝牙已关闭"];
         }
     }];
     
@@ -220,10 +237,6 @@
             return YES;
         }
         return NO;
-    }];
-    
-    [self.BLE setBlockOnCancelAllPeripheralsConnectionBlock:^(CBCentralManager *centralManager) {
-        
     }];
     
     __block BOOL isContain = nil;
@@ -263,6 +276,9 @@
 
 #pragma mark 下拉刷新
 - (void)startScanPeripherals{
+    if (self.BLE.centralManager.state != CBCentralManagerStatePoweredOn) {
+        [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)self.navigationController];
+    }
     [self.BLE cancelAllPeripheralsConnection];
     isRefresh = YES;
     [self.BLE cancelScan];
@@ -270,6 +286,10 @@
     [self.tableV cancelLongPress];
     [self.peripheralModels removeAllObjects];
     [self.tableV reloadData];
+    
+    self.currPeri = nil;
+    self.currPeriVc = nil;
+    
     // 扫描设备 30s停止
     self.BLE.scanForPeripherals().begin().stop(scanTime);
 
@@ -288,15 +308,17 @@
     
     if (connectStatus) {
         self.currPeri = [[self.BLE findConnectedPeripherals] firstObject];
-    }else{
-        return;
     }
     for (JUSTPeripheral *peripheral in self.peripheralModels) {
         if ([self.currPeri.identifier.UUIDString isEqualToString:peripheral.peri.identifier.UUIDString]) {
             connectedIndex = [self.peripheralModels indexOfObject:peripheral];
         }
     }
+    if (self.peripheralModels == nil || self.peripheralModels.count == 0) {
+        return;
+    }
     JUSTPeripheral *peri = self.peripheralModels[connectedIndex];
+    self.currPeriModel = peri;
     peri.isConnected = connectStatus;
     [self.tableV reloadData];
 }
@@ -389,7 +411,9 @@
                 [self.tableV reloadData];
                 
             }];
-            UIAlertAction *cancelAct = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+            UIAlertAction *cancelAct = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                
+            }];
             [alertVc addAction:sureAct];
             [alertVc addAction:cancelAct];
             [alertVc addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
@@ -433,18 +457,30 @@
     [self.timer invalidate];
     self.timer = nil;
     
-    if (self.currPeri) {
-        [self.BLE cancelAllPeripheralsConnection];
-    }
-    [self.tableV reloadData];
     JUSTPeripheral *peri = self.peripheralModels[indexPath.row];
     CBPeripheral *peripheral = peri.peri;
-    
-    JUSTPeripheralViewController *periVc = [[JUSTPeripheralViewController alloc] init];
-    periVc.currPeripheral = peripheral;
-    periVc->BLE = self.BLE;
-    periVc.isConnected = NO;
-    
+    JUSTPeripheralViewController *periVc = nil;
+    // 连接的是否是已连接的外设
+//    if (self.currPeri != peripheral) {
+//        [self.BLE cancelAllPeripheralsConnection];
+//        self.currPeri = nil;
+//    }
+    [self.tableV reloadData];
+    // 没有连接外设 或者 连接的外设不是已连接的外设
+    if (self.currPeriVc == nil || self.currPeri != peripheral) {
+        [self.BLE cancelAllPeripheralsConnection];
+        self.currPeri = nil;
+        periVc = [[JUSTPeripheralViewController alloc] init];
+        self.currPeriVc = periVc;
+        periVc.isConnected = NO;
+        periVc.currPeripheral = peripheral;
+        periVc->BLE = self.BLE;
+        self.currPeri = peripheral;
+    }
+    // 已连接外设
+    else{
+        periVc = self.currPeriVc;
+    }
     [self.navigationController pushViewController:periVc animated:YES];
 }
 

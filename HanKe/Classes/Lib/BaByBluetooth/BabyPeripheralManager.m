@@ -21,7 +21,10 @@
     self = [super init];
     if (self) {
         _localName = @"baby-default-name";
-        _peripheralManager = [[CBPeripheralManager alloc]initWithDelegate:self queue:nil options:nil];
+        NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 //蓝牙power没打开时alert提示框
+                                 [NSNumber numberWithBool:YES],CBCentralManagerOptionShowPowerAlertKey,nil];
+        _peripheralManager = [[CBPeripheralManager alloc]initWithDelegate:self queue:nil options:options];
     }
     return  self;    
 }

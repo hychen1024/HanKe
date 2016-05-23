@@ -12,6 +12,8 @@
 #import "SVProgressHUD.h"
 #import "THCircularProgressView.h"
 #import "UICountingLabel.h"
+#import "JUSTNavController.h"
+#import "BlueToothTool.h"
 
 #define channelOnPeropheralView @"peripheralView"
 
@@ -25,6 +27,8 @@
     CGFloat lastPer;
     // lastPer -> currPer 是加还是减
     BOOL isSum;
+    // 控制器已经存在(非第一次进入到控制器)
+    BOOL hasVc;
     
     CGFloat tmpNum;
     // 间隔
@@ -58,6 +62,10 @@
  *  断开连接显示的图片
  */
 @property (weak, nonatomic) IBOutlet UIImageView *disconnectView;
+/**
+ *  返回按钮
+ */
+@property (weak, nonatomic) IBOutlet UIButton *backBtn;
 /**
  *  按钮遮罩View
  */
@@ -147,18 +155,33 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    // 隐藏导航栏
     [self.navigationController setNavigationBarHidden:YES animated:YES];
+}
+
+- (void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    // 已连接状态下开启定时器
+    if (hasVc && ![self.sendTimer isValid] && self.currPeripheral.state == CBPeripheralStateConnected) {
+        self.sendTimer = [NSTimer scheduledTimerWithTimeInterval:self.sendInterval target:self selector:@selector(sendCheckCommand) userInfo:nil repeats:YES];
+    }
 }
 
 #pragma mark - custom methods  自定义方法
 - (void)init_View{
     lastPer = 0;
+    hasVc = NO;
     
     self.sendInterval = sendCheckCommandInterval;
     
     tmpWaterBtn = nil;
     tmpFuncBtn = nil;
     
+    self.backBtn.enabled = NO;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.backBtn.enabled = YES;
+    });
+
     [self initViewType:_isConnected];
     
     // KVO
@@ -178,10 +201,20 @@
     [BLE setBlockOnCentralManagerDidUpdateStateAtChannel:channelOnPeropheralView block:^(CBCentralManager *central) {
         if (central.state != CBCentralManagerStatePoweredOn) {
             // 显示未连接视图
+            [weakBLE cancelAllPeripheralsConnection];
             weakSelf.isConnected = NO;
+            [weakSelf.sendTimer invalidate];
+            weakSelf.sendTimer = nil;
+            if (weakBLE.centralManager.state != CBCentralManagerStatePoweredOn) {
+                [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)weakSelf.navigationController];
+            }
         }
         if (central.state == CBCentralManagerStatePoweredOn) {
-            [weakSelf connectPeripheral];
+            JUSTNavController *navVc = (JUSTNavController *)[UIApplication sharedApplication].keyWindow.rootViewController;
+            // 判断主页面是否是在当前页面
+            if (navVc.visibleViewController == self) {
+                [weakSelf connectPeripheral];
+            }
         }
     }];
     
@@ -215,7 +248,11 @@
     //设置设备断开连接的委托
     [BLE setBlockOnDisconnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
         YCLog(@"设备：%@--断开连接",peripheral.name);
-        [SVProgressHUD showErrorWithStatus:@"断开连接" maskType:SVProgressHUDMaskTypeNone];
+        JUSTNavController *navVc = (JUSTNavController *)[UIApplication sharedApplication].keyWindow.rootViewController;
+        // 判断主页面是否是在当前页面
+        if (navVc.visibleViewController == self) {
+            [SVProgressHUD showErrorWithStatus:@"断开连接" maskType:SVProgressHUDMaskTypeNone];
+        }
         // 显示未连接视图
         weakSelf.isConnected = NO;
         [weakSelf.sendTimer invalidate];
@@ -268,7 +305,6 @@
                 }];
                 
                 weakSelf.sendTimer = [NSTimer scheduledTimerWithTimeInterval:weakSelf.sendInterval target:weakSelf selector:@selector(sendCheckCommand) userInfo:nil repeats:YES];
-                [weakSelf.sendTimer fire];
             }
         }
 
@@ -293,7 +329,6 @@
     //设置通知状态改变的委托
     [BLE setBlockOnDidUpdateNotificationStateForCharacteristicAtChannel:channelOnPeropheralView block:^(CBCharacteristic *characteristic, NSError *error) {
         NSString *str = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
-        YCLog(@"%lu",(unsigned long)characteristic.properties);
         YCLog(@"str:%@,UUID:%@,isNotify:%@",str,characteristic.UUID.UUIDString,characteristic.isNotifying?@"YES":@"NO");
         YCLog(@"characteristic.value:%@",[NSString stringWithFormat:@"%@",characteristic.value]);
     }];
@@ -385,13 +420,15 @@
  *  连接外设
  */
 - (void)connectPeripheral{
+    [BLE cancelAllPeripheralsConnection];
     [SVProgressHUD showWithStatus:@"正在连接..."];
     if (self.currPeripheral == nil) {
         [SVProgressHUD showErrorWithStatus:@"连接失败" maskType:SVProgressHUDMaskTypeNone];
         return;
     }
     if (self.writeCharacteristic != nil) {
-        BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().begin();
+//        BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().begin();
+        BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
         return;
     }
     BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
@@ -437,6 +474,7 @@
         self.connectStatus.text = @"(未连接)";
         self.disconnectView.hidden = NO;
         self.retryBtn.hidden = NO;
+        self.coverView.hidden = NO;
     }
 }
 
@@ -519,7 +557,9 @@
 
 // 返回按钮点击响应
 - (IBAction)backBtnDidClick:(UIButton *)sender {
+    
     [SVProgressHUD dismiss];
+    
     if (self.writeCharacteristic) {
         [BLE cancelNotify:self.currPeripheral characteristic:self.writeCharacteristic];
     }
@@ -527,6 +567,9 @@
     self.timer = nil;
     [self.sendTimer invalidate];
     self.sendTimer = nil;
+    
+    hasVc = YES;
+    
     [self.navigationController setNavigationBarHidden:NO animated:YES];
     [self.navigationController popViewControllerAnimated:YES];
 
@@ -534,8 +577,14 @@
 
 // 重试按钮点击响应
 - (IBAction)retryBtnDidClick:(UIButton *)sender {
-    [BLE cancelAllPeripheralsConnection];
-    [self connectPeripheral];
+    if (BLE.centralManager.state != CBCentralManagerStatePoweredOn) {
+        [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)self.navigationController];
+        return;
+    }
+    if (BLE.centralManager.state == CBCentralManagerStatePoweredOn) {
+        [BLE cancelAllPeripheralsConnection];
+        [self connectPeripheral];
+    }
 }
 
 #pragma mark 发送指令

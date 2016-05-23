@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A0966B71CF2D04C00F0E7FD /* BlueToothTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0966B61CF2D04C00F0E7FD /* BlueToothTool.m */; };
 		4A26A0641CE96E7500AE0AC9 /* MJRefreshAutoFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A26A03A1CE96E7500AE0AC9 /* MJRefreshAutoFooter.m */; };
 		4A26A0651CE96E7500AE0AC9 /* MJRefreshBackFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A26A03C1CE96E7500AE0AC9 /* MJRefreshBackFooter.m */; };
 		4A26A0661CE96E7500AE0AC9 /* MJRefreshComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A26A03E1CE96E7500AE0AC9 /* MJRefreshComponent.m */; };
@@ -67,6 +68,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4A0966B51CF2D04C00F0E7FD /* BlueToothTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueToothTool.h; sourceTree = "<group>"; };
+		4A0966B61CF2D04C00F0E7FD /* BlueToothTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueToothTool.m; sourceTree = "<group>"; };
 		4A26A0391CE96E7500AE0AC9 /* MJRefreshAutoFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefreshAutoFooter.h; sourceTree = "<group>"; };
 		4A26A03A1CE96E7500AE0AC9 /* MJRefreshAutoFooter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJRefreshAutoFooter.m; sourceTree = "<group>"; };
 		4A26A03B1CE96E7500AE0AC9 /* MJRefreshBackFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefreshBackFooter.h; sourceTree = "<group>"; };
@@ -588,6 +591,8 @@
 				4AF433FF1CE3037E00F4134D /* JUSTBlueToothTool.m */,
 				4A5B07381CD856C6001525A0 /* ConvertTool.h */,
 				4A5B07391CD856C6001525A0 /* ConvertTool.m */,
+				4A0966B51CF2D04C00F0E7FD /* BlueToothTool.h */,
+				4A0966B61CF2D04C00F0E7FD /* BlueToothTool.m */,
 			);
 			path = BlueToothTool;
 			sourceTree = "<group>";
@@ -711,6 +716,7 @@
 				4A32B1B71CD0B9C20025CBA4 /* main.m in Sources */,
 				4A26A0761CE96E7500AE0AC9 /* UIView+MJExtension.m in Sources */,
 				4AF434001CE3037E00F4134D /* JUSTBlueToothTool.m in Sources */,
+				4A0966B71CF2D04C00F0E7FD /* BlueToothTool.m in Sources */,
 				4A26A0751CE96E7500AE0AC9 /* UIScrollView+MJRefresh.m in Sources */,
 				4A52D07F1CD1A91A00D2F534 /* BabySpeaker.m in Sources */,
 				4AFE09921CD2F93200B5517E /* SVIndefiniteAnimatedView.m in Sources */,
