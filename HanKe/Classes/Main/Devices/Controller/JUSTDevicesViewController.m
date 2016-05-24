@@ -236,7 +236,7 @@
     [self.BLE setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
 #warning 最终版要修改筛选条件
         // 外设名大于1
-        if (peripheralName.length > 1) {
+        if (peripheralName.length > 1 && [peripheralName hasPrefix:@"SH-HC"]) {
             return YES;
         }
         return NO;

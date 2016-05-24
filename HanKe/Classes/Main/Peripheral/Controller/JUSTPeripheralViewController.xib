@@ -8,14 +8,18 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="JUSTPeripheralViewController">
             <connections>
                 <outlet property="backBtn" destination="WsS-x5-7EW" id="6mD-fn-Z1r"/>
+                <outlet property="backImage" destination="awa-21-WWd" id="Tph-zb-sTJ"/>
                 <outlet property="bigBtn" destination="GJg-b2-DzW" id="ezt-mN-tYa"/>
                 <outlet property="circleProgressView" destination="zud-g4-8pc" id="lfX-Gn-zZP"/>
                 <outlet property="circleView" destination="Gb5-uO-HJC" id="hS8-De-n4j"/>
                 <outlet property="connectStatus" destination="9X4-is-6I8" id="Dtx-PP-tRN"/>
                 <outlet property="consumeLb" destination="h6K-kJ-n9B" id="tUX-4h-lSn"/>
-                <outlet property="coverView" destination="cpT-tx-ESr" id="btq-I5-V6n"/>
+                <outlet property="controlBgV" destination="ovM-rW-RCT" id="znh-WX-VTa"/>
+                <outlet property="controlView" destination="k2T-Kd-OW0" id="VVD-8P-wAi"/>
+                <outlet property="coverView" destination="cpT-tx-ESr" id="hgW-wZ-OFm"/>
                 <outlet property="disconnectView" destination="kXj-jr-uJP" id="Aes-nn-1xS"/>
                 <outlet property="disinfectBtn" destination="t5F-pC-Kyq" id="Ocx-P8-Eee"/>
+                <outlet property="displayView" destination="Zrd-Rg-Xis" id="8Sg-Uo-13k"/>
                 <outlet property="exhaustTipLb" destination="q3O-hw-9LZ" id="lZT-FB-LC3"/>
                 <outlet property="hydroName" destination="g19-GA-uSl" id="4v5-PK-8dx"/>
                 <outlet property="hydroOffBtn" destination="CWB-bb-Zcg" id="7bn-pE-ZAo"/>
@@ -220,7 +224,7 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-            <point key="canvasLocation" x="466.5" y="-1000.5"/>
+            <point key="canvasLocation" x="179.5" y="-1139.5"/>
         </view>
     </objects>
     <resources>

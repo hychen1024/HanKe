@@ -58,6 +58,19 @@
  *  全局圆环百分比View
  */
 @property (nonatomic, strong) THCircularProgressView *circleNumV;
+
+/**
+ *  控制操作View
+ */
+@property (weak, nonatomic) IBOutlet UIView *controlView;
+/**
+ *  信息显示View
+ */
+@property (weak, nonatomic) IBOutlet UIView *displayView;
+/**
+ *  按钮遮罩View
+ */
+@property (weak, nonatomic) IBOutlet UIView *coverView;
 /**
  *  断开连接显示的图片
  */
@@ -66,10 +79,6 @@
  *  返回按钮
  */
 @property (weak, nonatomic) IBOutlet UIButton *backBtn;
-/**
- *  按钮遮罩View
- */
-@property (weak, nonatomic) IBOutlet UIView *coverView;
 /**
  *  水疗机名
  */
@@ -85,7 +94,6 @@
 /**
  *  百分比符号
  */
-
 @property (weak, nonatomic) IBOutlet UILabel *percentage;
 /**
  *  耗材显示数字Lb
@@ -135,6 +143,14 @@
  *  耗材用完提示Lb
  */
 @property (weak, nonatomic) IBOutlet UILabel *exhaustTipLb;
+/**
+ *  返回图片
+ */
+@property (weak, nonatomic) IBOutlet UIImageView *backImage;
+/**
+ *  大中小水量背景图片
+ */
+@property (weak, nonatomic) IBOutlet UIImageView *controlBgV;
 
 @end
 
@@ -144,6 +160,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+//    [self prepareUI];
     [self init_View];
     [self initBLEDelegete];
 }
@@ -172,6 +189,33 @@
 }
 
 #pragma mark - custom methods  自定义方法
+//- (void)prepareUI{
+//    // topV,bottomV,coverV设置frame
+//    self.displayView.sd_layout.topEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.56);
+//    self.controlView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.44);
+//    self.coverView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.44);
+//    
+//    CGFloat displayH = kScreenH * 0.56;
+//    CGFloat controlH = kScreenH * 0.44;
+//    self.displayView.hidden = YES;
+//    self.exhaustTipLb.hidden = NO;
+//    // bottomV
+//    self.hydroOffBtn.sd_layout.centerXEqualToView(self.controlView).widthIs(57).heightIs(57).bottomSpaceToView(self.controlView,controlH * 0.1);
+//    self.bigBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.145).rightSpaceToView(self.hydroOffBtn,42);
+//    self.smallBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.145).leftSpaceToView(self.hydroOffBtn,42);
+//    self.midBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.hydroOffBtn,controlH * 0.1).centerXEqualToView(self.controlView);
+//    self.controlBgV.sd_layout.heightIs(83).widthIs(180).centerXEqualToView(self.controlView).bottomSpaceToView(self.controlView,controlH * 0.188);
+//    self.hydroOnBtn.sd_layout.heightIs(27).widthIs(54).centerXEqualToView(self.controlView).bottomSpaceToView(self.midBtn,controlH * 0.2);
+//    self.muteBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).leftSpaceToView(self.hydroOnBtn,60);
+//    self.disinfectBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).rightSpaceToView(self.hydroOnBtn,60);
+//    self.exhaustTipLb.sd_layout.heightIs(30).leftEqualToView(self.controlView).rightEqualToView(self.controlView).bottomSpaceToView(self.controlView,30);
+//    if (IS_IPHONE_5) {
+//        
+//    }
+//    
+//    
+//}
+
 - (void)init_View{
     lastPer = 0;
     hasVc = NO;
