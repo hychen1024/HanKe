@@ -146,11 +146,11 @@
 /**
  *  返回图片
  */
-//@property (weak, nonatomic) IBOutlet UIImageView *backImage;
+@property (weak, nonatomic) IBOutlet UIImageView *backImage;
 /**
  *  大中小水量背景图片
  */
-//@property (weak, nonatomic) IBOutlet UIImageView *controlBgV;
+@property (weak, nonatomic) IBOutlet UIImageView *controlBgV;
 
 @end
 
@@ -160,7 +160,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    [self prepareUI];
+    [self prepareUI];
     [self init_View];
     [self initBLEDelegete];
 }
@@ -189,32 +189,95 @@
 }
 
 #pragma mark - custom methods  自定义方法
-//- (void)prepareUI{
-//    // topV,bottomV,coverV设置frame
-//    self.displayView.sd_layout.topEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.56);
-//    self.controlView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.44);
-//    self.coverView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.44);
-//    
-//    CGFloat displayH = kScreenH * 0.56;
-//    CGFloat controlH = kScreenH * 0.44;
-//    self.displayView.hidden = YES;
-//    self.exhaustTipLb.hidden = NO;
-//    // bottomV
-//    self.hydroOffBtn.sd_layout.centerXEqualToView(self.controlView).widthIs(57).heightIs(57).bottomSpaceToView(self.controlView,controlH * 0.1);
-//    self.bigBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.145).rightSpaceToView(self.hydroOffBtn,42);
-//    self.smallBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.145).leftSpaceToView(self.hydroOffBtn,42);
-//    self.midBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.hydroOffBtn,controlH * 0.1).centerXEqualToView(self.controlView);
-//    self.controlBgV.sd_layout.heightIs(83).widthIs(180).centerXEqualToView(self.controlView).bottomSpaceToView(self.controlView,controlH * 0.188);
-//    self.hydroOnBtn.sd_layout.heightIs(27).widthIs(54).centerXEqualToView(self.controlView).bottomSpaceToView(self.midBtn,controlH * 0.2);
-//    self.muteBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).leftSpaceToView(self.hydroOnBtn,60);
-//    self.disinfectBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).rightSpaceToView(self.hydroOnBtn,60);
-//    self.exhaustTipLb.sd_layout.heightIs(30).leftEqualToView(self.controlView).rightEqualToView(self.controlView).bottomSpaceToView(self.controlView,30);
-//    if (IS_IPHONE_5) {
-//        
-//    }
-//    
-//    
-//}
+- (void)prepareUI{
+    // topV,bottomV,coverV设置frame
+    self.displayView.sd_layout.topEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.56);
+    self.controlView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.44);
+    self.coverView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.44);
+    
+    CGFloat displayH = kScreenH * 0.56;
+    CGFloat controlH = kScreenH * 0.44;
+    self.isConnected = YES;
+    
+    // bottomV
+    self.hydroOffBtn.sd_layout.centerXEqualToView(self.controlView).widthIs(57).heightIs(57).bottomSpaceToView(self.controlView,controlH * 0.1);
+    self.bigBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.145).rightSpaceToView(self.hydroOffBtn,42);
+    self.smallBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.145).leftSpaceToView(self.hydroOffBtn,42);
+    self.midBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.hydroOffBtn,controlH * 0.1).centerXEqualToView(self.controlView);
+    self.controlBgV.sd_layout.heightIs(83).widthIs(180).centerXEqualToView(self.controlView).bottomSpaceToView(self.controlView,controlH * 0.188);
+    self.hydroOnBtn.sd_layout.heightIs(27).widthIs(54).centerXEqualToView(self.controlView).bottomSpaceToView(self.midBtn,controlH * 0.2);
+    self.muteBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).leftSpaceToView(self.hydroOnBtn,60);
+    self.disinfectBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).rightSpaceToView(self.hydroOnBtn,60);
+    self.exhaustTipLb.sd_layout.heightIs(30).leftEqualToView(self.controlView).rightEqualToView(self.controlView).topSpaceToView(self.controlView,-30);
+    
+    // topV
+    self.backImage.sd_layout.widthIs(21).heightIs(21).leftSpaceToView(self.displayView,14).topSpaceToView(self.displayView,displayH * 0.08);
+    self.backBtn.sd_layout.widthIs(44).heightIs(34).leftSpaceToView(self.displayView,2).topSpaceToView(self.displayView,displayH * 0.06);
+    self.retryBtn.sd_layout.widthIs(46).heightIs(30).topSpaceToView(self.displayView,displayH * 0.07).rightSpaceToView(self.displayView,8);
+    self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.4).topSpaceToView(self.displayView,displayH * 0.07);
+    self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.67).topSpaceToView(self.displayView,displayH * 0.07);
+
+    self.hydroStatus.sd_layout.widthIs(80).heightIs(32).bottomSpaceToView(self.displayView,displayH * 0.07).centerXEqualToView(self.displayView);
+    // centerY -> self.displayV
+    self.disconnectView.sd_layout.widthIs(displayH * 0.5).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
+    self.circleView.sd_layout.widthIs(displayH * 0.427).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
+    self.consumeLb.sd_layout.widthIs(displayH * 0.427).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
+    self.circleProgressView.sd_layout.widthIs(displayH * 0.513).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
+    self.percentage.sd_layout.xIs(self.displayView.frame.size.width * 0.58).yIs(self.displayView.frame.size.height * 0.37).widthIs(self.displayView.frame.size.width * 0.112).heightIs(self.displayView.frame.size.height * 0.072);
+
+    if (IS_IPHONE_6P) {
+        self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.40).topSpaceToView(self.displayView,displayH * 0.07);
+        self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.64).topSpaceToView(self.displayView,displayH * 0.07);
+    }
+    
+    if (IS_IPHONE_5) {
+        self.hydroStatus.sd_layout.widthIs(80).heightIs(32).bottomSpaceToView(self.displayView,displayH * 0.05).centerXEqualToView(self.displayView);
+        self.hydroOnBtn.sd_layout.heightIs(27).widthIs(54).centerXEqualToView(self.controlView).bottomSpaceToView(self.midBtn,controlH * 0.13);
+        self.muteBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).leftSpaceToView(self.hydroOnBtn,60);
+        self.disinfectBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).rightSpaceToView(self.hydroOnBtn,60);
+        
+        self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.36).topSpaceToView(self.displayView,displayH * 0.07);
+        self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.67).topSpaceToView(self.displayView,displayH * 0.07);
+        self.percentage.sd_layout.centerXIs(kScreenW * 0.62).centerYIs(displayH * 0.4).widthIs(self.displayView.frame.size.width * 0.112).heightIs(self.displayView.frame.size.height * 0.072);
+        self.consumeLb.font = [UIFont systemFontOfSize:60];
+        self.percentage.font = [UIFont systemFontOfSize:20];
+    }
+    
+    if (IS_IPHONE_4_OR_LESS) {
+        // bottomV
+        self.hydroOffBtn.sd_layout.centerXEqualToView(self.controlView).widthIs(57).heightIs(57).bottomSpaceToView(self.controlView,controlH * 0.05);
+        self.bigBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.075).rightSpaceToView(self.hydroOffBtn,42);
+        self.smallBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.075).leftSpaceToView(self.hydroOffBtn,42);
+        self.midBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.hydroOffBtn,controlH * 0.1).centerXEqualToView(self.controlView);
+        self.controlBgV.sd_layout.heightIs(83).widthIs(180).centerXEqualToView(self.controlView).bottomSpaceToView(self.controlView,controlH * 0.118);
+        self.hydroOnBtn.sd_layout.heightIs(27).widthIs(54).centerXEqualToView(self.controlView).bottomSpaceToView(self.midBtn,controlH * 0.085);
+        self.muteBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).leftSpaceToView(self.hydroOnBtn,60);
+        self.disinfectBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).rightSpaceToView(self.hydroOnBtn,60);
+        self.exhaustTipLb.sd_layout.heightIs(30).leftEqualToView(self.controlView).rightEqualToView(self.controlView).topSpaceToView(self.controlView,-30);
+        
+        // topV
+        self.backImage.sd_layout.widthIs(18).heightIs(18).leftSpaceToView(self.displayView,14).topSpaceToView(self.displayView,displayH * 0.08);
+        self.backBtn.sd_layout.widthIs(30).heightIs(30).leftSpaceToView(self.displayView,2).topSpaceToView(self.displayView,displayH * 0.06);
+        self.retryBtn.sd_layout.widthIs(46).heightIs(30).topSpaceToView(self.displayView,displayH * 0.07).rightSpaceToView(self.displayView,8);
+        self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.36).topSpaceToView(self.displayView,displayH * 0.07);
+        self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.67).topSpaceToView(self.displayView,displayH * 0.07);
+        
+        self.hydroStatus.sd_layout.widthIs(80).heightIs(32).bottomSpaceToView(self.displayView,displayH * 0.06).centerXEqualToView(self.displayView);
+        
+        // centerY -> self.displayV
+        
+        self.disconnectView.sd_layout.widthIs(displayH * 0.5).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
+        self.circleView.sd_layout.widthIs(displayH * 0.427).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
+        self.consumeLb.sd_layout.widthIs(displayH * 0.427).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
+        self.circleProgressView.sd_layout.widthIs(displayH * 0.513).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
+        
+        self.percentage.sd_layout.centerXIs(self.displayView.frame.size.width * 0.52).centerYIs(displayH * 0.44).widthIs(self.displayView.frame.size.width * 0.112).heightIs(self.displayView.frame.size.height * 0.072);
+        self.consumeLb.font = [UIFont systemFontOfSize:35];
+        self.percentage.font = [UIFont systemFontOfSize:20];
+    }
+
+    
+}
 
 - (void)init_View{
     lastPer = 0;

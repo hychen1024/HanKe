@@ -10,7 +10,6 @@
 #import "JUSTTabBarController.h"
 #import "JUSTNavController.h"
 #import "JUSTDevicesViewController.h"
-#import "JUSTPeripheralViewController.h"
 
 @interface AppDelegate ()
 

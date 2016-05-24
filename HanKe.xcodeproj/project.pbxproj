@@ -636,7 +636,7 @@
 		4A32B1AA1CD0B9C20025CBA4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				CLASSPREFIX = JUST;
+				CLASSPREFIX = "";
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "JUST-HYC";
 				TargetAttributes = {
