@@ -224,7 +224,7 @@
     // 设置状态改变的委托
     [self.BLE setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
         if (central.state == CBCentralManagerStatePoweredOn) {
-            [SVProgressHUD showInfoWithStatus:@"蓝牙打开成功,开始扫描设备"];
+            [SVProgressHUD showSuccessWithStatus:@"蓝牙打开成功,开始扫描设备"];
             [weakSelf startScanPeripherals];
         }if (central.state != CBCentralManagerStatePoweredOn) {
             [weakSelf.tableV reloadData];

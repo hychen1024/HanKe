@@ -146,11 +146,11 @@
 /**
  *  返回图片
  */
-@property (weak, nonatomic) IBOutlet UIImageView *backImage;
+//@property (weak, nonatomic) IBOutlet UIImageView *backImage;
 /**
  *  大中小水量背景图片
  */
-@property (weak, nonatomic) IBOutlet UIImageView *controlBgV;
+//@property (weak, nonatomic) IBOutlet UIImageView *controlBgV;
 
 @end
 
@@ -243,6 +243,7 @@
     [self.circleProgressView.superview addSubview:circleNumV];
     circleNumV.hidden = YES;
     self.circleNumV = circleNumV;
+    
     
     // KVO
     [self.consumeLb addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
@@ -518,7 +519,7 @@
 - (void)initViewType:(BOOL)isConnect{
     if (isConnect) { //已连接 显示某些控件
 
-        
+        self.circleNumV.center = self.circleView.center;
         self.connectStatus.text = @"(已连接)";
         
         self.consumeLb.format = @"%d";
