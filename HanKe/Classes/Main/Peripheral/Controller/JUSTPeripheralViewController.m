@@ -188,6 +188,18 @@
 
     [self initViewType:_isConnected];
     
+    // 百分比圆环
+    CGRect circleProgressVFrame = self.circleProgressView.frame;
+    THCircularProgressView *circleNumV = [[THCircularProgressView alloc] initWithFrame:circleProgressVFrame];
+    circleNumV.lineWidth = 7;
+    circleNumV.radius = circleProgressVFrame.size.width * 0.5;
+    circleNumV.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
+    circleNumV.progressColor = [UIColor whiteColor];
+    circleNumV.percentage = [self.consumeLb.text floatValue] * 0.01;
+    [self.circleProgressView.superview addSubview:circleNumV];
+    circleNumV.hidden = YES;
+    self.circleNumV = circleNumV;
+    
     // KVO
     [self.consumeLb addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
     [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
@@ -302,8 +314,11 @@
                     
                     NSString *valueStr = [NSString stringWithFormat:@"%@",characteristics.value];
                     valueStr = [ConvertTool removeTrimmingCharactersWithStr:valueStr];
-#warning 返回的数据不匹配
-                    if(valueStr == nil) return;
+                    
+                    if(valueStr == nil) {
+                        YCLog(@"数据不匹配 - 数据为空");
+                        return;
+                    }
                     
                     [weakSelf initDataWithSuccessedConnection:valueStr];
                 }];
@@ -360,17 +375,20 @@
 
 }
 
+#pragma mark 校验数据,成功后初始化界面
 /**
- *  成功连接并获取到写特征后 初始化界面数据
+ *  成功连接后 校验数据并初始化界面数据
  *
  *  @param backValue 返回的机器信息
  */
 - (void)initDataWithSuccessedConnection:(NSString *)backValue{
     // 数据不符合
     if (backValue.length != 12) {
-//        [self writeValue:@"2A07"];
+        YCLog(@"数据不匹配 - 数据长度不符合");
         return;
     }
+    // 协议标志字
+    NSString *protocolSignStr = [backValue substringWithRange:NSMakeRange(0, 2)];
     // 命令字
     NSString *commandStr = [backValue substringWithRange:NSMakeRange(2, 2)];
     // 设备状态
@@ -381,9 +399,14 @@
     NSString *dataStr3 = [backValue substringWithRange:NSMakeRange(8, 2)];
     // 保留字
 //    NSString *dataStr4 = [backValue substringWithRange:NSMakeRange(10, 2)];
+    if (![protocolSignStr isEqualToString:@"2a"] && ![protocolSignStr isEqualToString:@"2A"]) {
+        YCLog(@"数据不匹配 - 协议标志字错误");
+        return;
+    }
     
     // 发送的命令字与得到的回调命令字不匹配
     if (![commandStr isEqualToString:[self.writeValue substringWithRange:NSMakeRange(2, 2)]]) {
+        YCLog(@"数据不匹配 - 发送的命令字与得到的回调命令字不匹配");
         return;
     }
     
@@ -450,22 +473,13 @@
  */
 - (void)initViewType:(BOOL)isConnect{
     if (isConnect) { //已连接 显示某些控件
-        // 百分比圆环
-        CGRect circleProgressVFrame = self.circleProgressView.frame;
-        THCircularProgressView *circleNumV = [[THCircularProgressView alloc] initWithFrame:circleProgressVFrame];
-        circleNumV.lineWidth = 7;
-        circleNumV.radius = circleProgressVFrame.size.width * 0.5;
-        circleNumV.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
-        circleNumV.progressColor = [UIColor whiteColor];
-        circleNumV.percentage = [self.consumeLb.text floatValue] * 0.01;
-        [self.circleProgressView.superview addSubview:circleNumV];
-        self.circleNumV = circleNumV;
+
         
         self.connectStatus.text = @"(已连接)";
         
         self.consumeLb.format = @"%d";
         self.consumeLb.method = UILabelCountingMethodLinear;
-        
+        self.circleNumV.hidden = NO;
         self.disconnectView.hidden = YES;
         self.circleProgressView.hidden = NO;
         self.consumeLb.hidden = NO;
@@ -484,6 +498,7 @@
         self.disconnectView.hidden = NO;
         self.retryBtn.hidden = NO;
         self.coverView.hidden = NO;
+        self.circleNumV.hidden = YES;
     }
 }
 
