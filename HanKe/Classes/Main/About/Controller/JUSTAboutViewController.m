@@ -43,7 +43,7 @@
     textLb.text = @"瀚科水疗是由广州市瀚科电子科技有限公司针对该司的水疗设备提供的一款智能控制移动应用软件。它通过采用蓝牙通信的方式来动态扫描识别身边的水疗设备进行配对，进而实现远程操控，让用户通过移动终端来方便形象的展示出水疗设备当前的运行状态情况。";
     textLb.numberOfLines = 0;
     textLb.font = [UIFont systemFontOfSize:15];
-    textLb.textColor = [UIColor colorWithRed:0.65 green:0.65 blue:0.65 alpha:1.00];
+    textLb.textColor = [UIColor colorWithRed:0.55 green:0.55 blue:0.55 alpha:1.00];
     // 调整行间距
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:textLb.text];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];

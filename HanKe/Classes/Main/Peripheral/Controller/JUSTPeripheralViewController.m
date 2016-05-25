@@ -197,7 +197,6 @@
     
     CGFloat displayH = kScreenH * 0.56;
     CGFloat controlH = kScreenH * 0.44;
-    self.isConnected = YES;
     
     // bottomV
     self.hydroOffBtn.sd_layout.centerXEqualToView(self.controlView).widthIs(57).heightIs(57).bottomSpaceToView(self.controlView,controlH * 0.1);
@@ -444,9 +443,9 @@
     
     //设置发现characteristics的descriptors的委托
     [BLE setBlockOnDiscoverDescriptorsForCharacteristicAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBCharacteristic *characteristic, NSError *error) {
-        for (CBDescriptor *d in characteristic.descriptors) {
-            YCLog(@"CBDescriptor name is :%@",d.UUID);
-        }
+//        for (CBDescriptor *d in characteristic.descriptors) {
+//            YCLog(@"CBDescriptor name is :%@",d.UUID);
+//        }
     }];
     
     //设置读取Descriptor的委托
@@ -456,9 +455,9 @@
     
     //设置通知状态改变的委托
     [BLE setBlockOnDidUpdateNotificationStateForCharacteristicAtChannel:channelOnPeropheralView block:^(CBCharacteristic *characteristic, NSError *error) {
-        NSString *str = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
-        YCLog(@"str:%@,UUID:%@,isNotify:%@",str,characteristic.UUID.UUIDString,characteristic.isNotifying?@"YES":@"NO");
-        YCLog(@"characteristic.value:%@",[NSString stringWithFormat:@"%@",characteristic.value]);
+//        NSString *str = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
+//        YCLog(@"str:%@,UUID:%@,isNotify:%@",str,characteristic.UUID.UUIDString,characteristic.isNotifying?@"YES":@"NO");
+//        YCLog(@"characteristic.value:%@",[NSString stringWithFormat:@"%@",characteristic.value]);
     }];
     
     //设置写数据成功的委托

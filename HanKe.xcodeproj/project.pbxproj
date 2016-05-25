@@ -642,7 +642,7 @@
 				TargetAttributes = {
 					4A32B1B11CD0B9C20025CBA4 = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = U2R553VF9R;
+						DevelopmentTeam = U5X88348TK;
 					};
 				};
 			};
@@ -793,6 +793,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "cad428d9-c802-4858-9b29-492cd5c9891d";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -831,6 +832,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE = "cad428d9-c802-4858-9b29-492cd5c9891d";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -847,7 +849,7 @@
 				INFOPLIST_FILE = HanKe/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.just.HanKe;
+				PRODUCT_BUNDLE_IDENTIFIER = com.just.HKHydro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -864,7 +866,7 @@
 				INFOPLIST_FILE = HanKe/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.just.HanKe;
+				PRODUCT_BUNDLE_IDENTIFIER = com.just.HKHydro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
