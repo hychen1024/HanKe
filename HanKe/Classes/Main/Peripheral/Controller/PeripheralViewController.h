@@ -1,5 +1,5 @@
 //
-//  JUSTPeripheralViewController.h
+//  PeripheralViewController.h
 //  HanKe
 //
 //  Created by Just-h on 16/5/3.
@@ -8,14 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "BabyBluetooth.h"
-#import "JUSTViewController.h"
+#import "BaseViewController.h"
 
-@interface JUSTPeripheralViewController : JUSTViewController
+@interface PeripheralViewController : BaseViewController
 {
     @public
     BabyBluetooth *BLE;
 }
-//@property (nonatomic, weak) JUSTPeripheralViewController *weakPeriVc;
 /**
  *
  */

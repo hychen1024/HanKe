@@ -1,24 +1,24 @@
 
 //
-//  JUSTDevicesViewController.m
+//  DevicesViewController.m
 //  HanKe
 //
 //  Created by Just-h on 16/4/28.
 //  Copyright © 2016年 JUST-HYC. All rights reserved.
 //
 
-#import "JUSTDevicesViewController.h"
+#import "DevicesViewController.h"
 #import "RTDragCellTableView.h"
-#import "JUSTPeripheral.h"
-#import "JUSTPeripheralViewController.h"
-#import "JUSTDeviceTableViewCell.h"
-#import "JUSTAboutViewController.h"
+#import "Peripheral.h"
+#import "PeripheralViewController.h"
+#import "DeviceTableViewCell.h"
+#import "AboutViewController.h"
 #import "SVProgressHUD.h"
 #import "BabyBluetooth.h"
 #import "MJRefresh.h"
 #import "MGSwipeButton.h"
 #import "BlueToothTool.h"
-#import "JUSTNavController.h"
+#import "NavController.h"
 
 #define reuseIdentify @"device"
 #define tabbarViewH 60
@@ -27,7 +27,7 @@
 
 #define nameFilePath [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"name.plist"]
 
-@interface JUSTDevicesViewController ()<RTDragCellTableViewDataSource,RTDragCellTableViewDelegate,MGSwipeTableCellDelegate>
+@interface DevicesViewController ()<RTDragCellTableViewDataSource,RTDragCellTableViewDelegate,MGSwipeTableCellDelegate>
 {
     // 记录扫到设备的时间
     NSDate *insertingTime;
@@ -75,14 +75,14 @@
 /**
  *  当前连接外设的控制器
  */
-@property (nonatomic, strong) JUSTPeripheralViewController *currPeriVc;
+@property (nonatomic, strong) PeripheralViewController *currPeriVc;
 /**
  *  当前连接外设的模型
  */
-@property (nonatomic, strong) JUSTPeripheral *currPeriModel;
+@property (nonatomic, strong) Peripheral *currPeriModel;
 @end
 
-@implementation JUSTDevicesViewController
+@implementation DevicesViewController
 
 #pragma mark - view life circle  viewController生命周期方法
 - (void)viewDidLoad {
@@ -242,13 +242,13 @@
     }];
     
     __block BOOL isContain = nil;
-    __block JUSTPeripheral *justPeripheral = nil;
+    __block Peripheral *justPeripheral = nil;
     // 设置扫描到外设的委托
     [self.BLE setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
         YCLog(@"扫描到了设备:%@,,,%f,,,",peripheral.name,[RSSI floatValue]);
         isContain = NO;
-        justPeripheral = [JUSTPeripheral peripheralWithName:peripheral.name RSSI:RSSI peripheral:peripheral];
-        for (__strong JUSTPeripheral *peri in weakSelf.peripheralModels) {
+        justPeripheral = [Peripheral peripheralWithName:peripheral.name RSSI:RSSI peripheral:peripheral];
+        for (__strong Peripheral *peri in weakSelf.peripheralModels) {
             // 更新蓝牙信号格
             if ([peripheral.identifier.UUIDString isEqualToString:peri.peri.identifier.UUIDString]) {
                 isContain = YES;
@@ -279,7 +279,7 @@
 #pragma mark 下拉刷新
 - (void)startScanPeripherals{
     if (self.BLE.centralManager.state != CBCentralManagerStatePoweredOn) {
-        [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)self.navigationController tableView:self.tableV];
+        [BlueToothTool showOpenBlueToothTip:(NavController *)self.navigationController tableView:self.tableV];
     }
     [self.BLE cancelAllPeripheralsConnection];
     isRefresh = YES;
@@ -311,7 +311,7 @@
     if (connectStatus) {
         self.currPeri = [[self.BLE findConnectedPeripherals] firstObject];
     }
-    for (JUSTPeripheral *peripheral in self.peripheralModels) {
+    for (Peripheral *peripheral in self.peripheralModels) {
         if ([self.currPeri.identifier.UUIDString isEqualToString:peripheral.peri.identifier.UUIDString]) {
             connectedIndex = [self.peripheralModels indexOfObject:peripheral];
         }
@@ -319,7 +319,7 @@
     if (self.peripheralModels == nil || self.peripheralModels.count == 0) {
         return;
     }
-    JUSTPeripheral *peri = self.peripheralModels[connectedIndex];
+    Peripheral *peri = self.peripheralModels[connectedIndex];
     self.currPeriModel = peri;
     peri.isConnected = connectStatus;
     [self.tableV reloadData];
@@ -347,7 +347,7 @@
 #pragma mark 按钮点击事件
 // 关于按钮点击响应
 - (void)aboutItemClick{
-    JUSTAboutViewController *aboutVc = [[JUSTAboutViewController alloc] init];
+    AboutViewController *aboutVc = [[AboutViewController alloc] init];
     [self.navigationController pushViewController:aboutVc animated:YES];
 }
 
@@ -388,14 +388,14 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-//    JUSTDeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentify];
-    JUSTDeviceTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+//    DeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentify];
+    DeviceTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     if (cell == nil) {
-        cell = [JUSTDeviceTableViewCell cellWithTableView:tableView];
+        cell = [DeviceTableViewCell cellWithTableView:tableView];
     }
     cell.delegate = self;
     
-    JUSTPeripheral *peripheral = self.peripheralModels[indexPath.row];
+    Peripheral *peripheral = self.peripheralModels[indexPath.row];
     // 没有刷新状态 显示左滑按钮
     if (!isRefresh) {
         __weak typeof(self) weakSelf = self;
@@ -404,7 +404,7 @@
             UIAlertController *alertVc = [UIAlertController alertControllerWithTitle:@"修改标题" message:nil preferredStyle:UIAlertControllerStyleAlert];
             
             UIAlertAction *sureAct = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                JUSTPeripheral *peri = self.peripheralModels[indexPath.row];
+                Peripheral *peri = self.peripheralModels[indexPath.row];
                 NSString *identify = peri.peri.identifier.UUIDString;
                 NSString *newName = alertVc.textFields.firstObject.text;
                 [weakSelf.nameDict setObject:newName forKey:identify];
@@ -432,7 +432,7 @@
         }];
         
         MGSwipeButton *swipeDelBtn = [MGSwipeButton buttonWithNormalImage:@"delete_n" highlightedImage:@"delete_p" callback:^BOOL(MGSwipeTableCell *sender) {
-            JUSTPeripheral *peri = self.peripheralModels[indexPath.row];
+            Peripheral *peri = self.peripheralModels[indexPath.row];
             NSString *identify = peri.peri.identifier.UUIDString;
             [weakSelf.nameDict setObject:peri.peri.name forKey:identify];
             // 写入存储
@@ -468,9 +468,9 @@
     [self.timer invalidate];
     self.timer = nil;
     
-    JUSTPeripheral *peri = self.peripheralModels[indexPath.row];
+    Peripheral *peri = self.peripheralModels[indexPath.row];
     CBPeripheral *peripheral = peri.peri;
-    JUSTPeripheralViewController *periVc = nil;
+    PeripheralViewController *periVc = nil;
     // 连接的是否是已连接的外设
 //    if (self.currPeri != peripheral) {
 //        [self.BLE cancelAllPeripheralsConnection];
@@ -481,7 +481,7 @@
     if (self.currPeriVc == nil || self.currPeri != peripheral) {
         [self.BLE cancelAllPeripheralsConnection];
         self.currPeri = nil;
-        periVc = [[JUSTPeripheralViewController alloc] init];
+        periVc = [[PeripheralViewController alloc] init];
         self.currPeriVc = periVc;
         periVc.isConnected = NO;
         periVc.currPeripheral = peripheral;

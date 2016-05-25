@@ -1,19 +1,19 @@
 //
-//  JUSTAboutViewController.m
+//  AboutViewController.m
 //  HanKe
 //
 //  Created by Just-h on 16/5/6.
 //  Copyright © 2016年 JUST-HYC. All rights reserved.
 //
 
-#import "JUSTAboutViewController.h"
+#import "AboutViewController.h"
 #import "UIView+SDAutoLayout.h"
 
-@interface JUSTAboutViewController ()
+@interface AboutViewController ()
 
 @end
 
-@implementation JUSTAboutViewController
+@implementation AboutViewController
 #pragma mark - view life circle  viewController生命周期方法
 - (void)viewDidLoad {
     [super viewDidLoad];

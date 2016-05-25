@@ -1,5 +1,5 @@
 //
-//  JUSTDeviceTableViewCell.h
+//  DeviceTableViewCell.h
 //  HanKe
 //
 //  Created by Just-h on 16/4/28.
@@ -7,14 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JUSTPeripheral.h"
+#import "Peripheral.h"
 #import "MGSwipeTableCell.h"
 
-@interface JUSTDeviceTableViewCell : MGSwipeTableCell
+@interface DeviceTableViewCell : MGSwipeTableCell
 /**
  *  外设模型
  */
-@property (nonatomic, strong) JUSTPeripheral *peri;
+@property (nonatomic, strong) Peripheral *peri;
 
 + (instancetype)cellWithTableView:(UITableView *)tableView;
 @end

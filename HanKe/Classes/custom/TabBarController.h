@@ -1,5 +1,5 @@
 //
-//  JUSTTabBarController.h
+//  TabBarController.h
 //  HanKe
 //
 //  Created by Just-h on 16/4/28.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface JUSTTabBarController : UITabBarController
+@interface TabBarController : UITabBarController
 
 @end

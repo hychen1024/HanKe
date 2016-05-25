@@ -7,9 +7,9 @@
 //
 
 #import "AppDelegate.h"
-#import "JUSTTabBarController.h"
-#import "JUSTNavController.h"
-#import "JUSTDevicesViewController.h"
+#import "TabBarController.h"
+#import "NavController.h"
+#import "DevicesViewController.h"
 
 @interface AppDelegate ()
 
@@ -22,7 +22,7 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
     
     self.window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, kScreenW, kScreenH)];
-    JUSTNavController *navVc = [[JUSTNavController alloc] initWithRootViewController:[[JUSTDevicesViewController alloc] init]];
+    NavController *navVc = [[NavController alloc] initWithRootViewController:[[DevicesViewController alloc] init]];
     self.window.rootViewController = navVc;
 
     [self.window makeKeyAndVisible];

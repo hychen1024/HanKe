@@ -5,7 +5,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="JUSTPeripheralViewController">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PeripheralViewController">
             <connections>
                 <outlet property="backBtn" destination="WsS-x5-7EW" id="6mD-fn-Z1r"/>
                 <outlet property="backImage" destination="awa-21-WWd" id="kIP-Ri-J4t"/>

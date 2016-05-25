@@ -1,5 +1,5 @@
 //
-//  JUSTBaseViewController.h
+//  BaseViewController.h
 //  HanKe
 //
 //  Created by Just-h on 16/5/5.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface JUSTViewController : UIViewController
+@interface BaseViewController : UIViewController
 
 @end

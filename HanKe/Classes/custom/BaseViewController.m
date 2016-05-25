@@ -1,18 +1,18 @@
 //
-//  JUSTBaseViewController.m
+//  BaseViewController.m
 //  HanKe
 //
 //  Created by Just-h on 16/5/5.
 //  Copyright © 2016年 JUST-HYC. All rights reserved.
 //
 
-#import "JUSTViewController.h"
+#import "BaseViewController.h"
 
-@interface JUSTViewController ()
+@interface BaseViewController ()
 
 @end
 
-@implementation JUSTViewController
+@implementation BaseViewController
 
 #pragma mark - view life circle  viewController生命周期方法
 - (void)viewDidLoad {

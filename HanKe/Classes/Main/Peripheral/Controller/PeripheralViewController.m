@@ -1,25 +1,25 @@
 //
-//  JUSTPeripheralViewController.m
+//  PeripheralViewController.m
 //  HanKe
 //
 //  Created by Just-h on 16/5/3.
 //  Copyright © 2016年 JUST-HYC. All rights reserved.
 //
 
-#import "JUSTPeripheralViewController.h"
+#import "PeripheralViewController.h"
 #import "UIView+SDAutoLayout.h"
 #import "ConvertTool.h"
 #import "SVProgressHUD.h"
 #import "THCircularProgressView.h"
 #import "UICountingLabel.h"
-#import "JUSTNavController.h"
+#import "NavController.h"
 #import "BlueToothTool.h"
 
 #define channelOnPeropheralView @"peripheralView"
 
 #define sendCheckCommandInterval 2.0
 
-@interface JUSTPeripheralViewController ()
+@interface PeripheralViewController ()
 {
     // 当前耗材百分比
     CGFloat currPer;
@@ -154,7 +154,7 @@
 
 @end
 
-@implementation JUSTPeripheralViewController
+@implementation PeripheralViewController
 
 #pragma mark - view life circle  viewController生命周期方法
 
@@ -329,11 +329,11 @@
             [weakSelf.sendTimer invalidate];
             weakSelf.sendTimer = nil;
             if (weakBLE.centralManager.state != CBCentralManagerStatePoweredOn) {
-                [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)weakSelf.navigationController tableView:nil];
+                [BlueToothTool showOpenBlueToothTip:(NavController *)weakSelf.navigationController tableView:nil];
             }
         }
         if (central.state == CBCentralManagerStatePoweredOn) {
-            JUSTNavController *navVc = (JUSTNavController *)[UIApplication sharedApplication].keyWindow.rootViewController;
+            NavController *navVc = (NavController *)[UIApplication sharedApplication].keyWindow.rootViewController;
             // 判断主页面是否是在当前页面
             if (navVc.visibleViewController == self) {
                 [weakSelf connectPeripheral];
@@ -371,7 +371,7 @@
     //设置设备断开连接的委托
     [BLE setBlockOnDisconnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
         YCLog(@"设备：%@--断开连接",peripheral.name);
-        JUSTNavController *navVc = (JUSTNavController *)[UIApplication sharedApplication].keyWindow.rootViewController;
+        NavController *navVc = (NavController *)[UIApplication sharedApplication].keyWindow.rootViewController;
         // 判断主页面是否是在当前页面
         if (navVc.visibleViewController == self) {
             [SVProgressHUD showErrorWithStatus:@"断开连接" maskType:SVProgressHUDMaskTypeNone];
@@ -559,7 +559,7 @@
     [SVProgressHUD showWithStatus:@"正在连接..."];
     if (BLE.centralManager.state != CBCentralManagerStatePoweredOn) {
         [SVProgressHUD dismiss];
-        [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)self.navigationController tableView:nil];
+        [BlueToothTool showOpenBlueToothTip:(NavController *)self.navigationController tableView:nil];
     }
     if (self.currPeripheral == nil) {
         [SVProgressHUD showErrorWithStatus:@"连接失败" maskType:SVProgressHUDMaskTypeNone];
@@ -708,7 +708,7 @@
 // 重试按钮点击响应
 - (IBAction)retryBtnDidClick:(UIButton *)sender {
     if (BLE.centralManager.state != CBCentralManagerStatePoweredOn) {
-        [BlueToothTool showOpenBlueToothTip:(JUSTNavController *)self.navigationController tableView:nil];
+        [BlueToothTool showOpenBlueToothTip:(NavController *)self.navigationController tableView:nil];
         return;
     }
     if (BLE.centralManager.state == CBCentralManagerStatePoweredOn) {

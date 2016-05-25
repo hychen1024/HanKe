@@ -1,20 +1,20 @@
 //
-//  JUSTTabBarController.m
+//  TabBarController.m
 //  HanKe
 //
 //  Created by Just-h on 16/4/28.
 //  Copyright © 2016年 JUST-HYC. All rights reserved.
 //
 
-#import "JUSTTabBarController.h"
-#import "JUSTNavController.h"
-#import "JUSTTabBar.h"
+#import "TabBarController.h"
+#import "NavController.h"
+#import "TabBar.h"
 
-@interface JUSTTabBarController ()
+@interface TabBarController ()
 
 @end
 
-@implementation JUSTTabBarController
+@implementation TabBarController
 
 #pragma mark - view life circle  viewController生命周期方法
 - (void)viewDidLoad {
@@ -28,7 +28,7 @@
 
 #pragma mark - custom methods  自定义方法
 - (void)initView{
-    JUSTTabBar *tabBar = [[JUSTTabBar alloc] initWithFrame:self.tabBar.frame];
+    TabBar *tabBar = [[TabBar alloc] initWithFrame:self.tabBar.frame];
     [self setValue:tabBar forKey:@"tabBar"];
     
     UIView *bgView = [[UIView alloc] initWithFrame:self.tabBar.bounds];

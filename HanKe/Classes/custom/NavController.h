@@ -1,5 +1,5 @@
 //
-//  JUSTDevicesViewController.h
+//  NavController.h
 //  HanKe
 //
 //  Created by Just-h on 16/4/28.
@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JUSTViewController.h"
-@interface JUSTDevicesViewController : JUSTViewController
 
+@interface NavController : UINavigationController
 @end

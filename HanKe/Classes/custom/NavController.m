@@ -1,18 +1,18 @@
 //
-//  JUSTNavController.m
+//  NavController.m
 //  HanKe
 //
 //  Created by Just-h on 16/4/28.
 //  Copyright © 2016年 JUST-HYC. All rights reserved.
 //
 
-#import "JUSTNavController.h"
+#import "NavController.h"
 
-@interface JUSTNavController ()
+@interface NavController ()
 
 @end
 
-@implementation JUSTNavController
+@implementation NavController
 #pragma mark - view life circle  viewController生命周期方法
 - (void)viewDidLoad {
     [super viewDidLoad];

@@ -8,11 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "JUSTNavController.h"
+#import "NavController.h"
 
 @interface BlueToothTool : NSObject
 /**
  *  ActionSheet提示打开蓝牙
  */
-+ (void)showOpenBlueToothTip:(JUSTNavController *)nav tableView:(UITableView *)tableV;
++ (void)showOpenBlueToothTip:(NavController *)nav tableView:(UITableView *)tableV;
 @end

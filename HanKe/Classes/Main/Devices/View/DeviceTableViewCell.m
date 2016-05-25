@@ -1,14 +1,14 @@
 //
-//  JUSTDeviceTableViewCell.m
+//  DeviceTableViewCell.m
 //  HanKe
 //
 //  Created by Just-h on 16/4/28.
 //  Copyright © 2016年 JUST-HYC. All rights reserved.
 //
 
-#import "JUSTDeviceTableViewCell.h"
+#import "DeviceTableViewCell.h"
 
-@interface JUSTDeviceTableViewCell ()
+@interface DeviceTableViewCell ()
 /**
  *  信号图片
  */
@@ -23,7 +23,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *connectImage;
 
 @end
-@implementation JUSTDeviceTableViewCell
+@implementation DeviceTableViewCell
 
 - (void)awakeFromNib {
     [super awakeFromNib];
@@ -31,9 +31,9 @@
 }
 
 + (instancetype)cellWithTableView:(UITableView *)tableView{
-    JUSTDeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+    DeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (cell == nil) {
-        cell = [[[NSBundle mainBundle] loadNibNamed:@"JUSTDeviceTableViewCell" owner:self options:nil] firstObject];
+        cell = [[[NSBundle mainBundle] loadNibNamed:@"DeviceTableViewCell" owner:self options:nil] firstObject];
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.backgroundColor = [UIColor clearColor];
         UIView *cellBg = [[UIView alloc] init];
@@ -44,7 +44,7 @@
     return cell;
 }
 
-- (void)setPeri:(JUSTPeripheral *)peri{
+- (void)setPeri:(Peripheral *)peri{
     _peri = peri;
     float rssi = [peri.rssi floatValue];
     self.periName.text = peri.name;

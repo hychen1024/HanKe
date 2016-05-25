@@ -1,5 +1,5 @@
 //
-//  JUSTPeripheral.h
+//  Peripheral.h
 //  HanKe
 //
 //  Created by Just-h on 16/4/29.
@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
-@interface JUSTPeripheral : NSObject
+@interface Peripheral : NSObject
 /**
  *  扫描到的蓝牙设备名
  */
@@ -33,7 +33,7 @@
  *  @param name 设备名
  *  @param rssi 信号强度
  *
- *  @return JUSTPeripheral
+ *  @return Peripheral
  */
 + (instancetype)peripheralWithName:(NSString *)name RSSI:(NSNumber *)rssi peripheral:(CBPeripheral *)peri;
 @end

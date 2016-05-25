@@ -1,19 +1,19 @@
 //
-//  JUSTTabBar.m
+//  TabBar.m
 //  HanKe
 //
 //  Created by Just-h on 16/4/28.
 //  Copyright © 2016年 JUST-HYC. All rights reserved.
 //
 
-#import "JUSTTabBar.h"
+#import "TabBar.h"
 
 #define tabBarCount 3;
 
-@interface JUSTTabBar ()
+@interface TabBar ()
 @property (nonatomic, strong) UIButton *addBtn;
 @end
-@implementation JUSTTabBar
+@implementation TabBar
 
 -(UIButton *)addBtn{
     if (!_addBtn) {
@@ -33,8 +33,8 @@
 }
 
 - (void)addBtnDidClick{
-    if ([self.JUSTTabBarDelegate respondsToSelector:@selector(tabBarDidClickAddBtn:)]) {
-        [self.JUSTTabBarDelegate tabBarDidClickAddBtn:self];
+    if ([self.TabBarDelegate respondsToSelector:@selector(tabBarDidClickAddBtn:)]) {
+        [self.TabBarDelegate tabBarDidClickAddBtn:self];
     }
 }
 
