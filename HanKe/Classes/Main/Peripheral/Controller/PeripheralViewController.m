@@ -455,9 +455,9 @@
     
     //设置通知状态改变的委托
     [BLE setBlockOnDidUpdateNotificationStateForCharacteristicAtChannel:channelOnPeropheralView block:^(CBCharacteristic *characteristic, NSError *error) {
-//        NSString *str = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
-//        YCLog(@"str:%@,UUID:%@,isNotify:%@",str,characteristic.UUID.UUIDString,characteristic.isNotifying?@"YES":@"NO");
-//        YCLog(@"characteristic.value:%@",[NSString stringWithFormat:@"%@",characteristic.value]);
+        NSString *str = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
+        YCLog(@"str:%@,UUID:%@,isNotify:%@",str,characteristic.UUID.UUIDString,characteristic.isNotifying?@"YES":@"NO");
+        YCLog(@"characteristic.value:%@",[NSString stringWithFormat:@"%@",characteristic.value]);
     }];
     
     //设置写数据成功的委托
@@ -530,13 +530,60 @@
     // 设备状态
     if ([dataStr1 isEqualToString:@"01"]) { // 待机
         [self.hydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
+        self.muteBtn.selected = NO;
+        self.hydroOffBtn.enabled = NO;
+        self.hydroOffBtn.selected = NO;
+        self.hydroOnBtn.selected = NO;
+        self.hydroOnBtn.userInteractionEnabled = YES;
+        self.disinfectBtn.selected = NO;
+        self.disinfectBtn.enabled = YES;
     }else if ([dataStr1 isEqualToString:@"02"]){ // 水疗
+        self.muteBtn.selected = NO;
+        self.hydroOffBtn.enabled = YES;
+        self.hydroOffBtn.selected = NO;
         self.hydroOnBtn.selected = YES;
+        self.hydroOnBtn.userInteractionEnabled = NO;
+        self.disinfectBtn.selected = NO;
+        self.disinfectBtn.enabled = NO;
         [self.hydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"03"]){ // 消毒
+        self.muteBtn.selected = NO;
+        self.hydroOffBtn.enabled = NO;
+        self.hydroOffBtn.selected = NO;
+        self.hydroOnBtn.selected = NO;
+        self.hydroOnBtn.enabled = NO;
         self.disinfectBtn.selected = YES;
+        self.disinfectBtn.enabled = YES;
+        [self.hydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"81"]){
+        self.muteBtn.selected = YES;
+        self.hydroOffBtn.enabled = NO;
+        self.hydroOffBtn.selected = NO;
+        self.hydroOnBtn.selected = NO;
+        self.hydroOnBtn.userInteractionEnabled = YES;
+        self.disinfectBtn.selected = NO;
+        self.disinfectBtn.enabled = YES;
+        [self.hydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"82"]){
+        self.muteBtn.selected = YES;
+        self.hydroOffBtn.enabled = YES;
+        self.hydroOffBtn.selected = NO;
+        self.hydroOnBtn.selected = YES;
+        self.hydroOnBtn.userInteractionEnabled = NO;
+        self.disinfectBtn.selected = NO;
+        self.disinfectBtn.enabled = NO;
+        [self.hydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"83"]){
+        self.muteBtn.selected = YES;
+        self.hydroOffBtn.enabled = NO;
+        self.hydroOffBtn.selected = NO;
+        self.hydroOnBtn.selected = NO;
+        self.hydroOnBtn.enabled = NO;
+        self.disinfectBtn.selected = YES;
+        self.disinfectBtn.enabled = YES;
         [self.hydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
     }
+    
     
     // 水流量
     if ([dataStr2 isEqualToString:@"01"]) { // 小水量
@@ -677,6 +724,7 @@
     if (sender.tag == 1001) {
         [self.hydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
         self.disinfectBtn.enabled = YES;
+        self.hydroOnBtn.enabled = YES;
         self.hydroOnBtn.selected = NO;
         self.hydroOnBtn.userInteractionEnabled = YES;
         self.hydroOffBtn.enabled = NO;
@@ -689,9 +737,9 @@
 // 返回按钮点击响应
 - (IBAction)backBtnDidClick:(UIButton *)sender {
     
-    if (self.writeCharacteristic) {
-        [BLE cancelNotify:self.currPeripheral characteristic:self.writeCharacteristic];
-    }
+//    if (self.writeCharacteristic) {
+//        [BLE cancelNotify:self.currPeripheral characteristic:self.writeCharacteristic];
+//    }
     [self.timer invalidate];
     self.timer = nil;
     [self.sendTimer invalidate];
@@ -817,9 +865,10 @@
         if (b) {
             [self.disinfectBtn removeObserver:self forKeyPath:@"selected"];
             [self.hydroOnBtn removeObserver:self forKeyPath:@"selected"];
+            
             self.hydroOnBtn.enabled = NO;
             self.hydroOffBtn.enabled = NO;
-            self.hydroOnBtn.selected = NO;
+//            self.hydroOnBtn.selected = NO;
             [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
             [self.hydroOnBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
         }

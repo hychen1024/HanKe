@@ -247,7 +247,7 @@
     [self.BLE setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
         YCLog(@"扫描到了设备:%@,,,%f,,,",peripheral.name,[RSSI floatValue]);
         isContain = NO;
-        justPeripheral = [Peripheral peripheralWithName:peripheral.name RSSI:RSSI peripheral:peripheral];
+        justPeripheral = [Peripheral peripheralWithName:nil RSSI:RSSI peripheral:peripheral];
         for (__strong Peripheral *peri in weakSelf.peripheralModels) {
             // 更新蓝牙信号格
             if ([peripheral.identifier.UUIDString isEqualToString:peri.peri.identifier.UUIDString]) {
@@ -317,6 +317,9 @@
         }
     }
     if (self.peripheralModels == nil || self.peripheralModels.count == 0) {
+        return;
+    }
+    if (connectedIndex == self.peripheralModels.count) {
         return;
     }
     Peripheral *peri = self.peripheralModels[connectedIndex];
@@ -396,13 +399,17 @@
     cell.delegate = self;
     
     Peripheral *peripheral = self.peripheralModels[indexPath.row];
+    NSInteger index = indexPath.row + 1;
+    peripheral.name = [NSString stringWithFormat:@"设备%ld",(long)index];
+
     // 没有刷新状态 显示左滑按钮
     if (!isRefresh) {
         __weak typeof(self) weakSelf = self;
         cell.swipeBackgroundColor = [UIColor clearColor];
-        MGSwipeButton *swipeEditBtn = [MGSwipeButton buttonWithNormalImage:@"rechristen_n" highlightedImage:@"rechristen_p" callback:^BOOL(MGSwipeTableCell *sender) {
-            UIAlertController *alertVc = [UIAlertController alertControllerWithTitle:@"修改标题" message:nil preferredStyle:UIAlertControllerStyleAlert];
+        
+        MGSwipeButton *swipeEditBtn = [MGSwipeButton buttonWithTitle:@"改名" backgroundColor:[UIColor colorWithRed:0.13 green:0.52 blue:0.85 alpha:1.00] callback:^BOOL(MGSwipeTableCell *sender) {
             
+            UIAlertController *alertVc = [UIAlertController alertControllerWithTitle:@"修改标题" message:nil preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *sureAct = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 Peripheral *peri = self.peripheralModels[indexPath.row];
                 NSString *identify = peri.peri.identifier.UUIDString;
@@ -413,8 +420,8 @@
                 peri.name = newName;
                 [self.peripheralModels replaceObjectAtIndex:indexPath.row withObject:peri];
                 [self.tableV reloadData];
-                
-            }];
+        }];
+            
             UIAlertAction *cancelAct = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
                 
             }];
@@ -431,10 +438,10 @@
             return YES;
         }];
         
-        MGSwipeButton *swipeDelBtn = [MGSwipeButton buttonWithNormalImage:@"delete_n" highlightedImage:@"delete_p" callback:^BOOL(MGSwipeTableCell *sender) {
+        MGSwipeButton *swipeDelBtn = [MGSwipeButton buttonWithTitle:@"移除" backgroundColor:[UIColor colorWithRed:0.84 green:0.29 blue:0.31 alpha:1.00] callback:^BOOL(MGSwipeTableCell *sender) {
             Peripheral *peri = self.peripheralModels[indexPath.row];
             NSString *identify = peri.peri.identifier.UUIDString;
-            [weakSelf.nameDict setObject:peri.peri.name forKey:identify];
+            [weakSelf.nameDict setObject:peri.name forKey:identify];
             // 写入存储
             [weakSelf.nameDict writeToFile:nameFilePath atomically:YES];
             
@@ -445,6 +452,7 @@
             weakSelf.currPeri = nil;
             return YES;
         }];
+        
         cell.rightButtons = @[swipeDelBtn,swipeEditBtn];
         cell.rightSwipeSettings.transition = MGSwipeTransitionClipCenter;
     }
