@@ -702,7 +702,7 @@
     if (sender.tag == 101 || sender.tag == 105 || sender.tag == 106) {
         sender.selected = !sender.selected;
         if (sender.selected) {
-            switch (sender.tag) {
+            switch (sender.tag) { // 水疗
                 case 101:{
                     [self.hydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
                     break;
