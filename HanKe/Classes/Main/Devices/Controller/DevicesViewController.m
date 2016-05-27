@@ -73,13 +73,13 @@
  */
 @property (nonatomic, strong) CBPeripheral *currPeri;
 /**
- *  当前连接外设的控制器
- */
-@property (nonatomic, strong) PeripheralViewController *currPeriVc;
-/**
  *  当前连接外设的模型
  */
 @property (nonatomic, strong) Peripheral *currPeriModel;
+/**
+ *  水疗控制器
+ */
+@property (nonatomic, strong) PeripheralViewController *peripheralVc;
 @end
 
 @implementation DevicesViewController
@@ -113,7 +113,7 @@
     self.title = @"我的设备";
     // 隐藏导航栏返回按钮
     self.navigationItem.leftBarButtonItem = nil;
-    
+    // 间隔时间
     self.intervalTime = 5.0;
     
     // 导航栏右边关于按钮
@@ -124,21 +124,6 @@
     [aboutBtn addTarget:self action:@selector(aboutItemClick) forControlEvents: UIControlEventTouchUpInside];
     UIBarButtonItem *aboutItem = [[UIBarButtonItem alloc]initWithCustomView:aboutBtn];
     self.navigationItem.rightBarButtonItem = aboutItem;
-
-    // UITableView
-    _tableV = [[RTDragCellTableView alloc] init];
-    _tableV.frame = CGRectMake(0, 0, kScreenW, kScreenH);
-    _tableV.allowsSelection = YES;
-    _tableV.backgroundColor = [UIColor clearColor];
-    _tableV.delegate = self;
-    _tableV.dataSource = self;
-    _tableV.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    _tableV.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [self.view addSubview:_tableV];
-    
-    // 下拉
-    _tableV.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(startScanPeripherals)];
-    _tableV.mj_header.automaticallyChangeAlpha = YES;
     
     // 背景Image
     UIImageView *bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_image"]];
@@ -185,7 +170,22 @@
     self.refreshBgV.backgroundColor = RGBColor(0xe5e5e5);
     [self.view addSubview:self.refreshBgV];
     
-    last = -54;
+    // UITableView
+    _tableV = [[RTDragCellTableView alloc] init];
+    _tableV.frame = CGRectMake(0, 64, kScreenW, kScreenH-bottomV.frame.size.height-64);
+    _tableV.allowsSelection = YES;
+    _tableV.backgroundColor = [UIColor clearColor];
+    _tableV.delegate = self;
+    _tableV.dataSource = self;
+    _tableV.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    _tableV.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self.view addSubview:_tableV];
+    
+    // 下拉
+    _tableV.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(startScanPeripherals)];
+    _tableV.mj_header.automaticallyChangeAlpha = YES;
+    
+    last = 10;
     // 注册通知 接收连接状态
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveConnectedStatus:) name:@"connectStatus" object:nil];
 }
@@ -197,6 +197,7 @@
     
     // 初始化蓝牙
     self.BLE = [BabyBluetooth shareBabyBluetooth];
+    self.peripheralVc -> BLE = self.BLE;
     
     // 设置蓝牙委托
     [self BLEDelegate];
@@ -290,7 +291,6 @@
     [self.tableV reloadData];
     
     self.currPeri = nil;
-    self.currPeriVc = nil;
     
     // 扫描设备 30s停止
     self.BLE.scanForPeripherals().begin().stop(scanTime);
@@ -478,29 +478,15 @@
     
     Peripheral *peri = self.peripheralModels[indexPath.row];
     CBPeripheral *peripheral = peri.peri;
-    PeripheralViewController *periVc = nil;
-    // 连接的是否是已连接的外设
-//    if (self.currPeri != peripheral) {
-//        [self.BLE cancelAllPeripheralsConnection];
-//        self.currPeri = nil;
-//    }
+
     [self.tableV reloadData];
-    // 没有连接外设 或者 连接的外设不是已连接的外设
-    if (self.currPeriVc == nil || self.currPeri != peripheral) {
-        [self.BLE cancelAllPeripheralsConnection];
-        self.currPeri = nil;
-        periVc = [[PeripheralViewController alloc] init];
-        self.currPeriVc = periVc;
-        periVc.isConnected = NO;
-        periVc.currPeripheral = peripheral;
-        periVc->BLE = self.BLE;
-        self.currPeri = peripheral;
-    }
-    // 已连接外设
-    else{
-        periVc = self.currPeriVc;
-    }
-    [self.navigationController pushViewController:periVc animated:YES];
+    [self.BLE cancelAllPeripheralsConnection];
+    self.currPeri = peripheral;
+    self.peripheralVc.isConnected = NO;
+    self.peripheralVc.currPeripheral = peripheral;
+    self.peripheralVc.peripheralModels = self.peripheralModels;
+    self.peripheralVc.index = indexPath.row;
+    [self.navigationController pushViewController:self.peripheralVc animated:YES];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -529,6 +515,22 @@
 - (NSMutableArray *)peripheralModels{
     if (!_peripheralModels) {
         _peripheralModels = [NSMutableArray array];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"111" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"222" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"333" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"444" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"555" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"666" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
     }
     return _peripheralModels;
 }
@@ -538,6 +540,13 @@
         _nameDict = [[NSMutableDictionary alloc] init];
     }
     return _nameDict;
+}
+
+- (PeripheralViewController *)peripheralVc{
+    if (!_peripheralVc) {
+        _peripheralVc = [[PeripheralViewController alloc] init];
+    }
+    return _peripheralVc;
 }
 
 - (void)dealloc{

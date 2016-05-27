@@ -14,12 +14,13 @@
 #import "UICountingLabel.h"
 #import "NavController.h"
 #import "BlueToothTool.h"
+#import "DisplayView.h"
 
 #define channelOnPeropheralView @"peripheralView"
 
 #define sendCheckCommandInterval 2.0
 
-@interface PeripheralViewController ()
+@interface PeripheralViewController ()<UIScrollViewDelegate>
 {
     // 当前耗材百分比
     CGFloat currPer;
@@ -58,23 +59,52 @@
  *  全局圆环百分比View
  */
 @property (nonatomic, strong) THCircularProgressView *circleNumV;
+/**
+ *  滚动视图
+ */
+@property (nonatomic, strong) UIScrollView *scrollV;
+/**
+ *  当前显示的DisplayView
+ */
+@property (nonatomic, strong) DisplayView *currDisplayView;
 
 /**
- *  控制操作View
+ *  BottomView
  */
 @property (weak, nonatomic) IBOutlet UIView *controlView;
-/**
- *  信息显示View
- */
-@property (weak, nonatomic) IBOutlet UIView *displayView;
 /**
  *  按钮遮罩View
  */
 @property (weak, nonatomic) IBOutlet UIView *coverView;
 /**
- *  断开连接显示的图片
+ *  消毒按钮
  */
-@property (weak, nonatomic) IBOutlet UIImageView *disconnectView;
+@property (weak, nonatomic) IBOutlet UIButton *disinfectBtn;
+/**
+ *  水疗按钮
+ */
+@property (weak, nonatomic) IBOutlet UIButton *hydroBtn;
+/**
+ *  正常水量
+ */
+@property (weak, nonatomic) IBOutlet UIButton *normalWater;
+/**
+ *  加大水量
+ */
+@property (weak, nonatomic) IBOutlet UIButton *moreWater;
+
+
+/**
+ *  TopView
+ */
+@property (weak, nonatomic) IBOutlet UIView *displayView;
+
+@property (weak, nonatomic) IBOutlet UIPageControl *pageCtrl;
+
+/**
+ *  静音按钮
+ */
+@property (weak, nonatomic) IBOutlet UIButton *silenceBtn;
 /**
  *  返回按钮
  */
@@ -88,75 +118,40 @@
  */
 @property (weak, nonatomic) IBOutlet UILabel *connectStatus;
 /**
- *  圆环百分比View
- */
-@property (weak, nonatomic) IBOutlet UIView *circleProgressView;
-/**
- *  百分比符号
- */
-@property (weak, nonatomic) IBOutlet UILabel *percentage;
-/**
- *  耗材显示数字Lb
- */
-@property (weak, nonatomic) IBOutlet UICountingLabel *consumeLb;
-/**
- *  数字底图
- */
-@property (weak, nonatomic) IBOutlet UIImageView *circleView;
-/**
  *  重试按钮
  */
 @property (weak, nonatomic) IBOutlet UIButton *retryBtn;
-/**
- *  水疗机状态显示按钮
- */
-@property (weak, nonatomic) IBOutlet UIButton *hydroStatus;
-/**
- *  消毒按钮
- */
-@property (weak, nonatomic) IBOutlet UIButton *disinfectBtn;
-/**
- *  水疗开按钮
- */
-@property (weak, nonatomic) IBOutlet UIButton *hydroOnBtn;
-/**
- *  静音按钮
- */
-@property (weak, nonatomic) IBOutlet UIButton *muteBtn;
-/**
- *  大水量按钮
- */
-@property (weak, nonatomic) IBOutlet UIButton *bigBtn;
-/**
- *  中水量按钮
- */
-@property (weak, nonatomic) IBOutlet UIButton *midBtn;
-/**
- *  小水量按钮
- */
-@property (weak, nonatomic) IBOutlet UIButton *smallBtn;
-/**
- *  水疗关按钮
- */
-@property (weak, nonatomic) IBOutlet UIButton *hydroOffBtn;
-/**
- *  耗材用完提示Lb
- */
-@property (weak, nonatomic) IBOutlet UILabel *exhaustTipLb;
 /**
  *  返回图片
  */
 @property (weak, nonatomic) IBOutlet UIImageView *backImage;
 /**
- *  大中小水量背景图片
+ *  更换耗材文字
  */
-@property (weak, nonatomic) IBOutlet UIImageView *controlBgV;
+@property (weak, nonatomic) IBOutlet UILabel *changeLb;
+/**
+ *  电话号码Btn
+ */
+@property (weak, nonatomic) IBOutlet UIButton *phoneNumBtn;
+
 
 @end
 
 @implementation PeripheralViewController
 
 #pragma mark - view life circle  viewController生命周期方法
+
+- (instancetype)init{
+    if (self = [super init]) {
+        self.scrollV = [[UIScrollView alloc] init];
+        self.scrollV.pagingEnabled = YES;
+        self.scrollV.bounces = NO;
+        self.scrollV.showsVerticalScrollIndicator = NO;
+        self.scrollV.showsHorizontalScrollIndicator = NO;
+        self.scrollV.delegate = self;
+    }
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -190,24 +185,48 @@
 
 #pragma mark - custom methods  自定义方法
 - (void)prepareUI{
-    // topV,bottomV,coverV设置frame
-    self.displayView.sd_layout.topEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.56);
-    self.controlView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.44);
-    self.coverView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.44);
+    [self.displayView addSubview:self.scrollV];
+    NSInteger tmpIndex = self.index+1;
+    // 页码赋值
+    if (tmpIndex <= 5) {
+        self.pageCtrl.numberOfPages = 5;
+        self.pageCtrl.currentPage = tmpIndex;
+    }else if (tmpIndex > 5){
+        for (NSInteger i = 5; i < self.peripheralModels.count; i+=5) { // 取出5的倍数
+            if ((i - tmpIndex) <= 5 && (i - tmpIndex) >= 0 && self.peripheralModels.count >= i) {
+                    self.pageCtrl.numberOfPages = 5;
+                    self.pageCtrl.currentPage = tmpIndex - i + 5 - 1;
+            }else if ((i - tmpIndex) <= 5 && (i - tmpIndex) >= 0 && self.peripheralModels.count < i){
+                    self.pageCtrl.numberOfPages = 5 - i + self.peripheralModels.count;
+                    self.pageCtrl.currentPage = tmpIndex - i + 5 - 1;
+            }
+        }
+    }
     
-    CGFloat displayH = kScreenH * 0.56;
-    CGFloat controlH = kScreenH * 0.44;
+//    if (self.index > 5) {
+//        self.pageCtrl.currentPage = self.index % 5;
+//    }else{
+//        self.pageCtrl.currentPage = self.index;
+//    }
+//    if (self.peripheralModels.count >= 5 && self.index > 5) {
+//        self.pageCtrl.numberOfPages = self.peripheralModels.count - 5;
+//    }else if (self.peripheralModels.count >= 5 && self.index < 5){
+//        self.pageCtrl.numberOfPages = 5;
+//    }else{
+//        self.pageCtrl.numberOfPages = self.peripheralModels.count;
+//    }
+    
+    
+    // topV,bottomV,coverV设置frame
+    self.displayView.sd_layout.topEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.585);
+    self.controlView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.415);
+    self.coverView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.415);
+    
+    CGFloat displayH = kScreenH * 0.585;
+    CGFloat controlH = kScreenH * 0.415;
     
     // bottomV
-    self.hydroOffBtn.sd_layout.centerXEqualToView(self.controlView).widthIs(57).heightIs(57).bottomSpaceToView(self.controlView,controlH * 0.1);
-    self.bigBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.145).rightSpaceToView(self.hydroOffBtn,42);
-    self.smallBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.145).leftSpaceToView(self.hydroOffBtn,42);
-    self.midBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.hydroOffBtn,controlH * 0.1).centerXEqualToView(self.controlView);
-    self.controlBgV.sd_layout.heightIs(83).widthIs(180).centerXEqualToView(self.controlView).bottomSpaceToView(self.controlView,controlH * 0.188);
-    self.hydroOnBtn.sd_layout.heightIs(27).widthIs(54).centerXEqualToView(self.controlView).bottomSpaceToView(self.midBtn,controlH * 0.2);
-    self.muteBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).leftSpaceToView(self.hydroOnBtn,60);
-    self.disinfectBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).rightSpaceToView(self.hydroOnBtn,60);
-    self.exhaustTipLb.sd_layout.heightIs(30).leftEqualToView(self.controlView).rightEqualToView(self.controlView).topSpaceToView(self.controlView,-30);
+    
     
     // topV
     self.backImage.sd_layout.widthIs(21).heightIs(21).leftSpaceToView(self.displayView,14).topSpaceToView(self.displayView,displayH * 0.08);
@@ -216,13 +235,7 @@
     self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.4).topSpaceToView(self.displayView,displayH * 0.07);
     self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.67).topSpaceToView(self.displayView,displayH * 0.07);
 
-    self.hydroStatus.sd_layout.widthIs(80).heightIs(32).bottomSpaceToView(self.displayView,displayH * 0.07).centerXEqualToView(self.displayView);
     // centerY -> self.displayV
-    self.disconnectView.sd_layout.widthIs(displayH * 0.5).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
-    self.circleView.sd_layout.widthIs(displayH * 0.427).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
-    self.consumeLb.sd_layout.widthIs(displayH * 0.427).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
-    self.circleProgressView.sd_layout.widthIs(displayH * 0.513).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
-    self.percentage.sd_layout.xIs(self.displayView.frame.size.width * 0.58).yIs(self.displayView.frame.size.height * 0.37).widthIs(self.displayView.frame.size.width * 0.112).heightIs(self.displayView.frame.size.height * 0.072);
 
     if (IS_IPHONE_6P) {
         self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.40).topSpaceToView(self.displayView,displayH * 0.07);
@@ -230,29 +243,11 @@
     }
     
     if (IS_IPHONE_5) {
-        self.hydroStatus.sd_layout.widthIs(80).heightIs(32).bottomSpaceToView(self.displayView,displayH * 0.05).centerXEqualToView(self.displayView);
-        self.hydroOnBtn.sd_layout.heightIs(27).widthIs(54).centerXEqualToView(self.controlView).bottomSpaceToView(self.midBtn,controlH * 0.13);
-        self.muteBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).leftSpaceToView(self.hydroOnBtn,60);
-        self.disinfectBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).rightSpaceToView(self.hydroOnBtn,60);
-        
-        self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.36).topSpaceToView(self.displayView,displayH * 0.07);
-        self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.67).topSpaceToView(self.displayView,displayH * 0.07);
-        self.percentage.sd_layout.centerXIs(kScreenW * 0.62).centerYIs(displayH * 0.4).widthIs(self.displayView.frame.size.width * 0.112).heightIs(self.displayView.frame.size.height * 0.072);
-        self.consumeLb.font = [UIFont systemFontOfSize:60];
-        self.percentage.font = [UIFont systemFontOfSize:20];
+
     }
     
     if (IS_IPHONE_4_OR_LESS) {
         // bottomV
-        self.hydroOffBtn.sd_layout.centerXEqualToView(self.controlView).widthIs(57).heightIs(57).bottomSpaceToView(self.controlView,controlH * 0.05);
-        self.bigBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.075).rightSpaceToView(self.hydroOffBtn,42);
-        self.smallBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.controlView,controlH * 0.075).leftSpaceToView(self.hydroOffBtn,42);
-        self.midBtn.sd_layout.widthIs(32).heightIs(32).bottomSpaceToView(self.hydroOffBtn,controlH * 0.1).centerXEqualToView(self.controlView);
-        self.controlBgV.sd_layout.heightIs(83).widthIs(180).centerXEqualToView(self.controlView).bottomSpaceToView(self.controlView,controlH * 0.118);
-        self.hydroOnBtn.sd_layout.heightIs(27).widthIs(54).centerXEqualToView(self.controlView).bottomSpaceToView(self.midBtn,controlH * 0.085);
-        self.muteBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).leftSpaceToView(self.hydroOnBtn,60);
-        self.disinfectBtn.sd_layout.widthIs(54).heightIs(27).bottomEqualToView(self.hydroOnBtn).rightSpaceToView(self.hydroOnBtn,60);
-        self.exhaustTipLb.sd_layout.heightIs(30).leftEqualToView(self.controlView).rightEqualToView(self.controlView).topSpaceToView(self.controlView,-30);
         
         // topV
         self.backImage.sd_layout.widthIs(18).heightIs(18).leftSpaceToView(self.displayView,14).topSpaceToView(self.displayView,displayH * 0.08);
@@ -260,19 +255,9 @@
         self.retryBtn.sd_layout.widthIs(46).heightIs(30).topSpaceToView(self.displayView,displayH * 0.07).rightSpaceToView(self.displayView,8);
         self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.36).topSpaceToView(self.displayView,displayH * 0.07);
         self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.67).topSpaceToView(self.displayView,displayH * 0.07);
-        
-        self.hydroStatus.sd_layout.widthIs(80).heightIs(32).bottomSpaceToView(self.displayView,displayH * 0.06).centerXEqualToView(self.displayView);
-        
+
         // centerY -> self.displayV
-        
-        self.disconnectView.sd_layout.widthIs(displayH * 0.5).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
-        self.circleView.sd_layout.widthIs(displayH * 0.427).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
-        self.consumeLb.sd_layout.widthIs(displayH * 0.427).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
-        self.circleProgressView.sd_layout.widthIs(displayH * 0.513).heightEqualToWidth().centerXEqualToView(self.displayView).centerYEqualToView(self.displayView);
-        
-        self.percentage.sd_layout.centerXIs(self.displayView.frame.size.width * 0.52).centerYIs(displayH * 0.44).widthIs(self.displayView.frame.size.width * 0.112).heightIs(self.displayView.frame.size.height * 0.072);
-        self.consumeLb.font = [UIFont systemFontOfSize:35];
-        self.percentage.font = [UIFont systemFontOfSize:20];
+
     }
 
     
@@ -294,23 +279,11 @@
 
     [self initViewType:_isConnected];
     
-    // 百分比圆环
-    CGRect circleProgressVFrame = self.circleProgressView.frame;
-    THCircularProgressView *circleNumV = [[THCircularProgressView alloc] initWithFrame:circleProgressVFrame];
-    circleNumV.lineWidth = 7;
-    circleNumV.radius = circleProgressVFrame.size.width * 0.5;
-    circleNumV.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
-    circleNumV.progressColor = [UIColor whiteColor];
-    circleNumV.percentage = [self.consumeLb.text floatValue] * 0.01;
-    [self.circleProgressView.superview addSubview:circleNumV];
-    circleNumV.hidden = YES;
-    self.circleNumV = circleNumV;
-    
     
     // KVO
-    [self.consumeLb addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
+    [self.currDisplayView.ConsumeLb addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
     [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
-    [self.hydroOnBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
+    [self.hydroBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
 
 }
 
@@ -490,7 +463,7 @@
  */
 - (void)initDataWithSuccessedConnection:(NSString *)backValue{
     // 数据不符合
-    if (backValue.length != 12) {
+    if (backValue.length != 16) {
         YCLog(@"数据不匹配 - 数据长度不符合");
         return;
     }
@@ -504,8 +477,12 @@
     NSString *dataStr2 = [backValue substringWithRange:NSMakeRange(6, 2)];
     // 耗材信息
     NSString *dataStr3 = [backValue substringWithRange:NSMakeRange(8, 2)];
+    // 水疗/消毒剩余时间高位
+    NSString *dataStr4 = [backValue substringWithRange:NSMakeRange(10, 2)];
+    // 水疗/消毒剩余时间地位
+    NSString *dataStr5 = [backValue substringWithRange:NSMakeRange(12, 2)];
     // 保留字
-//    NSString *dataStr4 = [backValue substringWithRange:NSMakeRange(10, 2)];
+    NSString *dataStr6 = [backValue substringWithRange:NSMakeRange(14, 2)];
     if (![protocolSignStr isEqualToString:@"2a"] && ![protocolSignStr isEqualToString:@"2A"]) {
         YCLog(@"数据不匹配 - 协议标志字错误");
         return;
@@ -524,78 +501,53 @@
     
     // 耗材信息
     NSString *newValue = [ConvertTool hexStrToDecStr:dataStr3];
-    self.consumeLb.text = newValue;
-    [self.consumeLb countFromCurrentValueTo:[newValue doubleValue]  withDuration:1.0];
+    self.currDisplayView.ConsumeLb.text = newValue;
+    [self.currDisplayView.ConsumeLb countFromCurrentValueTo:[newValue doubleValue]  withDuration:1.0];
     
     // 设备状态
     if ([dataStr1 isEqualToString:@"01"]) { // 待机
-        [self.hydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
-        self.muteBtn.selected = NO;
-        self.hydroOffBtn.enabled = NO;
-        self.hydroOffBtn.selected = NO;
-        self.hydroOnBtn.selected = NO;
-        self.hydroOnBtn.userInteractionEnabled = YES;
-        self.disinfectBtn.selected = NO;
-        self.disinfectBtn.enabled = YES;
+        [self.currDisplayView.HydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
+
     }else if ([dataStr1 isEqualToString:@"02"]){ // 水疗
-        self.muteBtn.selected = NO;
-        self.hydroOffBtn.enabled = YES;
-        self.hydroOffBtn.selected = NO;
-        self.hydroOnBtn.selected = YES;
-        self.hydroOnBtn.userInteractionEnabled = NO;
-        self.disinfectBtn.selected = NO;
-        self.disinfectBtn.enabled = NO;
-        [self.hydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
+
+        [self.currDisplayView.HydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"03"]){ // 消毒
-        self.muteBtn.selected = NO;
-        self.hydroOffBtn.enabled = NO;
-        self.hydroOffBtn.selected = NO;
-        self.hydroOnBtn.selected = NO;
-        self.hydroOnBtn.enabled = NO;
-        self.disinfectBtn.selected = YES;
-        self.disinfectBtn.enabled = YES;
-        [self.hydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
-    }else if ([dataStr1 isEqualToString:@"81"]){
-        self.muteBtn.selected = YES;
-        self.hydroOffBtn.enabled = NO;
-        self.hydroOffBtn.selected = NO;
-        self.hydroOnBtn.selected = NO;
-        self.hydroOnBtn.userInteractionEnabled = YES;
-        self.disinfectBtn.selected = NO;
-        self.disinfectBtn.enabled = YES;
-        [self.hydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
-    }else if ([dataStr1 isEqualToString:@"82"]){
-        self.muteBtn.selected = YES;
-        self.hydroOffBtn.enabled = YES;
-        self.hydroOffBtn.selected = NO;
-        self.hydroOnBtn.selected = YES;
-        self.hydroOnBtn.userInteractionEnabled = NO;
-        self.disinfectBtn.selected = NO;
-        self.disinfectBtn.enabled = NO;
-        [self.hydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
-    }else if ([dataStr1 isEqualToString:@"83"]){
-        self.muteBtn.selected = YES;
-        self.hydroOffBtn.enabled = NO;
-        self.hydroOffBtn.selected = NO;
-        self.hydroOnBtn.selected = NO;
-        self.hydroOnBtn.enabled = NO;
-        self.disinfectBtn.selected = YES;
-        self.disinfectBtn.enabled = YES;
-        [self.hydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
+
+        [self.currDisplayView.HydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"81"]){ // 待机静音
+
+        [self.currDisplayView.HydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"82"]){ // 水疗静音
+
+        [self.currDisplayView.HydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"83"]){ // 消毒静音
+
+        [self.currDisplayView.HydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
     }
     
     
     // 水流量
-    if ([dataStr2 isEqualToString:@"01"]) { // 小水量
-        self.smallBtn.selected = YES;
-        tmpWaterBtn = self.smallBtn;
-    }else if ([dataStr2 isEqualToString:@"02"]){ // 中水量
-        self.midBtn.selected = YES;
-        tmpWaterBtn = self.midBtn;
-    }else if ([dataStr2 isEqualToString:@"03"]){ // 大水量
-        self.bigBtn.selected = YES;
-        tmpWaterBtn = self.bigBtn;
+    if ([dataStr2 isEqualToString:@"01"]) { // 正常水量
+        self.normalWater.selected = YES;
+        tmpWaterBtn = self.normalWater;
+    }else if ([dataStr2 isEqualToString:@"02"]){ // 加大水量
+        self.moreWater.selected = YES;
+        tmpWaterBtn = self.moreWater;
     }
+    
+    // 剩余时间倒计时
+    NSString *HexStr = [dataStr4 stringByAppendingString:dataStr5];
+    NSString *DecStr = [ConvertTool hexStrToDecStr:HexStr];
+    int Dec = [DecStr intValue];
+    NSString *hour = [NSString stringWithFormat:@"%d",Dec / 3600];
+    NSString *minute = [NSString stringWithFormat:@"%d",(Dec % 3600) / 60];
+    NSString *second = [NSString stringWithFormat:@"%d",Dec % 60];
+    NSDictionary *timeDict = @{
+                            @"hour":hour,
+                            @"minute":minute,
+                            @"second":second
+                               };
+    
 }
 
 /**
@@ -627,32 +579,19 @@
  */
 - (void)initViewType:(BOOL)isConnect{
     if (isConnect) { //已连接 显示某些控件
-
-        self.circleNumV.center = self.circleView.center;
         self.connectStatus.text = @"(已连接)";
-        
-        self.consumeLb.format = @"%d";
-        self.consumeLb.method = UILabelCountingMethodLinear;
-        self.circleNumV.hidden = NO;
-        self.disconnectView.hidden = YES;
-        self.circleProgressView.hidden = NO;
-        self.consumeLb.hidden = NO;
-        self.circleView.hidden = NO;
-        self.percentage.hidden = NO;
         self.retryBtn.hidden = YES;
         self.coverView.hidden = YES;
+        self.silenceBtn.hidden = NO;
+        self.retryBtn.hidden = YES;
+        self.currDisplayView.viewType = displayViewTypeConnect;
     }else{ //未连接 隐藏某些控件
-        self.circleProgressView.hidden = YES;
-        self.consumeLb.hidden = YES;
-        self.circleView.hidden = YES;
-        self.percentage.hidden = YES;
-        self.circleNumV.hidden = YES;
-        self.exhaustTipLb.hidden = YES;
         self.connectStatus.text = @"(未连接)";
-        self.disconnectView.hidden = NO;
         self.retryBtn.hidden = NO;
         self.coverView.hidden = NO;
-        self.circleNumV.hidden = YES;
+        self.silenceBtn.hidden = YES;
+        self.retryBtn.hidden = NO;
+        self.currDisplayView.viewType = displayViewTypeDisconnect;
     }
 }
 
@@ -683,7 +622,7 @@
 // 水疗功能按钮点击响应
 - (IBAction)hydroBtnDidClick:(UIButton *)sender {
     // 水量开关逻辑控制
-    if (sender.tag == 102 || sender.tag == 103 || sender.tag == 104) {
+    if (sender.tag == 102 || sender.tag == 103) {
         if (tmpWaterBtn == sender) {
             return;
         }
@@ -702,17 +641,17 @@
     if (sender.tag == 101 || sender.tag == 105 || sender.tag == 106) {
         sender.selected = !sender.selected;
         if (sender.selected) {
-            switch (sender.tag) { // 水疗
-                case 101:{
-                    [self.hydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
+            switch (sender.tag) {
+                case 101:{ // 水疗
+                    [self.currDisplayView.HydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
                     break;
                 }
                 case 105:{ // 静音
                     
                     break;
                 }
-                case 106:{
-                    [self.hydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
+                case 106:{ // 消毒
+                    [self.currDisplayView.HydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
                     break;
                 }
                 default:
@@ -721,15 +660,6 @@
         }
     }
     
-    if (sender.tag == 1001) {
-        [self.hydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
-        self.disinfectBtn.enabled = YES;
-        self.hydroOnBtn.enabled = YES;
-        self.hydroOnBtn.selected = NO;
-        self.hydroOnBtn.userInteractionEnabled = YES;
-        self.hydroOffBtn.enabled = NO;
-    }
-
     [self waterBtnDidClick:sender];
   
 }
@@ -765,6 +695,15 @@
     }
 }
 
+// 电话号码点击响应
+- (IBAction)phoneNumBtnDidClick:(UIButton *)sender {
+    NSString *urlStr = @"tel://4008787555";
+    // 不要设置frame
+    UIWebView *webV = [[UIWebView alloc] init];
+    [webV loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]]];
+}
+
+
 #pragma mark 发送指令
 // 写数据 这里的数据只需要写2AXX就行 后面12位会自动补齐日期
 - (void)writeValue:(NSString *)value{ // response:(void (^)(NSString *responseStr))response
@@ -785,22 +724,21 @@
  *  @param isShow 显示or隐藏
  */
 - (void)showExhaustTip:(BOOL)isShow{
-    __weak typeof(self) weakSelf = self;
     if (isShow) {// 显示
-        [UIView animateWithDuration:1 animations:^{
-            weakSelf.exhaustTipLb.hidden = NO;
-            CGRect frame = weakSelf.exhaustTipLb.frame;
-            frame.origin.y = 0;
-            weakSelf.exhaustTipLb.frame = frame;
-        }];
+        self.currDisplayView.ChangeTip.hidden = NO;
+        self.changeLb.hidden = NO;
+        self.phoneNumBtn.hidden = NO;
+        self.hydroName.hidden = YES;
+        self.connectStatus.hidden = YES;
+        
         self.isShowTip = YES;
     }else{// 隐藏
-        [UIView animateWithDuration:1 animations:^{
-            CGRect frame = weakSelf.exhaustTipLb.frame;
-            frame.origin.y = -30;
-            weakSelf.exhaustTipLb.frame = frame;
-            weakSelf.exhaustTipLb.hidden = YES;
-        }];
+        self.currDisplayView.ChangeTip.hidden = YES;
+        self.changeLb.hidden = YES;
+        self.phoneNumBtn.hidden = YES;
+        self.hydroName.hidden = NO;
+        self.connectStatus.hidden = NO;
+        
         self.isShowTip = NO;
     }
 }
@@ -845,7 +783,7 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
     
     // 获取耗材信息
-    if ([keyPath isEqualToString:@"text"] && object == self.consumeLb) {
+    if ([keyPath isEqualToString:@"text"] && object == self.currDisplayView.ConsumeLb) {
         if ([change[@"new"] isEqualToString:@"0"]) { //显示耗材用尽提示
             [self showExhaustTip:YES];
         }
@@ -864,32 +802,29 @@
         b = [change[@"new"] boolValue];
         if (b) {
             [self.disinfectBtn removeObserver:self forKeyPath:@"selected"];
-            [self.hydroOnBtn removeObserver:self forKeyPath:@"selected"];
+            [self.hydroBtn removeObserver:self forKeyPath:@"selected"];
+#warning 消毒按钮选中状态下
+            self.hydroBtn.enabled = NO;
             
-            self.hydroOnBtn.enabled = NO;
-            self.hydroOffBtn.enabled = NO;
-//            self.hydroOnBtn.selected = NO;
             [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
-            [self.hydroOnBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
+            [self.hydroBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
         }
         if (!b){
-            self.hydroOnBtn.enabled = YES;
+            self.hydroBtn.enabled = YES;
         }
     }
     
     // 获取水疗开按钮的选中状态
-    if (object == self.hydroOnBtn && [keyPath isEqualToString:@"selected"]) {
+    if (object == self.hydroBtn && [keyPath isEqualToString:@"selected"]) {
         b = [change[@"new"] boolValue];
         if (b) {
             [self.disinfectBtn removeObserver:self forKeyPath:@"selected"];
-            [self.hydroOnBtn removeObserver:self forKeyPath:@"selected"];
+            [self.hydroBtn removeObserver:self forKeyPath:@"selected"];
+#warning 水疗按钮选中状态下
             self.disinfectBtn.enabled = NO;
-            self.disinfectBtn.selected = NO;
-            self.hydroOnBtn.selected = YES;
-            self.hydroOnBtn.userInteractionEnabled = NO;
-            self.hydroOffBtn.enabled = YES;
+            
             [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
-            [self.hydroOnBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
+            [self.hydroBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
         }
         if (!b){
             self.disinfectBtn.enabled = YES;
@@ -898,13 +833,37 @@
 }
 
 - (void)dealloc{
-    [self.consumeLb removeObserver:self forKeyPath:@"text"];
+    [self.currDisplayView.ConsumeLb removeObserver:self forKeyPath:@"text"];
     [self.disinfectBtn removeObserver:self forKeyPath:@"selected"];
-    [self.hydroOnBtn removeObserver:self forKeyPath:@"selected"];
+    [self.hydroBtn removeObserver:self forKeyPath:@"selected"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 #pragma mark - sources and delegates 代理、协议方法
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    // 计算页码
+    NSInteger page = (scrollView.contentOffset.x+scrollView.frame.size.width/2)/(scrollView.frame.size.width);
+    for (int i = 5; i < self.peripheralModels.count; i+=5) {
+        if (i - page > 0) {
+            if (self.pageCtrl.currentPage == i && page > i) {
+                self.pageCtrl.numberOfPages = (self.pageCtrl.numberOfPages - page) >= (i-1) ? i : self.pageCtrl.numberOfPages - page;
+                break;
+            }
+        }
+    }
+    self.pageCtrl.currentPage = page;
+}
+
+// 滑动结束后获取当前X偏移量
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    NSInteger index = scrollView.contentOffset.x / kScreenW;
+    // 获取当前的DisplayView
+    self.currDisplayView = self.scrollV.subviews[index];
+    
+    YCLog(@"currDisplayView:%@",self.currDisplayView);
+    YCLog(@"index:%ld",index);
+    YCLog(@"scrollV.subViews:%@",self.scrollV.subviews);
+}
 
 
 #pragma mark - getters and setters 属性的设置和获取方法
@@ -916,5 +875,23 @@
                 @"connectStatus":@(_isConnected)
                            };
     [[NSNotificationCenter defaultCenter] postNotificationName:@"connectStatus" object:nil userInfo:dict];
+}
+
+- (void)setPeripheralModels:(NSArray *)peripheralModels{
+    _peripheralModels = peripheralModels;
+    
+    self.scrollV.frame = CGRectMake(0, kScreenH * 0.1638, kScreenW, kScreenH * 0.4212);
+    self.scrollV.contentSize = CGSizeMake(kScreenW * peripheralModels.count, kScreenH * 0.4212);
+    for (NSInteger i = 0; i < peripheralModels.count; ++i) {
+        DisplayView *displayV = [DisplayView displayView];
+        displayV.viewType = displayViewTypeDisconnect;
+        displayV.frame = CGRectMake(i * kScreenW, 0, kScreenW, kScreenH * 0.4212);
+        [self.scrollV addSubview:displayV];
+    }
+}
+
+- (void)setIndex:(NSInteger)index{
+    _index = index;
+    self.scrollV.contentOffset = CGPointMake(index * kScreenW, 0);
 }
 @end

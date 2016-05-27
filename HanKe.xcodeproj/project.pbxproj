@@ -60,6 +60,8 @@
 		4A5B07491CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5B07461CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.m */; };
 		4A5B074A1CD87CC6001525A0 /* UIView+SDAutoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5B07481CD87CC6001525A0 /* UIView+SDAutoLayout.m */; };
 		4A62B2DE1CE1E57800468BC3 /* THCircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A62B2DD1CE1E57800468BC3 /* THCircularProgressView.m */; };
+		4AC9E44D1CF7EB6E002739B0 /* DisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9E44C1CF7EB6E002739B0 /* DisplayView.m */; };
+		4AC9E44F1CF7EDFE002739B0 /* DisplayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AC9E44E1CF7EDFE002739B0 /* DisplayView.xib */; };
 		4AF434001CE3037E00F4134D /* JUSTBlueToothTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AF433FF1CE3037E00F4134D /* JUSTBlueToothTool.m */; };
 		4AFE09921CD2F93200B5517E /* SVIndefiniteAnimatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AFE098D1CD2F93200B5517E /* SVIndefiniteAnimatedView.m */; };
 		4AFE09931CD2F93200B5517E /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4AFE098F1CD2F93200B5517E /* SVProgressHUD.bundle */; };
@@ -170,6 +172,9 @@
 		4A5B07481CD87CC6001525A0 /* UIView+SDAutoLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SDAutoLayout.m"; sourceTree = "<group>"; };
 		4A62B2DC1CE1E57800468BC3 /* THCircularProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THCircularProgressView.h; sourceTree = "<group>"; };
 		4A62B2DD1CE1E57800468BC3 /* THCircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THCircularProgressView.m; sourceTree = "<group>"; };
+		4AC9E44B1CF7EB6E002739B0 /* DisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayView.h; sourceTree = "<group>"; };
+		4AC9E44C1CF7EB6E002739B0 /* DisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DisplayView.m; sourceTree = "<group>"; };
+		4AC9E44E1CF7EDFE002739B0 /* DisplayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DisplayView.xib; sourceTree = "<group>"; };
 		4AF433FE1CE3037E00F4134D /* JUSTBlueToothTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JUSTBlueToothTool.h; sourceTree = "<group>"; };
 		4AF433FF1CE3037E00F4134D /* JUSTBlueToothTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JUSTBlueToothTool.m; sourceTree = "<group>"; };
 		4AFE098C1CD2F93200B5517E /* SVIndefiniteAnimatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVIndefiniteAnimatedView.h; sourceTree = "<group>"; };
@@ -355,6 +360,9 @@
 				4A62B2DD1CE1E57800468BC3 /* THCircularProgressView.m */,
 				4A4852171CE48BFA00C26A21 /* UICountingLabel.h */,
 				4A4852181CE48BFA00C26A21 /* UICountingLabel.m */,
+				4AC9E44B1CF7EB6E002739B0 /* DisplayView.h */,
+				4AC9E44C1CF7EB6E002739B0 /* DisplayView.m */,
+				4AC9E44E1CF7EDFE002739B0 /* DisplayView.xib */,
 			);
 			name = customView;
 			sourceTree = "<group>";
@@ -399,9 +407,9 @@
 				4A52D0571CD1A87E00D2F534 /* Extension(延展) */,
 				4A52D0971CD1EEF100D2F534 /* custom(自定义) */,
 				4A52D0581CD1A87E00D2F534 /* Lib(第三方) */,
+				4A52D0671CD1A87E00D2F534 /* Tools(工具类) */,
 				4A52D0591CD1A87E00D2F534 /* Main(主要) */,
 				4A52D0661CD1A87E00D2F534 /* Others(其他) */,
-				4A52D0671CD1A87E00D2F534 /* Tools(工具类) */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -671,6 +679,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A32B1C51CD0B9C20025CBA4 /* LaunchScreen.storyboard in Resources */,
+				4AC9E44F1CF7EDFE002739B0 /* DisplayView.xib in Resources */,
 				4A52D0921CD1B0A300D2F534 /* DeviceTableViewCell.xib in Resources */,
 				4A26A0721CE96E7500AE0AC9 /* MJRefresh.bundle in Resources */,
 				4A4851ED1CE42A2200C26A21 /* PeripheralViewController.xib in Resources */,
@@ -715,6 +724,7 @@
 				4A5B073A1CD856C6001525A0 /* ConvertTool.m in Sources */,
 				4A26A0691CE96E7500AE0AC9 /* MJRefreshAutoGifFooter.m in Sources */,
 				4A32B1B71CD0B9C20025CBA4 /* main.m in Sources */,
+				4AC9E44D1CF7EB6E002739B0 /* DisplayView.m in Sources */,
 				4A26A0761CE96E7500AE0AC9 /* UIView+MJExtension.m in Sources */,
 				4AF434001CE3037E00F4134D /* JUSTBlueToothTool.m in Sources */,
 				4A0966B71CF2D04C00F0E7FD /* BlueToothTool.m in Sources */,

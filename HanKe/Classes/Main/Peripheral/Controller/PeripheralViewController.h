@@ -16,9 +16,13 @@
     BabyBluetooth *BLE;
 }
 /**
- *
+ *  设备数组
  */
-@property (nonatomic, strong) NSArray *peripherals;
+@property (nonatomic, strong) NSArray *peripheralModels;
+/**
+ *  当前连接的外设Index
+ */
+@property (nonatomic, assign) NSInteger index;
 /**
  *  当前连接的蓝牙外设
  */

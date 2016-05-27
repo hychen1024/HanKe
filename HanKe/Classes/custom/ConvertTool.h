@@ -123,4 +123,5 @@
  *  @return 十进制字符串数
  */
 + (NSString *)hexStrToDecStr:(NSString *)hexStr;
+
 @end

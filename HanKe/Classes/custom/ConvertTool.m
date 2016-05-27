@@ -296,4 +296,5 @@
 + (NSString *)hexStrToDecStr:(NSString *)hexStr{
     return [NSString stringWithFormat:@"%lu",strtoul([hexStr UTF8String],0,16)];
 }
+
 @end
