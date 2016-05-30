@@ -71,7 +71,7 @@
 /**
  *  当前连接的外设
  */
-@property (nonatomic, strong) CBPeripheral *currPeri;
+@property (nonatomic, strong) CBPeripheral *currPeripheral;
 /**
  *  当前连接外设的模型
  */
@@ -106,6 +106,7 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 }
 
 #pragma mark - custom methods  自定义方法
@@ -290,7 +291,7 @@
     [self.peripheralModels removeAllObjects];
     [self.tableV reloadData];
     
-    self.currPeri = nil;
+    self.currPeripheral = nil;
     
     // 扫描设备 30s停止
     self.BLE.scanForPeripherals().begin().stop(scanTime);
@@ -307,12 +308,12 @@
 #pragma mark 连接状态改变通知回调
 - (void)receiveConnectedStatus:(NSNotification *)notice{
     BOOL connectStatus = [notice.userInfo[@"connectStatus"] boolValue];
-    
+    self.currPeripheral = notice.userInfo[@"currPeripheral"];
     if (connectStatus) {
-        self.currPeri = [[self.BLE findConnectedPeripherals] firstObject];
+        self.currPeripheral = [[self.BLE findConnectedPeripherals] firstObject];
     }
     for (Peripheral *peripheral in self.peripheralModels) {
-        if ([self.currPeri.identifier.UUIDString isEqualToString:peripheral.peri.identifier.UUIDString]) {
+        if ([self.currPeripheral.identifier.UUIDString isEqualToString:peripheral.peri.identifier.UUIDString]) {
             connectedIndex = [self.peripheralModels indexOfObject:peripheral];
         }
     }
@@ -449,7 +450,7 @@
             NSIndexPath *cellIndexPath = [weakSelf.tableV indexPathForCell:cell];
             [weakSelf.peripheralModels removeObjectAtIndex:cellIndexPath.row];
             [weakSelf.tableV deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationFade];
-            weakSelf.currPeri = nil;
+            weakSelf.currPeripheral = nil;
             return YES;
         }];
         
@@ -481,11 +482,22 @@
 
     [self.tableV reloadData];
     [self.BLE cancelAllPeripheralsConnection];
-    self.currPeri = peripheral;
-    self.peripheralVc.isConnected = NO;
-    self.peripheralVc.currPeripheral = peripheral;
-    self.peripheralVc.peripheralModels = self.peripheralModels;
+    
+    // 判断当前进入的控制台页面是否是已经进入的
+    if (self.currPeripheral == peripheral) {
+        if (peri.isConnected) {
+            self.peripheralVc.isConnected = YES;
+        }else{
+            self.peripheralVc.isConnected = NO;
+        }
+    }else{
+        self.currPeripheral = peripheral;
+        self.peripheralVc.isConnected = NO;
+        self.peripheralVc.currPeripheral = peripheral;
+    }
+    self.peripheralVc.peripheralModels = [self.peripheralModels copy];
     self.peripheralVc.index = indexPath.row;
+    self.peripheralVc.currPeri = peri;
     [self.navigationController pushViewController:self.peripheralVc animated:YES];
 }
 
@@ -521,6 +533,8 @@
         [_peripheralModels addObject:[Peripheral peripheralWithName:@"444" RSSI:@(-75) peripheral:nil]];
         [_peripheralModels addObject:[Peripheral peripheralWithName:@"555" RSSI:@(-75) peripheral:nil]];
         [_peripheralModels addObject:[Peripheral peripheralWithName:@"666" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
+        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
         [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
         [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
         [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];

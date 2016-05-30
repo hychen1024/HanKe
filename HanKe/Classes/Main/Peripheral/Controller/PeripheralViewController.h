@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BabyBluetooth.h"
 #import "BaseViewController.h"
+#import "Peripheral.h"
 
 @interface PeripheralViewController : BaseViewController
 {
@@ -19,6 +20,10 @@
  *  设备数组
  */
 @property (nonatomic, strong) NSArray *peripheralModels;
+/**
+ *  当前连接的外设模型
+ */
+@property (nonatomic, strong) Peripheral *currPeri;
 /**
  *  当前连接的外设Index
  */

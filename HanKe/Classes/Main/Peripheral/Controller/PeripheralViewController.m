@@ -16,9 +16,10 @@
 #import "BlueToothTool.h"
 #import "DisplayView.h"
 
-#define channelOnPeropheralView @"peripheralView"
 
-#define sendCheckCommandInterval 2.0
+#define channelOnPeropheralView @"peripheralView"
+// 发送查询状态指令间隔
+#define sendCheckCommandInterval 1.0
 
 @interface PeripheralViewController ()<UIScrollViewDelegate>
 {
@@ -30,9 +31,11 @@
     BOOL isSum;
     // 控制器已经存在(非第一次进入到控制器)
     BOOL hasVc;
+    // 水疗没水图片切换动画控制
+    BOOL hydroNoWater;
     
     CGFloat tmpNum;
-    // 间隔
+    // 圆环动画间隔
     CGFloat interval;
     // 水量缓冲按钮
     UIButton *tmpWaterBtn;
@@ -40,7 +43,11 @@
     UIButton *tmpFuncBtn;
 }
 /**
- *  定时发送
+ *  水疗没水Timer
+ */
+@property (nonatomic, strong) NSTimer *noWaterTimer;
+/**
+ *  定时发送查询指令Timer
  */
 @property (nonatomic, strong) NSTimer *sendTimer;
 /**
@@ -167,6 +174,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    // 状态栏改为白色
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     // 隐藏导航栏
     [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
@@ -190,32 +199,23 @@
     // 页码赋值
     if (tmpIndex <= 5) {
         self.pageCtrl.numberOfPages = 5;
-        self.pageCtrl.currentPage = tmpIndex;
+        self.pageCtrl.currentPage = tmpIndex - 1;
     }else if (tmpIndex > 5){
-        for (NSInteger i = 5; i < self.peripheralModels.count; i+=5) { // 取出5的倍数
+        for (NSInteger i = 5; i < self.peripheralModels.count + 5; i+=5) { // 取出5的倍数
+            // 当前页总数为5的情况
             if ((i - tmpIndex) <= 5 && (i - tmpIndex) >= 0 && self.peripheralModels.count >= i) {
-                    self.pageCtrl.numberOfPages = 5;
-                    self.pageCtrl.currentPage = tmpIndex - i + 5 - 1;
-            }else if ((i - tmpIndex) <= 5 && (i - tmpIndex) >= 0 && self.peripheralModels.count < i){
-                    self.pageCtrl.numberOfPages = 5 - i + self.peripheralModels.count;
-                    self.pageCtrl.currentPage = tmpIndex - i + 5 - 1;
+                self.pageCtrl.numberOfPages = 5;
+                self.pageCtrl.currentPage = tmpIndex - i + 5 - 1;
+                break;
+            }
+            // 当前页总数小于5的情况
+            else if ((i - tmpIndex) <= 5 && (i - tmpIndex) >= 0 && self.peripheralModels.count < i){
+                self.pageCtrl.numberOfPages = 5 - i + self.peripheralModels.count;
+                self.pageCtrl.currentPage = tmpIndex - i + 5 - 1;
+                break;
             }
         }
     }
-    
-//    if (self.index > 5) {
-//        self.pageCtrl.currentPage = self.index % 5;
-//    }else{
-//        self.pageCtrl.currentPage = self.index;
-//    }
-//    if (self.peripheralModels.count >= 5 && self.index > 5) {
-//        self.pageCtrl.numberOfPages = self.peripheralModels.count - 5;
-//    }else if (self.peripheralModels.count >= 5 && self.index < 5){
-//        self.pageCtrl.numberOfPages = 5;
-//    }else{
-//        self.pageCtrl.numberOfPages = self.peripheralModels.count;
-//    }
-    
     
     // topV,bottomV,coverV设置frame
     self.displayView.sd_layout.topEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.585);
@@ -232,8 +232,8 @@
     self.backImage.sd_layout.widthIs(21).heightIs(21).leftSpaceToView(self.displayView,14).topSpaceToView(self.displayView,displayH * 0.08);
     self.backBtn.sd_layout.widthIs(44).heightIs(34).leftSpaceToView(self.displayView,2).topSpaceToView(self.displayView,displayH * 0.06);
     self.retryBtn.sd_layout.widthIs(46).heightIs(30).topSpaceToView(self.displayView,displayH * 0.07).rightSpaceToView(self.displayView,8);
-    self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.4).topSpaceToView(self.displayView,displayH * 0.07);
-    self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.67).topSpaceToView(self.displayView,displayH * 0.07);
+    self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.35).topSpaceToView(self.displayView,displayH * 0.07);
+    self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.62).topSpaceToView(self.displayView,displayH * 0.07);
 
     // centerY -> self.displayV
 
@@ -264,6 +264,7 @@
 }
 
 - (void)init_View{
+    self.hydroName.text = self.currPeri.name;
     lastPer = 0;
     hasVc = NO;
     
@@ -272,11 +273,13 @@
     tmpWaterBtn = nil;
     tmpFuncBtn = nil;
     
+    // 3秒后退后按钮才可点击
     self.backBtn.enabled = NO;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.backBtn.enabled = YES;
     });
 
+    // 初始化对应的View
     [self initViewType:_isConnected];
     
     
@@ -506,23 +509,32 @@
     
     // 设备状态
     if ([dataStr1 isEqualToString:@"01"]) { // 待机
+        [self ShowHydroWithNoWater:NO];
         [self.currDisplayView.HydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
-
     }else if ([dataStr1 isEqualToString:@"02"]){ // 水疗
-
+        [self ShowHydroWithNoWater:NO];
         [self.currDisplayView.HydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"03"]){ // 消毒
 
         [self.currDisplayView.HydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"04"]){ // 水疗没水
+        [self ShowHydroWithNoWater:YES];
+        [self.currDisplayView.HydroStatus setTitle:@"水疗没水" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"81"]){ // 待机静音
-
+        self.silenceBtn.selected = YES;
+        [self ShowHydroWithNoWater:NO];
         [self.currDisplayView.HydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"82"]){ // 水疗静音
-
+        self.silenceBtn.selected = YES;
+        [self ShowHydroWithNoWater:NO];
         [self.currDisplayView.HydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"83"]){ // 消毒静音
-
+        self.silenceBtn.selected = YES;
         [self.currDisplayView.HydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"84"]){ // 水疗没水静音
+        self.silenceBtn.selected = YES;
+        [self ShowHydroWithNoWater:YES];
+        [self.currDisplayView.HydroStatus setTitle:@"水疗没水" forState:UIControlStateNormal];
     }
     
     
@@ -535,19 +547,48 @@
         tmpWaterBtn = self.moreWater;
     }
     
-    // 剩余时间倒计时
+    // 水疗/消毒剩余时间
     NSString *HexStr = [dataStr4 stringByAppendingString:dataStr5];
     NSString *DecStr = [ConvertTool hexStrToDecStr:HexStr];
+    // 剩余总秒数
     int Dec = [DecStr intValue];
+    // 剩余小时
     NSString *hour = [NSString stringWithFormat:@"%d",Dec / 3600];
+    // 剩余分钟
     NSString *minute = [NSString stringWithFormat:@"%d",(Dec % 3600) / 60];
+    // 剩余秒
     NSString *second = [NSString stringWithFormat:@"%d",Dec % 60];
-    NSDictionary *timeDict = @{
-                            @"hour":hour,
-                            @"minute":minute,
-                            @"second":second
-                               };
-    
+#warning 给剩余时间Label赋值
+}
+
+
+/**
+ *  是否显示水疗没水状态
+ */
+- (void)ShowHydroWithNoWater:(BOOL)isShow{
+    if (isShow) { // 显示水疗没水状态
+        hydroNoWater = NO;
+        self.noWaterTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(hydroNoWater:) userInfo:nil repeats:YES];
+    }else{ // 关闭水疗没水状态
+        [self.noWaterTimer invalidate];
+        self.noWaterTimer = nil;
+        UIImage *selectImg = [UIImage imageNamed:@"hydrotherapeutics_p"];
+        [self.hydroBtn setBackgroundImage:selectImg forState:UIControlStateSelected];
+        [self.hydroBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+    }
+}
+
+- (void)hydroNoWater:(NSTimer *)timer{
+    UIImage *normalImg = [UIImage imageNamed:@"hydrotherapeutics_n"];
+    UIImage *selectImg = [UIImage imageNamed:@"hydrotherapeutics_p"];
+    if (!hydroNoWater) {
+        [self.hydroBtn setBackgroundImage:normalImg forState:UIControlStateSelected];
+        [self.hydroBtn setTitleColor:[UIColor colorWithRed:200 green:200 blue:200 alpha:1] forState:UIControlStateSelected];
+    }else{
+        [self.hydroBtn setBackgroundImage:selectImg forState:UIControlStateSelected];
+        [self.hydroBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+    }
+    hydroNoWater = !hydroNoWater;
 }
 
 /**
@@ -565,7 +606,6 @@
         return;
     }
     if (self.writeCharacteristic != nil) {
-//        BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().begin();
         BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
         return;
     }
@@ -583,14 +623,12 @@
         self.retryBtn.hidden = YES;
         self.coverView.hidden = YES;
         self.silenceBtn.hidden = NO;
-        self.retryBtn.hidden = YES;
         self.currDisplayView.viewType = displayViewTypeConnect;
     }else{ //未连接 隐藏某些控件
         self.connectStatus.text = @"(未连接)";
         self.retryBtn.hidden = NO;
         self.coverView.hidden = NO;
         self.silenceBtn.hidden = YES;
-        self.retryBtn.hidden = NO;
         self.currDisplayView.viewType = displayViewTypeDisconnect;
     }
 }
@@ -647,7 +685,7 @@
                     break;
                 }
                 case 105:{ // 静音
-                    
+
                     break;
                 }
                 case 106:{ // 消毒
@@ -701,6 +739,7 @@
     // 不要设置frame
     UIWebView *webV = [[UIWebView alloc] init];
     [webV loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]]];
+    [self.view addSubview:webV];
 }
 
 
@@ -725,7 +764,7 @@
  */
 - (void)showExhaustTip:(BOOL)isShow{
     if (isShow) {// 显示
-        self.currDisplayView.ChangeTip.hidden = NO;
+        self.currDisplayView.viewType = displayViewTypeExhaust;
         self.changeLb.hidden = NO;
         self.phoneNumBtn.hidden = NO;
         self.hydroName.hidden = YES;
@@ -733,7 +772,8 @@
         
         self.isShowTip = YES;
     }else{// 隐藏
-        self.currDisplayView.ChangeTip.hidden = YES;
+        self.currDisplayView.viewType = displayViewTypeConnect;
+        
         self.changeLb.hidden = YES;
         self.phoneNumBtn.hidden = YES;
         self.hydroName.hidden = NO;
@@ -841,17 +881,39 @@
 }
 #pragma mark - sources and delegates 代理、协议方法
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    // 计算页码
-    NSInteger page = (scrollView.contentOffset.x+scrollView.frame.size.width/2)/(scrollView.frame.size.width);
-    for (int i = 5; i < self.peripheralModels.count; i+=5) {
-        if (i - page > 0) {
-            if (self.pageCtrl.currentPage == i && page > i) {
-                self.pageCtrl.numberOfPages = (self.pageCtrl.numberOfPages - page) >= (i-1) ? i : self.pageCtrl.numberOfPages - page;
+    // 计算当前页码
+    NSInteger page = (scrollView.contentOffset.x+scrollView.frame.size.width*0.5)/(scrollView.frame.size.width);
+    // 页码赋值
+    if (page < 5) {//当前页码小于5
+        self.pageCtrl.numberOfPages = 5;
+        self.pageCtrl.currentPage = page;
+    }
+    else if (page == 5){//当前页码等于5
+        self.pageCtrl.currentPage = 0;
+    }
+    else if (page > 5){//当前页码大于5
+        for (NSInteger i = 5; i < self.peripheralModels.count + 5; i+=5) { // 取出5的倍数
+            if (page == i) {//当前页码大于5并等于5的倍数
+                if(page + 5 >= self.peripheralModels.count){
+                    self.pageCtrl.numberOfPages = self.peripheralModels.count - i;
+                }
+                self.pageCtrl.currentPage = 0;
+                break;
+            }
+            // 当前页总数为5的情况
+            if ((i - page) <= 5 && (i - page) >= 0 && self.peripheralModels.count >= i) {
+                self.pageCtrl.numberOfPages = 5;
+                self.pageCtrl.currentPage = page - i + 5;
+                break;
+            }
+            // 当前页总数小于5的情况
+            else if ((i - page) <= 5 && (i - page) >= 0 && self.peripheralModels.count < i){
+                self.pageCtrl.numberOfPages = 5 - i + self.peripheralModels.count;
+                self.pageCtrl.currentPage = page - i + 5;
                 break;
             }
         }
     }
-    self.pageCtrl.currentPage = page;
 }
 
 // 滑动结束后获取当前X偏移量
@@ -860,9 +922,24 @@
     // 获取当前的DisplayView
     self.currDisplayView = self.scrollV.subviews[index];
     
-    YCLog(@"currDisplayView:%@",self.currDisplayView);
-    YCLog(@"index:%ld",index);
-    YCLog(@"scrollV.subViews:%@",self.scrollV.subviews);
+    // 切换视图
+    Peripheral *currPeri = self.peripheralModels[index];
+    self.currPeripheral = currPeri.peri;
+    // 1.更新UI
+    self.hydroName.text = currPeri.name;
+    self.connectStatus.text = currPeri.isConnected ? @"(已连接)":@"(未连接)";
+    self.coverView.hidden = NO;
+    
+    // 2.连接当前视图所对应的设备并断开连接
+    [self connectPeripheral];
+    
+    // 3.暂时关闭返回按钮
+    self.backBtn.enabled = NO;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.backBtn.enabled = YES;
+    });
+    
+    // 4.
 }
 
 
@@ -871,9 +948,22 @@
     _isConnected = isConnected;
     // 显示连接状态视图
     [self initViewType:isConnected];
-    NSDictionary *dict = @{
-                @"connectStatus":@(_isConnected)
-                           };
+    if (isConnected) {
+        self.currDisplayView.viewType = displayViewTypeConnect;
+    }else{
+        self.currDisplayView.viewType = displayViewTypeDisconnect;
+    }
+    NSDictionary *dict = nil;
+    if (self.currPeripheral == nil) {
+        dict = @{
+         @"connectStatus":@(_isConnected)
+                };
+    }else{
+        dict = @{
+         @"connectStatus":@(_isConnected),
+         @"currPeripheral":_currPeripheral
+               };
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:@"connectStatus" object:nil userInfo:dict];
 }
 
@@ -893,5 +983,7 @@
 - (void)setIndex:(NSInteger)index{
     _index = index;
     self.scrollV.contentOffset = CGPointMake(index * kScreenW, 0);
+    // 获取当前的DisplayView
+    self.currDisplayView = self.scrollV.subviews[index];
 }
 @end
