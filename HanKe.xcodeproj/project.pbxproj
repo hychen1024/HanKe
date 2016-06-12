@@ -57,9 +57,9 @@
 		4A5B073A1CD856C6001525A0 /* ConvertTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5B07391CD856C6001525A0 /* ConvertTool.m */; };
 		4A5B073C1CD8757F001525A0 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A5B073B1CD8757F001525A0 /* CoreBluetooth.framework */; };
 		4A5B07431CD87B33001525A0 /* PeripheralViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5B07421CD87B33001525A0 /* PeripheralViewController.m */; };
-		4A5B07491CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5B07461CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.m */; };
-		4A5B074A1CD87CC6001525A0 /* UIView+SDAutoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5B07481CD87CC6001525A0 /* UIView+SDAutoLayout.m */; };
 		4A62B2DE1CE1E57800468BC3 /* THCircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A62B2DD1CE1E57800468BC3 /* THCircularProgressView.m */; };
+		4A6475741D0CFF4000F7119D /* UITableView+SDAutoTableViewCellHeight.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6475711D0CFF4000F7119D /* UITableView+SDAutoTableViewCellHeight.m */; };
+		4A6475751D0CFF4000F7119D /* UIView+SDAutoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6475731D0CFF4000F7119D /* UIView+SDAutoLayout.m */; };
 		4AC9E44D1CF7EB6E002739B0 /* DisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9E44C1CF7EB6E002739B0 /* DisplayView.m */; };
 		4AC9E44F1CF7EDFE002739B0 /* DisplayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AC9E44E1CF7EDFE002739B0 /* DisplayView.xib */; };
 		4AF434001CE3037E00F4134D /* JUSTBlueToothTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AF433FF1CE3037E00F4134D /* JUSTBlueToothTool.m */; };
@@ -166,12 +166,12 @@
 		4A5B073B1CD8757F001525A0 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		4A5B07411CD87B33001525A0 /* PeripheralViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeripheralViewController.h; sourceTree = "<group>"; };
 		4A5B07421CD87B33001525A0 /* PeripheralViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeripheralViewController.m; sourceTree = "<group>"; };
-		4A5B07451CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+SDAutoTableViewCellHeight.h"; sourceTree = "<group>"; };
-		4A5B07461CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+SDAutoTableViewCellHeight.m"; sourceTree = "<group>"; };
-		4A5B07471CD87CC6001525A0 /* UIView+SDAutoLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SDAutoLayout.h"; sourceTree = "<group>"; };
-		4A5B07481CD87CC6001525A0 /* UIView+SDAutoLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SDAutoLayout.m"; sourceTree = "<group>"; };
 		4A62B2DC1CE1E57800468BC3 /* THCircularProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THCircularProgressView.h; sourceTree = "<group>"; };
 		4A62B2DD1CE1E57800468BC3 /* THCircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THCircularProgressView.m; sourceTree = "<group>"; };
+		4A6475701D0CFF4000F7119D /* UITableView+SDAutoTableViewCellHeight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+SDAutoTableViewCellHeight.h"; sourceTree = "<group>"; };
+		4A6475711D0CFF4000F7119D /* UITableView+SDAutoTableViewCellHeight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+SDAutoTableViewCellHeight.m"; sourceTree = "<group>"; };
+		4A6475721D0CFF4000F7119D /* UIView+SDAutoLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SDAutoLayout.h"; sourceTree = "<group>"; };
+		4A6475731D0CFF4000F7119D /* UIView+SDAutoLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SDAutoLayout.m"; sourceTree = "<group>"; };
 		4AC9E44B1CF7EB6E002739B0 /* DisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayView.h; sourceTree = "<group>"; };
 		4AC9E44C1CF7EB6E002739B0 /* DisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DisplayView.m; sourceTree = "<group>"; };
 		4AC9E44E1CF7EDFE002739B0 /* DisplayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DisplayView.xib; sourceTree = "<group>"; };
@@ -584,10 +584,10 @@
 		4A5B07441CD87CC6001525A0 /* SDAutoLayout */ = {
 			isa = PBXGroup;
 			children = (
-				4A5B07451CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.h */,
-				4A5B07461CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.m */,
-				4A5B07471CD87CC6001525A0 /* UIView+SDAutoLayout.h */,
-				4A5B07481CD87CC6001525A0 /* UIView+SDAutoLayout.m */,
+				4A6475701D0CFF4000F7119D /* UITableView+SDAutoTableViewCellHeight.h */,
+				4A6475711D0CFF4000F7119D /* UITableView+SDAutoTableViewCellHeight.m */,
+				4A6475721D0CFF4000F7119D /* UIView+SDAutoLayout.h */,
+				4A6475731D0CFF4000F7119D /* UIView+SDAutoLayout.m */,
 			);
 			path = SDAutoLayout;
 			sourceTree = "<group>";
@@ -701,6 +701,7 @@
 				4A32B1BA1CD0B9C20025CBA4 /* AppDelegate.m in Sources */,
 				4A52D07C1CD1A91A00D2F534 /* BabyOptions.m in Sources */,
 				4A26A06D1CE96E7500AE0AC9 /* MJRefreshBackNormalFooter.m in Sources */,
+				4A6475751D0CFF4000F7119D /* UIView+SDAutoLayout.m in Sources */,
 				4A26A0701CE96E7500AE0AC9 /* MJRefreshNormalHeader.m in Sources */,
 				4A44BE561CED8C43009E2287 /* MGSwipeTableCell.m in Sources */,
 				4A4852191CE48BFA00C26A21 /* UICountingLabel.m in Sources */,
@@ -709,8 +710,8 @@
 				4A44BE551CED8C43009E2287 /* MGSwipeButton.m in Sources */,
 				4A26A0641CE96E7500AE0AC9 /* MJRefreshAutoFooter.m in Sources */,
 				4A52D09D1CD1F02800D2F534 /* TabBarController.m in Sources */,
-				4A5B07491CD87CC6001525A0 /* UITableView+SDAutoTableViewCellHeight.m in Sources */,
 				4A52D0791CD1A91A00D2F534 /* BabyBluetooth.m in Sources */,
+				4A6475741D0CFF4000F7119D /* UITableView+SDAutoTableViewCellHeight.m in Sources */,
 				4A52D09A1CD1EF2000D2F534 /* TabBar.m in Sources */,
 				4A52D07B1CD1A91A00D2F534 /* BabyCentralManager.m in Sources */,
 				4A52D0A01CD20A9B00D2F534 /* NavController.m in Sources */,
@@ -737,7 +738,6 @@
 				4A26A0681CE96E7500AE0AC9 /* MJRefreshHeader.m in Sources */,
 				4A26A06A1CE96E7500AE0AC9 /* MJRefreshAutoNormalFooter.m in Sources */,
 				4A44BE5A1CED9F26009E2287 /* FDAlertView.m in Sources */,
-				4A5B074A1CD87CC6001525A0 /* UIView+SDAutoLayout.m in Sources */,
 				4A26A0661CE96E7500AE0AC9 /* MJRefreshComponent.m in Sources */,
 				4AFE09941CD2F93200B5517E /* SVProgressHUD.m in Sources */,
 				4A26A06C1CE96E7500AE0AC9 /* MJRefreshBackGifFooter.m in Sources */,

@@ -32,7 +32,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" id="k2T-Kd-OW0">
-                    <rect key="frame" x="0.0" y="390" width="375" height="277"/>
+                    <rect key="frame" x="0.0" y="400" width="375" height="267"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <button opaque="NO" tag="102" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="knY-Yz-99X" userLabel="normal">
@@ -103,29 +103,29 @@
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </view>
                 <view contentMode="scaleToFill" id="Zrd-Rg-Xis">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="390"/>
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="400"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="水疗设备" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="g19-GA-uSl">
-                            <rect key="frame" x="67" y="30" width="120" height="30"/>
+                            <rect key="frame" x="107" y="23" width="80" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(未连接)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="9X4-is-6I8">
-                            <rect key="frame" x="189" y="30" width="80" height="30"/>
+                            <rect key="frame" x="189" y="23" width="60" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="back1_n" id="awa-21-WWd" userLabel="backImage">
-                            <rect key="frame" x="14" y="34" width="21" height="21"/>
+                            <rect key="frame" x="14" y="27" width="21" height="21"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </imageView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="r8t-z0-ciD">
-                            <rect key="frame" x="321" y="30" width="46" height="30"/>
+                            <rect key="frame" x="321" y="23" width="46" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <state key="normal" title="重试">
                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -135,7 +135,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" tag="105" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="scF-gx-ANS" userLabel="Silence Btn">
-                            <rect key="frame" x="329" y="29" width="30" height="30"/>
+                            <rect key="frame" x="329" y="22" width="30" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <state key="normal" backgroundImage="sound"/>
                             <state key="selected" backgroundImage="silence"/>
@@ -145,14 +145,14 @@
                             </connections>
                         </button>
                         <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="设备需要更换耗材,请联系" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="BX7-iG-vjJ">
-                            <rect key="frame" x="57" y="32" width="260" height="22"/>
+                            <rect key="frame" x="57" y="25" width="260" height="22"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="PkZ-mw-JZ3">
-                            <rect key="frame" x="87" y="53" width="200" height="30"/>
+                            <rect key="frame" x="87" y="47" width="200" height="26"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="16"/>
                             <state key="normal" title="400-8787-555">
@@ -166,7 +166,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="WsS-x5-7EW">
-                            <rect key="frame" x="2" y="27" width="44" height="34"/>
+                            <rect key="frame" x="2" y="20" width="44" height="34"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <state key="normal" title="Button">
                                 <color key="titleColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -179,7 +179,7 @@
                             </connections>
                         </button>
                         <pageControl opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" id="UNd-Zi-JFH">
-                            <rect key="frame" x="137" y="67" width="100" height="37"/>
+                            <rect key="frame" x="137" y="60" width="100" height="37"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="pageIndicatorTintColor" red="0.25098039215686274" green="0.58039215686274503" blue="0.87058823529411766" alpha="1" colorSpace="calibratedRGB"/>
                             <color key="currentPageIndicatorTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -189,7 +189,7 @@
                     <color key="tintColor" red="0.12941176469999999" green="0.51372549020000002" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
                 </view>
                 <view alpha="0.5" contentMode="scaleToFill" id="cpT-tx-ESr" userLabel="coverV">
-                    <rect key="frame" x="0.0" y="390" width="375" height="277"/>
+                    <rect key="frame" x="0.0" y="400" width="375" height="267"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                 </view>

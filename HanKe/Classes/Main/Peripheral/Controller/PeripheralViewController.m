@@ -75,9 +75,7 @@
  */
 @property (nonatomic, strong) DisplayView *currDisplayView;
 
-/**
- *  BottomView
- */
+/*************** 底部控制视图 ***************/
 @property (weak, nonatomic) IBOutlet UIView *controlView;
 /**
  *  按钮遮罩View
@@ -101,13 +99,12 @@
 @property (weak, nonatomic) IBOutlet UIButton *moreWater;
 
 
-/**
- *  TopView
- */
+/*************** 顶部显示视图 ***************/
 @property (weak, nonatomic) IBOutlet UIView *displayView;
-
+/**
+ *  页码指示器
+ */
 @property (weak, nonatomic) IBOutlet UIPageControl *pageCtrl;
-
 /**
  *  静音按钮
  */
@@ -218,28 +215,36 @@
     }
     
     // topV,bottomV,coverV设置frame
-    self.displayView.sd_layout.topEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.585);
-    self.controlView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.415);
-    self.coverView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.415);
+    self.displayView.sd_layout.topEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.6);
+    self.controlView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.4);
+    self.coverView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.4);
     
-    CGFloat displayH = kScreenH * 0.585;
-    CGFloat controlH = kScreenH * 0.415;
+    CGFloat displayH = kScreenH * 0.6;
+    CGFloat controlH = kScreenH * 0.4;
     
     // bottomV
-    
+    CGFloat marginW = (kScreenW - 156) / 3;
+    CGFloat marginH = (controlH - 162) / 3;
+    self.normalWater.sd_layout.widthIs(78).heightIs(84).leftSpaceToView(self.controlView,marginW).topSpaceToView(self.controlView,marginH);
+    self.moreWater.sd_layout.widthIs(78).heightIs(84).rightSpaceToView(self.controlView,marginW).topSpaceToView(self.controlView,marginH);
+    self.hydroBtn.sd_layout.widthIs(84).heightIs(84).centerXEqualToView(self.normalWater).bottomSpaceToView(self.controlView,marginH);
+    self.disinfectBtn.sd_layout.widthIs(84).heightIs(84).centerXEqualToView(self.moreWater).bottomSpaceToView(self.controlView,marginH);
     
     // topV
-    self.backImage.sd_layout.widthIs(21).heightIs(21).leftSpaceToView(self.displayView,14).topSpaceToView(self.displayView,displayH * 0.08);
-    self.backBtn.sd_layout.widthIs(44).heightIs(34).leftSpaceToView(self.displayView,2).topSpaceToView(self.displayView,displayH * 0.06);
-    self.retryBtn.sd_layout.widthIs(46).heightIs(30).topSpaceToView(self.displayView,displayH * 0.07).rightSpaceToView(self.displayView,8);
-    self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.35).topSpaceToView(self.displayView,displayH * 0.07);
-    self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.62).topSpaceToView(self.displayView,displayH * 0.07);
-
+    self.backImage.sd_layout.widthIs(21).heightIs(21).leftSpaceToView(self.displayView,14).topSpaceToView(self.displayView,27);
+    self.backBtn.sd_layout.widthIs(44).heightIs(34).leftSpaceToView(self.displayView,2).topSpaceToView(self.displayView,20);
+    self.silenceBtn.sd_layout.rightSpaceToView(self.displayView,15).widthIs(30).heightIs(30).topSpaceToView(self.displayView,22);
+    self.retryBtn.sd_layout.widthIs(46).heightIs(30).topSpaceToView(self.displayView,23).rightSpaceToView(self.displayView,7);
+    self.hydroName.sd_layout.widthIs(80).heightIs(30).topSpaceToView(self.displayView,23).centerXEqualToView(self.displayView).offset(-40);
+    self.connectStatus.sd_layout.widthIs(60).heightIs(30).topSpaceToView(self.displayView,23).centerXEqualToView(self.displayView).offset(30);
+    self.pageCtrl.sd_layout.topSpaceToView(self.hydroName,7).centerXEqualToView(self.displayView).leftSpaceToView(self.displayView,100).rightSpaceToView(self.displayView,100);
+    self.changeLb.sd_layout.topSpaceToView(self.displayView,25).heightIs(22).leftSpaceToView(self.backBtn,1).rightSpaceToView(self.retryBtn,1);
+    self.phoneNumBtn.sd_layout.topSpaceToView(self.changeLb,1).widthIs(200).centerXEqualToView(self.displayView).heightIs(26);
     // centerY -> self.displayV
 
     if (IS_IPHONE_6P) {
-        self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.40).topSpaceToView(self.displayView,displayH * 0.07);
-        self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.64).topSpaceToView(self.displayView,displayH * 0.07);
+//        self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.40).topSpaceToView(self.displayView,displayH * 0.07);
+//        self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.64).topSpaceToView(self.displayView,displayH * 0.07);
     }
     
     if (IS_IPHONE_5) {
@@ -250,11 +255,11 @@
         // bottomV
         
         // topV
-        self.backImage.sd_layout.widthIs(18).heightIs(18).leftSpaceToView(self.displayView,14).topSpaceToView(self.displayView,displayH * 0.08);
-        self.backBtn.sd_layout.widthIs(30).heightIs(30).leftSpaceToView(self.displayView,2).topSpaceToView(self.displayView,displayH * 0.06);
-        self.retryBtn.sd_layout.widthIs(46).heightIs(30).topSpaceToView(self.displayView,displayH * 0.07).rightSpaceToView(self.displayView,8);
-        self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.36).topSpaceToView(self.displayView,displayH * 0.07);
-        self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.67).topSpaceToView(self.displayView,displayH * 0.07);
+//        self.backImage.sd_layout.widthIs(18).heightIs(18).leftSpaceToView(self.displayView,14).topSpaceToView(self.displayView,displayH * 0.08);
+//        self.backBtn.sd_layout.widthIs(30).heightIs(30).leftSpaceToView(self.displayView,2).topSpaceToView(self.displayView,displayH * 0.06);
+//        self.retryBtn.sd_layout.widthIs(46).heightIs(30).topSpaceToView(self.displayView,displayH * 0.07).rightSpaceToView(self.displayView,8);
+//        self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.36).topSpaceToView(self.displayView,displayH * 0.07);
+//        self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.67).topSpaceToView(self.displayView,displayH * 0.07);
 
         // centerY -> self.displayV
 
@@ -970,13 +975,14 @@
 - (void)setPeripheralModels:(NSArray *)peripheralModels{
     _peripheralModels = peripheralModels;
     
-    self.scrollV.frame = CGRectMake(0, kScreenH * 0.1638, kScreenW, kScreenH * 0.4212);
-    self.scrollV.contentSize = CGSizeMake(kScreenW * peripheralModels.count, kScreenH * 0.4212);
+    self.scrollV.frame = CGRectMake(0, kScreenH * 0.17, kScreenW, kScreenH * 0.43);
+    self.scrollV.contentSize = CGSizeMake(kScreenW * peripheralModels.count, kScreenH * 0.43);
     for (NSInteger i = 0; i < peripheralModels.count; ++i) {
         DisplayView *displayV = [DisplayView displayView];
         displayV.viewType = displayViewTypeDisconnect;
-        displayV.frame = CGRectMake(i * kScreenW, 0, kScreenW, kScreenH * 0.4212);
         [self.scrollV addSubview:displayV];
+        displayV.frame = CGRectMake(i * kScreenW, 0, kScreenW, kScreenH * 0.43);
+        
     }
 }
 
