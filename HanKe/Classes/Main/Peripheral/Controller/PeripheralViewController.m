@@ -280,8 +280,6 @@
     
     // KVO
     [self.currDisplayView.ConsumeLb addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
-    [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
-    [self.hydroBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
 
 }
 
@@ -495,7 +493,10 @@
     [SVProgressHUD dismiss];
     
     // 显示已连接视图
-    self.isConnected = YES;
+    if (self.isConnected == NO) {
+        self.isConnected = YES;
+    }
+    
     
     // 耗材信息
     NSString *newValue = [ConvertTool hexStrToDecStr:dataStr3];
@@ -504,49 +505,87 @@
     
     // 设备状态
     if ([dataStr1 isEqualToString:@"01"]) { // 关机
+        self.disinfectBtn.enabled = YES;
+        self.disinfectBtn.selected = NO;
+        self.hydroBtn.selected = NO;
+        self.hydroBtn.enabled = YES;
+        
         self.silenceBtn.selected = NO;
         [self ShowBlink:NO Type:0];
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x919191) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"关机" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"02"]){ // 水疗准备中
+        self.disinfectBtn.enabled = YES;
+        self.disinfectBtn.selected = NO;
+        self.hydroBtn.enabled = YES;
+        
         self.silenceBtn.selected = NO;
         [self ShowBlink:YES Type:2];
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x919191) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"水疗准备中" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"03"]){ // 水疗准备好
+        self.disinfectBtn.enabled = YES;
+        self.disinfectBtn.selected = NO;
+        self.hydroBtn.enabled = YES;
+        
         self.silenceBtn.selected = NO;
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x919191) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"水疗准备好" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"04"]){ // 水疗中
+        // 关闭消毒按钮
+        self.disinfectBtn.enabled = NO;
+        
         self.silenceBtn.selected = NO;
         [self ShowBlink:YES Type:4];
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x0ce921) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"水疗中 00:00:00" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"05"]){ // 消毒中
+        // 关闭水疗按钮
+        self.hydroBtn.enabled = NO;
+        
         self.silenceBtn.selected = NO;
         [self ShowBlink:YES Type:5];
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x1681dc) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"消毒中 00:00:00" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"81"]){ // 关机静音
+        self.disinfectBtn.enabled = YES;
+        self.disinfectBtn.selected = NO;
+        self.hydroBtn.selected = NO;
+        self.hydroBtn.enabled = YES;
+        
         self.silenceBtn.selected = YES;
         [self ShowBlink:NO Type:0];
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x919191) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"关机" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"82"]){ // 水疗准备中静音
+        self.disinfectBtn.enabled = YES;
+        self.disinfectBtn.selected = NO;
+        self.hydroBtn.enabled = YES;
+        
         self.silenceBtn.selected = YES;
         [self ShowBlink:YES Type:2];
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x919191) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"水疗准备中" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"83"]){ // 水疗准备好静音
+        self.disinfectBtn.enabled = YES;
+        self.disinfectBtn.selected = NO;
+        self.hydroBtn.enabled = YES;
+        
         self.silenceBtn.selected = YES;
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x919191) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"水疗准备好" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"84"]){ // 水疗中静音
+        // 关闭消毒按钮
+        self.disinfectBtn.enabled = NO;
+
         self.silenceBtn.selected = YES;
         [self ShowBlink:YES Type:4];
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x0ce921) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"水疗中 00:00:00" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"85"]){ // 消毒中静音
+        // 关闭水疗按钮
+        self.hydroBtn.enabled = NO;
+        
         self.silenceBtn.selected = YES;
         [self ShowBlink:YES Type:5];
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x1681dc) forState:UIControlStateNormal];
@@ -593,25 +632,29 @@
  *  Type 5 消毒中(按键灯1秒normal,1秒selected)
  */
 - (void)ShowBlink:(BOOL)isShow Type:(NSInteger)type{
-    if (self.noWaterTimer) {
-        [self.noWaterTimer invalidate];
-        self.noWaterTimer = nil;
-    }
+//    if (self.noWaterTimer) {
+//        [self.noWaterTimer invalidate];
+//        self.noWaterTimer = nil;
+//    }
     NSTimeInterval timeInterval = 0;
     if (type == 4 || type == 5) {
-        timeInterval = 1.0;
+        timeInterval = 2.0;
     }else if (type == 2){
-        timeInterval = 0.5;
+        timeInterval = 1;
     }
     if (isShow) { // 开启闪烁状态
         hydroNoWater = NO;
-        if (type == 5) { // 消毒键
-            self.noWaterTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(hydroDisinfect:) userInfo:nil repeats:YES];
-            self.disinfectBtn.selected = YES;
+        if (!self.noWaterTimer) {
+            if (type == 5) { // 消毒键
+                self.noWaterTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(hydroDisinfect:) userInfo:nil repeats:YES];
+                self.disinfectBtn.selected = YES;
+            }
+            if (type == 4) {
+                // 水疗键
+                self.noWaterTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(hydroNoWater:) userInfo:nil repeats:YES];
+                self.hydroBtn.selected = YES;
+            }
         }
-        // 水疗键
-        self.noWaterTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(hydroNoWater:) userInfo:nil repeats:YES];
-        self.hydroBtn.selected = YES;
     }else{ // 关闭闪烁状态
         [self.noWaterTimer invalidate];
         self.noWaterTimer = nil;
@@ -625,7 +668,7 @@
 - (void)hydroDisinfect:(NSTimer *)timer{
     if (!hydroNoWater) {
         [self.disinfectBtn setBackgroundImage:normalImg forState:UIControlStateSelected];
-        [self.disinfectBtn setTitleColor:[UIColor colorWithRed:200 green:200 blue:200 alpha:1] forState:UIControlStateSelected];
+        [self.disinfectBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateSelected];
     }else{
         [self.disinfectBtn setBackgroundImage:selectImg forState:UIControlStateSelected];
         [self.disinfectBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
@@ -748,10 +791,7 @@
 
 // 返回按钮点击响应
 - (IBAction)backBtnDidClick:(UIButton *)sender {
-    
-//    if (self.writeCharacteristic) {
-//        [BLE cancelNotify:self.currPeripheral characteristic:self.writeCharacteristic];
-//    }
+
     [self.noWaterTimer invalidate];
     self.noWaterTimer = nil;
     [self.timer invalidate];
@@ -759,6 +799,9 @@
     [self.sendTimer invalidate];
     self.sendTimer = nil;
     [self ShowBlink:NO Type:0];
+    
+    [self.currDisplayView.ConsumeLb removeObserver:self forKeyPath:@"text"];
+    [self.scrollV.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
     
     hasVc = YES;
@@ -884,47 +927,10 @@
         }
         [self animatedChangePercentageWithCurrPer:[change[@"new"] floatValue]*0.01];
     }
-    
-    BOOL b = NO;
-    // 获取消毒按钮的选中状态
-    if (object == self.disinfectBtn && [keyPath isEqualToString:@"selected"]) {
-        b = [change[@"new"] boolValue];
-        if (b) {
-            [self.disinfectBtn removeObserver:self forKeyPath:@"selected"];
-            [self.hydroBtn removeObserver:self forKeyPath:@"selected"];
-#warning 消毒按钮选中状态下
-            self.hydroBtn.enabled = NO;
-            
-            [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
-            [self.hydroBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
-        }
-        if (!b){
-            self.hydroBtn.enabled = YES;
-        }
-    }
-    
-    // 获取水疗开按钮的选中状态
-    if (object == self.hydroBtn && [keyPath isEqualToString:@"selected"]) {
-        b = [change[@"new"] boolValue];
-        if (b) {
-            [self.disinfectBtn removeObserver:self forKeyPath:@"selected"];
-            [self.hydroBtn removeObserver:self forKeyPath:@"selected"];
-#warning 水疗按钮选中状态下
-            self.disinfectBtn.enabled = NO;
-            
-            [self.disinfectBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
-            [self.hydroBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
-        }
-        if (!b){
-            self.disinfectBtn.enabled = YES;
-        }
-    }
 }
 
 - (void)dealloc{
     [self.currDisplayView.ConsumeLb removeObserver:self forKeyPath:@"text"];
-    [self.disinfectBtn removeObserver:self forKeyPath:@"selected"];
-    [self.hydroBtn removeObserver:self forKeyPath:@"selected"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }

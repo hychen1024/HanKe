@@ -14,9 +14,19 @@
 
 @interface DisplayView ()
 
-
 @end
 @implementation DisplayView
+
+// 百分比圆环
+//CGRect circleProgressVFrame = self.CircleProgressView.frame;
+//THCircularProgressView *circleNumV = [[THCircularProgressView alloc] initWithFrame:circleProgressVFrame];
+//circleNumV.lineWidth = 7;
+//circleNumV.radius = circleProgressVFrame.size.width * 0.5;
+//circleNumV.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
+//circleNumV.progressColor = [UIColor whiteColor];
+//circleNumV.percentage = [self.ConsumeLb.text floatValue] * 0.01;
+//[self addSubview:circleNumV];
+//circleNumV.hidden = YES;
 
 + (instancetype)displayView{
     DisplayView *display = [[[NSBundle mainBundle] loadNibNamed:@"DisplayView" owner:self options:nil] firstObject];
@@ -27,9 +37,31 @@
 - (instancetype)initWithFrame:(CGRect)frame{
     if (self = [super initWithFrame:frame]) {
         self = [[[NSBundle mainBundle] loadNibNamed:@"DisplayView" owner:self options:nil] firstObject];
-        
     }
     return self;
+}
+
+- (void)awakeFromNib{
+    [super awakeFromNib];
+    CGRect circleProgressVFrame = self.CircleProgressView.frame;
+    self.CircleProgressView.lineWidth = 7;
+    self.CircleProgressView.radius = circleProgressVFrame.size.width * 0.5;
+//    self.CircleProgressView.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
+    self.CircleProgressView.progressBackgroundColor = [UIColor blackColor];
+    self.CircleProgressView.progressColor = [UIColor whiteColor];
+    self.CircleProgressView.percentage = [self.ConsumeLb.text floatValue] * 0.01;
+    
+    // 百分比圆环
+//    CGRect circleProgressVFrame = self.CircleProgressView.frame;
+//    THCircularProgressView *circleNumV = [[THCircularProgressView alloc] initWithFrame:circleProgressVFrame];
+//    circleNumV.lineWidth = 7;
+//    circleNumV.radius = circleProgressVFrame.size.width * 0.5;
+//    circleNumV.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
+//    circleNumV.progressColor = [UIColor whiteColor];
+//    circleNumV.percentage = [self.ConsumeLb.text floatValue] * 0.01;
+//    [self addSubview:circleNumV];
+//    self.circleNumView = circleNumV;
+//    circleNumV.hidden = YES;
 }
 
 - (void)prepareUI{
@@ -86,6 +118,12 @@
         make.centerX.equalTo(self);
     }];
     
+    [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self);
+        make.centerX.equalTo(self);
+        make.size.mas_equalTo(CGSizeMake(selfH * 0.68, selfH * 0.68));
+    }];
+    
     if (IS_IPHONE_4_OR_LESS) {
         self.ResidueLb.font = [UIFont systemFontOfSize:14];
         [self.PercentageLb mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -94,49 +132,36 @@
             make.centerY.equalTo(self.DisconnectView).offset(-35);
         }];
     }
+    
+    if (IS_IPHONE_6P) {
+        [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.center.equalTo(self.CircleView);
+            make.size.mas_equalTo(CGSizeMake(selfH * 0.75, selfH * 0.75));
+        }];
+    }
+    if (IS_IPHONE_6) {
+        [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.center.equalTo(self.CircleView);
+            make.size.mas_equalTo(CGSizeMake(selfH * 0.67, selfH * 0.67));
+        }];
+    }
+    if (IS_IPHONE_5) {
+        [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.center.equalTo(self.CircleView);
+            make.size.mas_equalTo(CGSizeMake(selfH * 0.58, selfH * 0.58));
+        }];
+    }
+    if (IS_IPHONE_4_OR_LESS) {
+        [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.center.equalTo(self.CircleView);
+            make.size.mas_equalTo(CGSizeMake(selfH * 0.50, selfH * 0.50));
+        }];
+    }
 }
 
 - (void)setViewType:(displayViewType)viewType{
-    CGFloat selfH = self.frame.size.height;
     _viewType = viewType;
     if (viewType == displayViewTypeConnect) {
-        // 百分比圆环
-        CGRect circleProgressVFrame = self.CircleProgressView.frame;
-        THCircularProgressView *circleNumV = [[THCircularProgressView alloc] initWithFrame:circleProgressVFrame];
-        circleNumV.lineWidth = 7;
-        circleNumV.radius = circleProgressVFrame.size.width * 0.5;
-        circleNumV.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
-        circleNumV.progressColor = [UIColor whiteColor];
-        circleNumV.percentage = [self.ConsumeLb.text floatValue] * 0.01;
-        [self addSubview:circleNumV];
-        circleNumV.hidden = YES;
-        if (IS_IPHONE_6P) {
-            [circleNumV mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.center.equalTo(self.CircleView);
-                make.size.mas_equalTo(CGSizeMake(selfH * 0.75, selfH * 0.75));
-            }];
-        }
-        if (IS_IPHONE_6) {
-            [circleNumV mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.center.equalTo(self.CircleView);
-                make.size.mas_equalTo(CGSizeMake(selfH * 0.67, selfH * 0.67));
-            }];
-        }
-        if (IS_IPHONE_5) {
-            [circleNumV mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.center.equalTo(self.CircleView);
-                make.size.mas_equalTo(CGSizeMake(selfH * 0.58, selfH * 0.58));
-            }];
-        }
-        if (IS_IPHONE_4_OR_LESS) {
-            [circleNumV mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.center.equalTo(self.CircleView);
-                make.size.mas_equalTo(CGSizeMake(selfH * 0.50, selfH * 0.50));
-            }];
-        }
-
-        self.circleNumView = circleNumV;
-        
         self.ConsumeLb.format = @"%d";
         self.ConsumeLb.method = UILabelCountingMethodLinear;
         self.DisconnectView.hidden = YES;

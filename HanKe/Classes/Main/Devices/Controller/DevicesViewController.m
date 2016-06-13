@@ -293,8 +293,7 @@
         UIImageView *coverImg = [[UIImageView alloc] initWithFrame:self.view.frame];
         coverImg.userInteractionEnabled = YES;
         self.coverImg = coverImg;
-        coverImg.backgroundColor = [UIColor blackColor];
-        coverImg.alpha = 0.6;
+        coverImg.image = [UIImage imageNamed:@"home"];
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(firstRunTap:)];
         tap.numberOfTapsRequired = 1;
         [coverImg addGestureRecognizer:tap];

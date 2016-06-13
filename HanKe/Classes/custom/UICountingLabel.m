@@ -235,4 +235,8 @@
     return self.startingValue + (updateVal * (self.destinationValue - self.startingValue));
 }
 
+- (void)dealloc{
+    [self.timer invalidate];
+    self.timer = nil;
+}
 @end
