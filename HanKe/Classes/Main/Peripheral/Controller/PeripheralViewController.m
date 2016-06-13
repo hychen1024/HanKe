@@ -29,9 +29,9 @@
     CGFloat lastPer;
     // lastPer -> currPer 是加还是减
     BOOL isSum;
-    // 控制器已经存在(非第一次进入到控制器)
+    // 控制器是否已经存在(非第一次进入到控制器)
     BOOL hasVc;
-    // 水疗没水图片切换动画控制
+    // 是否是准备状态
     BOOL hydroNoWater;
     
     CGFloat tmpNum;
@@ -41,6 +41,9 @@
     UIButton *tmpWaterBtn;
     // 功能缓冲按钮
     UIButton *tmpFuncBtn;
+    
+    UIImage *normalImg;
+    UIImage *selectImg;
 }
 /**
  *  水疗没水Timer
@@ -195,7 +198,7 @@
     NSInteger tmpIndex = self.index+1;
     // 页码赋值
     if (tmpIndex <= 5) {
-        self.pageCtrl.numberOfPages = 5;
+        self.pageCtrl.numberOfPages = self.peripheralModels.count;
         self.pageCtrl.currentPage = tmpIndex - 1;
     }else if (tmpIndex > 5){
         for (NSInteger i = 5; i < self.peripheralModels.count + 5; i+=5) { // 取出5的倍数
@@ -218,8 +221,7 @@
     self.displayView.sd_layout.topEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.6);
     self.controlView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.4);
     self.coverView.sd_layout.bottomEqualToView(self.view).leftEqualToView(self.view).rightEqualToView(self.view).heightRatioToView(self.view,0.4);
-    
-    CGFloat displayH = kScreenH * 0.6;
+
     CGFloat controlH = kScreenH * 0.4;
     
     // bottomV
@@ -240,29 +242,10 @@
     self.pageCtrl.sd_layout.topSpaceToView(self.hydroName,7).centerXEqualToView(self.displayView).leftSpaceToView(self.displayView,100).rightSpaceToView(self.displayView,100);
     self.changeLb.sd_layout.topSpaceToView(self.displayView,25).heightIs(22).leftSpaceToView(self.backBtn,1).rightSpaceToView(self.retryBtn,1);
     self.phoneNumBtn.sd_layout.topSpaceToView(self.changeLb,1).widthIs(200).centerXEqualToView(self.displayView).heightIs(26);
-    // centerY -> self.displayV
 
-    if (IS_IPHONE_6P) {
-//        self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.40).topSpaceToView(self.displayView,displayH * 0.07);
-//        self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.64).topSpaceToView(self.displayView,displayH * 0.07);
-    }
-    
-    if (IS_IPHONE_5) {
-
-    }
     
     if (IS_IPHONE_4_OR_LESS) {
-        // bottomV
-        
-        // topV
-//        self.backImage.sd_layout.widthIs(18).heightIs(18).leftSpaceToView(self.displayView,14).topSpaceToView(self.displayView,displayH * 0.08);
-//        self.backBtn.sd_layout.widthIs(30).heightIs(30).leftSpaceToView(self.displayView,2).topSpaceToView(self.displayView,displayH * 0.06);
-//        self.retryBtn.sd_layout.widthIs(46).heightIs(30).topSpaceToView(self.displayView,displayH * 0.07).rightSpaceToView(self.displayView,8);
-//        self.hydroName.sd_layout.widthIs(120).heightIs(30).centerXIs(kScreenW * 0.36).topSpaceToView(self.displayView,displayH * 0.07);
-//        self.connectStatus.sd_layout.widthIs(80).heightIs(30).centerXIs(kScreenW * 0.67).topSpaceToView(self.displayView,displayH * 0.07);
-
-        // centerY -> self.displayV
-
+        self.pageCtrl.sd_layout.topSpaceToView(self.hydroName,0).centerXEqualToView(self.displayView).leftSpaceToView(self.displayView,100).rightSpaceToView(self.displayView,100);
     }
 
     
@@ -277,6 +260,9 @@
     
     tmpWaterBtn = nil;
     tmpFuncBtn = nil;
+    
+    normalImg = [UIImage imageNamed:@"hydrotherapeutics_n"];
+    selectImg = [UIImage imageNamed:@"hydrotherapeutics_p"];
     
     // 3秒后退后按钮才可点击
     self.backBtn.enabled = NO;
@@ -487,7 +473,7 @@
     NSString *dataStr3 = [backValue substringWithRange:NSMakeRange(8, 2)];
     // 水疗/消毒剩余时间高位
     NSString *dataStr4 = [backValue substringWithRange:NSMakeRange(10, 2)];
-    // 水疗/消毒剩余时间地位
+    // 水疗/消毒剩余时间低位
     NSString *dataStr5 = [backValue substringWithRange:NSMakeRange(12, 2)];
     // 保留字
     NSString *dataStr6 = [backValue substringWithRange:NSMakeRange(14, 2)];
@@ -513,33 +499,44 @@
     [self.currDisplayView.ConsumeLb countFromCurrentValueTo:[newValue doubleValue]  withDuration:1.0];
     
     // 设备状态
-    if ([dataStr1 isEqualToString:@"01"]) { // 待机
-        [self ShowHydroWithNoWater:NO];
-        [self.currDisplayView.HydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
-    }else if ([dataStr1 isEqualToString:@"02"]){ // 水疗
-        [self ShowHydroWithNoWater:NO];
+    if ([dataStr1 isEqualToString:@"01"]) { // 关机
+        self.silenceBtn.selected = NO;
+        [self ShowBlink:NO Type:0];
+        [self.currDisplayView.HydroStatus setTitle:@"关机" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"02"]){ // 水疗准备中
+        self.silenceBtn.selected = NO;
+        [self ShowBlink:YES Type:2];
+        [self.currDisplayView.HydroStatus setTitle:@"水疗准备中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"03"]){ // 水疗准备好
+        self.silenceBtn.selected = NO;
+        [self.currDisplayView.HydroStatus setTitle:@"水疗准备好" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"04"]){ // 水疗中
+        self.silenceBtn.selected = NO;
+        [self ShowBlink:YES Type:4];
         [self.currDisplayView.HydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
-    }else if ([dataStr1 isEqualToString:@"03"]){ // 消毒
-
+    }else if ([dataStr1 isEqualToString:@"05"]){ // 消毒中
+        self.silenceBtn.selected = NO;
+        [self ShowBlink:YES Type:5];
         [self.currDisplayView.HydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
-    }else if ([dataStr1 isEqualToString:@"04"]){ // 水疗没水
-        [self ShowHydroWithNoWater:YES];
-        [self.currDisplayView.HydroStatus setTitle:@"水疗没水" forState:UIControlStateNormal];
-    }else if ([dataStr1 isEqualToString:@"81"]){ // 待机静音
+    }else if ([dataStr1 isEqualToString:@"81"]){ // 关机静音
         self.silenceBtn.selected = YES;
-        [self ShowHydroWithNoWater:NO];
-        [self.currDisplayView.HydroStatus setTitle:@"待机中" forState:UIControlStateNormal];
-    }else if ([dataStr1 isEqualToString:@"82"]){ // 水疗静音
+        [self ShowBlink:NO Type:0];
+        [self.currDisplayView.HydroStatus setTitle:@"关机" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"82"]){ // 水疗准备中静音
         self.silenceBtn.selected = YES;
-        [self ShowHydroWithNoWater:NO];
+        [self ShowBlink:YES Type:2];
+        [self.currDisplayView.HydroStatus setTitle:@"水疗准备中" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"83"]){ // 水疗准备好静音
+        self.silenceBtn.selected = YES;
+        [self.currDisplayView.HydroStatus setTitle:@"水疗准备好" forState:UIControlStateNormal];
+    }else if ([dataStr1 isEqualToString:@"84"]){ // 水疗中静音
+        self.silenceBtn.selected = YES;
+        [self ShowBlink:YES Type:4];
         [self.currDisplayView.HydroStatus setTitle:@"水疗中" forState:UIControlStateNormal];
-    }else if ([dataStr1 isEqualToString:@"83"]){ // 消毒静音
+    }else if ([dataStr1 isEqualToString:@"85"]){ // 消毒中静音
         self.silenceBtn.selected = YES;
-        [self.currDisplayView.HydroStatus setTitle:@"消毒中" forState:UIControlStateNormal];
-    }else if ([dataStr1 isEqualToString:@"84"]){ // 水疗没水静音
-        self.silenceBtn.selected = YES;
-        [self ShowHydroWithNoWater:YES];
-        [self.currDisplayView.HydroStatus setTitle:@"水疗没水" forState:UIControlStateNormal];
+        [self ShowBlink:YES Type:5];
+        [self.currDisplayView.HydroStatus setTitle:@"消毒中 00:00:00" forState:UIControlStateNormal];
     }
     
     
@@ -547,7 +544,7 @@
     if ([dataStr2 isEqualToString:@"01"]) { // 正常水量
         self.normalWater.selected = YES;
         tmpWaterBtn = self.normalWater;
-    }else if ([dataStr2 isEqualToString:@"02"]){ // 加大水量
+    }else if ([dataStr2 isEqualToString:@"03"]){ // 加大水量
         self.moreWater.selected = YES;
         tmpWaterBtn = self.moreWater;
     }
@@ -558,37 +555,74 @@
     // 剩余总秒数
     int Dec = [DecStr intValue];
     // 剩余小时
-    NSString *hour = [NSString stringWithFormat:@"%d",Dec / 3600];
+    NSString *hour = [NSString stringWithFormat:@"%02d",Dec / 3600];
     // 剩余分钟
-    NSString *minute = [NSString stringWithFormat:@"%d",(Dec % 3600) / 60];
+    NSString *minute = [NSString stringWithFormat:@"%02d",(Dec % 3600) / 60];
     // 剩余秒
-    NSString *second = [NSString stringWithFormat:@"%d",Dec % 60];
-#warning 给剩余时间Label赋值
+    NSString *second = [NSString stringWithFormat:@"%02d",Dec % 60];
+
+    if ([dataStr1 isEqualToString:@"84"] || [dataStr1 isEqualToString:@"04"]) {
+        NSString *str = [NSString stringWithFormat:@"水疗中 %@:%@:%@",hour,minute,second];
+        [self.currDisplayView.HydroStatus setTitle:str forState:UIControlStateNormal];
+    }
+    if ([dataStr1 isEqualToString:@"85"] || [dataStr1 isEqualToString:@"05"]) {
+        NSString *str = [NSString stringWithFormat:@"消毒中 %@:%@:%@",hour,minute,second];
+        [self.currDisplayView.HydroStatus setTitle:str forState:UIControlStateNormal];
+    }
 }
 
 
 /**
- *  是否显示水疗没水状态
+ *  闪烁状态
+ *  Type 2 水疗准备中(按键灯0.5秒normal,0.5秒selected)
+ *  Type 4 水疗中(按键灯1秒normal,1秒selected)
+ *  Type 5 消毒中(按键灯1秒normal,1秒selected)
  */
-- (void)ShowHydroWithNoWater:(BOOL)isShow{
-    if (isShow) { // 显示水疗没水状态
-        hydroNoWater = NO;
-        self.noWaterTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(hydroNoWater:) userInfo:nil repeats:YES];
-    }else{ // 关闭水疗没水状态
+- (void)ShowBlink:(BOOL)isShow Type:(NSInteger)type{
+    if (self.noWaterTimer) {
         [self.noWaterTimer invalidate];
         self.noWaterTimer = nil;
-        UIImage *selectImg = [UIImage imageNamed:@"hydrotherapeutics_p"];
+    }
+    NSTimeInterval timeInterval = 0;
+    if (type == 4 || type == 5) {
+        timeInterval = 1.0;
+    }else if (type == 2){
+        timeInterval = 0.5;
+    }
+    if (isShow) { // 开启闪烁状态
+        hydroNoWater = NO;
+        if (type == 5) { // 消毒键
+            self.noWaterTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(hydroDisinfect:) userInfo:nil repeats:YES];
+            self.disinfectBtn.selected = YES;
+        }
+        // 水疗键
+        self.noWaterTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(hydroNoWater:) userInfo:nil repeats:YES];
+        self.hydroBtn.selected = YES;
+    }else{ // 关闭闪烁状态
+        [self.noWaterTimer invalidate];
+        self.noWaterTimer = nil;
         [self.hydroBtn setBackgroundImage:selectImg forState:UIControlStateSelected];
         [self.hydroBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+        [self.disinfectBtn setBackgroundImage:selectImg forState:UIControlStateSelected];
+        [self.disinfectBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
     }
 }
 
+- (void)hydroDisinfect:(NSTimer *)timer{
+    if (!hydroNoWater) {
+        [self.disinfectBtn setBackgroundImage:normalImg forState:UIControlStateSelected];
+        [self.disinfectBtn setTitleColor:[UIColor colorWithRed:200 green:200 blue:200 alpha:1] forState:UIControlStateSelected];
+    }else{
+        [self.disinfectBtn setBackgroundImage:selectImg forState:UIControlStateSelected];
+        [self.disinfectBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+    }
+    hydroNoWater = !hydroNoWater;
+}
+
 - (void)hydroNoWater:(NSTimer *)timer{
-    UIImage *normalImg = [UIImage imageNamed:@"hydrotherapeutics_n"];
-    UIImage *selectImg = [UIImage imageNamed:@"hydrotherapeutics_p"];
     if (!hydroNoWater) {
         [self.hydroBtn setBackgroundImage:normalImg forState:UIControlStateSelected];
-        [self.hydroBtn setTitleColor:[UIColor colorWithRed:200 green:200 blue:200 alpha:1] forState:UIControlStateSelected];
+        [self.hydroBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateSelected];
     }else{
         [self.hydroBtn setBackgroundImage:selectImg forState:UIControlStateSelected];
         [self.hydroBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
@@ -643,29 +677,20 @@
 }
 
 #pragma mark 水疗按钮响应
-/**
-    按钮对应tag值
- *  101 水疗开  1001 水疗关 (指令都是同一个,一个开一个关)
-    102 小水量
-    103 中水量
-    104 大水量
-    105 静音模式
-    106 消毒模式(消毒模式什么都不能做 只能取消消毒模式)
-    107 读取机器当前状态
- *
- */
+
 - (void)waterBtnDidClick:(UIButton *)btn{
     
     // 获取按钮的最后一位数(状态码)
     NSInteger statusNum = btn.tag % 10;
-    NSString *writeStr = [NSString stringWithFormat:@"2A0%ld",statusNum];
+    NSString *writeStr = [NSString stringWithFormat:@"2A0%ld",(long)statusNum];
+
     [self writeValue:writeStr];
 }
 
 // 水疗功能按钮点击响应
 - (IBAction)hydroBtnDidClick:(UIButton *)sender {
     // 水量开关逻辑控制
-    if (sender.tag == 102 || sender.tag == 103) {
+    if (sender.tag == 102 || sender.tag == 104) {
         if (tmpWaterBtn == sender) {
             return;
         }
@@ -690,7 +715,7 @@
                     break;
                 }
                 case 105:{ // 静音
-
+                    
                     break;
                 }
                 case 106:{ // 消毒
@@ -717,13 +742,12 @@
     self.timer = nil;
     [self.sendTimer invalidate];
     self.sendTimer = nil;
-    
+    [self ShowBlink:NO Type:0];
     hasVc = YES;
     [SVProgressHUD dismiss];
     [self.navigationController popViewControllerAnimated:YES];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
     
-
 }
 
 // 重试按钮点击响应
@@ -769,7 +793,9 @@
  */
 - (void)showExhaustTip:(BOOL)isShow{
     if (isShow) {// 显示
+        self.pageCtrl.sd_layout.topSpaceToView(self.hydroName,7).centerXEqualToView(self.displayView).leftSpaceToView(self.displayView,100).rightSpaceToView(self.displayView,100);
         self.currDisplayView.viewType = displayViewTypeExhaust;
+        
         self.changeLb.hidden = NO;
         self.phoneNumBtn.hidden = NO;
         self.hydroName.hidden = YES;
@@ -841,7 +867,7 @@
         [self animatedChangePercentageWithCurrPer:[change[@"new"] floatValue]*0.01];
     }
     
-    BOOL b = nil;
+    BOOL b = NO;
     // 获取消毒按钮的选中状态
     if (object == self.disinfectBtn && [keyPath isEqualToString:@"selected"]) {
         b = [change[@"new"] boolValue];
@@ -890,7 +916,7 @@
     NSInteger page = (scrollView.contentOffset.x+scrollView.frame.size.width*0.5)/(scrollView.frame.size.width);
     // 页码赋值
     if (page < 5) {//当前页码小于5
-        self.pageCtrl.numberOfPages = 5;
+        self.pageCtrl.numberOfPages = self.peripheralModels.count;
         self.pageCtrl.currentPage = page;
     }
     else if (page == 5){//当前页码等于5
@@ -980,9 +1006,9 @@
     for (NSInteger i = 0; i < peripheralModels.count; ++i) {
         DisplayView *displayV = [DisplayView displayView];
         displayV.viewType = displayViewTypeDisconnect;
-        [self.scrollV addSubview:displayV];
         displayV.frame = CGRectMake(i * kScreenW, 0, kScreenW, kScreenH * 0.43);
-        
+        [self.scrollV addSubview:displayV];
+        [displayV prepareUI];
     }
 }
 

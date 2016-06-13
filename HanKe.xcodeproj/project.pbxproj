@@ -57,9 +57,21 @@
 		4A5B073A1CD856C6001525A0 /* ConvertTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5B07391CD856C6001525A0 /* ConvertTool.m */; };
 		4A5B073C1CD8757F001525A0 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A5B073B1CD8757F001525A0 /* CoreBluetooth.framework */; };
 		4A5B07431CD87B33001525A0 /* PeripheralViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5B07421CD87B33001525A0 /* PeripheralViewController.m */; };
+		4A5CCAA71D0E4B75001C09E7 /* YCButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5CCAA61D0E4B75001C09E7 /* YCButton.m */; };
 		4A62B2DE1CE1E57800468BC3 /* THCircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A62B2DD1CE1E57800468BC3 /* THCircularProgressView.m */; };
 		4A6475741D0CFF4000F7119D /* UITableView+SDAutoTableViewCellHeight.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6475711D0CFF4000F7119D /* UITableView+SDAutoTableViewCellHeight.m */; };
 		4A6475751D0CFF4000F7119D /* UIView+SDAutoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6475731D0CFF4000F7119D /* UIView+SDAutoLayout.m */; };
+		4A6475911D0D5BA600F7119D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4A6475771D0D5BA600F7119D /* Info.plist */; };
+		4A6475921D0D5BA600F7119D /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6475791D0D5BA600F7119D /* MASCompositeConstraint.m */; };
+		4A6475931D0D5BA600F7119D /* MASConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64757C1D0D5BA600F7119D /* MASConstraint.m */; };
+		4A6475941D0D5BA600F7119D /* MASConstraintMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64757E1D0D5BA600F7119D /* MASConstraintMaker.m */; };
+		4A6475951D0D5BA600F7119D /* MASLayoutConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6475801D0D5BA600F7119D /* MASLayoutConstraint.m */; };
+		4A6475961D0D5BA600F7119D /* MASViewAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6475841D0D5BA600F7119D /* MASViewAttribute.m */; };
+		4A6475971D0D5BA600F7119D /* MASViewConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6475861D0D5BA600F7119D /* MASViewConstraint.m */; };
+		4A6475981D0D5BA600F7119D /* NSArray+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6475881D0D5BA600F7119D /* NSArray+MASAdditions.m */; };
+		4A6475991D0D5BA600F7119D /* NSLayoutConstraint+MASDebugAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64758B1D0D5BA600F7119D /* NSLayoutConstraint+MASDebugAdditions.m */; };
+		4A64759A1D0D5BA600F7119D /* View+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64758D1D0D5BA600F7119D /* View+MASAdditions.m */; };
+		4A64759B1D0D5BA600F7119D /* ViewController+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6475901D0D5BA600F7119D /* ViewController+MASAdditions.m */; };
 		4AC9E44D1CF7EB6E002739B0 /* DisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9E44C1CF7EB6E002739B0 /* DisplayView.m */; };
 		4AC9E44F1CF7EDFE002739B0 /* DisplayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AC9E44E1CF7EDFE002739B0 /* DisplayView.xib */; };
 		4AF434001CE3037E00F4134D /* JUSTBlueToothTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AF433FF1CE3037E00F4134D /* JUSTBlueToothTool.m */; };
@@ -166,15 +178,43 @@
 		4A5B073B1CD8757F001525A0 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		4A5B07411CD87B33001525A0 /* PeripheralViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeripheralViewController.h; sourceTree = "<group>"; };
 		4A5B07421CD87B33001525A0 /* PeripheralViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeripheralViewController.m; sourceTree = "<group>"; };
+		4A5CCAA51D0E4B75001C09E7 /* YCButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YCButton.h; sourceTree = "<group>"; };
+		4A5CCAA61D0E4B75001C09E7 /* YCButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YCButton.m; sourceTree = "<group>"; };
 		4A62B2DC1CE1E57800468BC3 /* THCircularProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THCircularProgressView.h; sourceTree = "<group>"; };
 		4A62B2DD1CE1E57800468BC3 /* THCircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THCircularProgressView.m; sourceTree = "<group>"; };
 		4A6475701D0CFF4000F7119D /* UITableView+SDAutoTableViewCellHeight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+SDAutoTableViewCellHeight.h"; sourceTree = "<group>"; };
 		4A6475711D0CFF4000F7119D /* UITableView+SDAutoTableViewCellHeight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+SDAutoTableViewCellHeight.m"; sourceTree = "<group>"; };
 		4A6475721D0CFF4000F7119D /* UIView+SDAutoLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SDAutoLayout.h"; sourceTree = "<group>"; };
 		4A6475731D0CFF4000F7119D /* UIView+SDAutoLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SDAutoLayout.m"; sourceTree = "<group>"; };
-		4AC9E44B1CF7EB6E002739B0 /* DisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayView.h; sourceTree = "<group>"; };
-		4AC9E44C1CF7EB6E002739B0 /* DisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DisplayView.m; sourceTree = "<group>"; };
-		4AC9E44E1CF7EDFE002739B0 /* DisplayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DisplayView.xib; sourceTree = "<group>"; };
+		4A6475771D0D5BA600F7119D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4A6475781D0D5BA600F7119D /* MASCompositeConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASCompositeConstraint.h; sourceTree = "<group>"; };
+		4A6475791D0D5BA600F7119D /* MASCompositeConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASCompositeConstraint.m; sourceTree = "<group>"; };
+		4A64757A1D0D5BA600F7119D /* MASConstraint+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MASConstraint+Private.h"; sourceTree = "<group>"; };
+		4A64757B1D0D5BA600F7119D /* MASConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASConstraint.h; sourceTree = "<group>"; };
+		4A64757C1D0D5BA600F7119D /* MASConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASConstraint.m; sourceTree = "<group>"; };
+		4A64757D1D0D5BA600F7119D /* MASConstraintMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASConstraintMaker.h; sourceTree = "<group>"; };
+		4A64757E1D0D5BA600F7119D /* MASConstraintMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASConstraintMaker.m; sourceTree = "<group>"; };
+		4A64757F1D0D5BA600F7119D /* MASLayoutConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASLayoutConstraint.h; sourceTree = "<group>"; };
+		4A6475801D0D5BA600F7119D /* MASLayoutConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASLayoutConstraint.m; sourceTree = "<group>"; };
+		4A6475811D0D5BA600F7119D /* Masonry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Masonry.h; sourceTree = "<group>"; };
+		4A6475821D0D5BA600F7119D /* MASUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASUtilities.h; sourceTree = "<group>"; };
+		4A6475831D0D5BA600F7119D /* MASViewAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASViewAttribute.h; sourceTree = "<group>"; };
+		4A6475841D0D5BA600F7119D /* MASViewAttribute.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASViewAttribute.m; sourceTree = "<group>"; };
+		4A6475851D0D5BA600F7119D /* MASViewConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASViewConstraint.h; sourceTree = "<group>"; };
+		4A6475861D0D5BA600F7119D /* MASViewConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASViewConstraint.m; sourceTree = "<group>"; };
+		4A6475871D0D5BA600F7119D /* NSArray+MASAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+MASAdditions.h"; sourceTree = "<group>"; };
+		4A6475881D0D5BA600F7119D /* NSArray+MASAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+MASAdditions.m"; sourceTree = "<group>"; };
+		4A6475891D0D5BA600F7119D /* NSArray+MASShorthandAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+MASShorthandAdditions.h"; sourceTree = "<group>"; };
+		4A64758A1D0D5BA600F7119D /* NSLayoutConstraint+MASDebugAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLayoutConstraint+MASDebugAdditions.h"; sourceTree = "<group>"; };
+		4A64758B1D0D5BA600F7119D /* NSLayoutConstraint+MASDebugAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLayoutConstraint+MASDebugAdditions.m"; sourceTree = "<group>"; };
+		4A64758C1D0D5BA600F7119D /* View+MASAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "View+MASAdditions.h"; sourceTree = "<group>"; };
+		4A64758D1D0D5BA600F7119D /* View+MASAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "View+MASAdditions.m"; sourceTree = "<group>"; };
+		4A64758E1D0D5BA600F7119D /* View+MASShorthandAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "View+MASShorthandAdditions.h"; sourceTree = "<group>"; };
+		4A64758F1D0D5BA600F7119D /* ViewController+MASAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ViewController+MASAdditions.h"; sourceTree = "<group>"; };
+		4A6475901D0D5BA600F7119D /* ViewController+MASAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ViewController+MASAdditions.m"; sourceTree = "<group>"; };
+		4AC9E44B1CF7EB6E002739B0 /* DisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayView.h; path = ../../../custom/DisplayView.h; sourceTree = "<group>"; };
+		4AC9E44C1CF7EB6E002739B0 /* DisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DisplayView.m; path = ../../../custom/DisplayView.m; sourceTree = "<group>"; };
+		4AC9E44E1CF7EDFE002739B0 /* DisplayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DisplayView.xib; path = ../../../custom/DisplayView.xib; sourceTree = "<group>"; };
 		4AF433FE1CE3037E00F4134D /* JUSTBlueToothTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JUSTBlueToothTool.h; sourceTree = "<group>"; };
 		4AF433FF1CE3037E00F4134D /* JUSTBlueToothTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JUSTBlueToothTool.m; sourceTree = "<group>"; };
 		4AFE098C1CD2F93200B5517E /* SVIndefiniteAnimatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVIndefiniteAnimatedView.h; sourceTree = "<group>"; };
@@ -360,9 +400,8 @@
 				4A62B2DD1CE1E57800468BC3 /* THCircularProgressView.m */,
 				4A4852171CE48BFA00C26A21 /* UICountingLabel.h */,
 				4A4852181CE48BFA00C26A21 /* UICountingLabel.m */,
-				4AC9E44B1CF7EB6E002739B0 /* DisplayView.h */,
-				4AC9E44C1CF7EB6E002739B0 /* DisplayView.m */,
-				4AC9E44E1CF7EDFE002739B0 /* DisplayView.xib */,
+				4A5CCAA51D0E4B75001C09E7 /* YCButton.h */,
+				4A5CCAA61D0E4B75001C09E7 /* YCButton.m */,
 			);
 			name = customView;
 			sourceTree = "<group>";
@@ -425,6 +464,7 @@
 		4A52D0581CD1A87E00D2F534 /* Lib(第三方) */ = {
 			isa = PBXGroup;
 			children = (
+				4A6475761D0D5BA600F7119D /* Masonry */,
 				4A44BE571CED9F26009E2287 /* FDAlertView */,
 				4A44BE4E1CED8C43009E2287 /* MGSwipeTableCell */,
 				4A26A0371CE96E7500AE0AC9 /* MJRefresh */,
@@ -577,6 +617,9 @@
 		4A5B07401CD87AB3001525A0 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				4AC9E44B1CF7EB6E002739B0 /* DisplayView.h */,
+				4AC9E44C1CF7EB6E002739B0 /* DisplayView.m */,
+				4AC9E44E1CF7EDFE002739B0 /* DisplayView.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -590,6 +633,40 @@
 				4A6475731D0CFF4000F7119D /* UIView+SDAutoLayout.m */,
 			);
 			path = SDAutoLayout;
+			sourceTree = "<group>";
+		};
+		4A6475761D0D5BA600F7119D /* Masonry */ = {
+			isa = PBXGroup;
+			children = (
+				4A6475771D0D5BA600F7119D /* Info.plist */,
+				4A6475781D0D5BA600F7119D /* MASCompositeConstraint.h */,
+				4A6475791D0D5BA600F7119D /* MASCompositeConstraint.m */,
+				4A64757A1D0D5BA600F7119D /* MASConstraint+Private.h */,
+				4A64757B1D0D5BA600F7119D /* MASConstraint.h */,
+				4A64757C1D0D5BA600F7119D /* MASConstraint.m */,
+				4A64757D1D0D5BA600F7119D /* MASConstraintMaker.h */,
+				4A64757E1D0D5BA600F7119D /* MASConstraintMaker.m */,
+				4A64757F1D0D5BA600F7119D /* MASLayoutConstraint.h */,
+				4A6475801D0D5BA600F7119D /* MASLayoutConstraint.m */,
+				4A6475811D0D5BA600F7119D /* Masonry.h */,
+				4A6475821D0D5BA600F7119D /* MASUtilities.h */,
+				4A6475831D0D5BA600F7119D /* MASViewAttribute.h */,
+				4A6475841D0D5BA600F7119D /* MASViewAttribute.m */,
+				4A6475851D0D5BA600F7119D /* MASViewConstraint.h */,
+				4A6475861D0D5BA600F7119D /* MASViewConstraint.m */,
+				4A6475871D0D5BA600F7119D /* NSArray+MASAdditions.h */,
+				4A6475881D0D5BA600F7119D /* NSArray+MASAdditions.m */,
+				4A6475891D0D5BA600F7119D /* NSArray+MASShorthandAdditions.h */,
+				4A64758A1D0D5BA600F7119D /* NSLayoutConstraint+MASDebugAdditions.h */,
+				4A64758B1D0D5BA600F7119D /* NSLayoutConstraint+MASDebugAdditions.m */,
+				4A64758C1D0D5BA600F7119D /* View+MASAdditions.h */,
+				4A64758D1D0D5BA600F7119D /* View+MASAdditions.m */,
+				4A64758E1D0D5BA600F7119D /* View+MASShorthandAdditions.h */,
+				4A64758F1D0D5BA600F7119D /* ViewController+MASAdditions.h */,
+				4A6475901D0D5BA600F7119D /* ViewController+MASAdditions.m */,
+			);
+			name = Masonry;
+			path = ../Masonry;
 			sourceTree = "<group>";
 		};
 		4AF433FD1CE3035C00F4134D /* BlueToothTool */ = {
@@ -680,6 +757,7 @@
 			files = (
 				4A32B1C51CD0B9C20025CBA4 /* LaunchScreen.storyboard in Resources */,
 				4AC9E44F1CF7EDFE002739B0 /* DisplayView.xib in Resources */,
+				4A6475911D0D5BA600F7119D /* Info.plist in Resources */,
 				4A52D0921CD1B0A300D2F534 /* DeviceTableViewCell.xib in Resources */,
 				4A26A0721CE96E7500AE0AC9 /* MJRefresh.bundle in Resources */,
 				4A4851ED1CE42A2200C26A21 /* PeripheralViewController.xib in Resources */,
@@ -699,9 +777,15 @@
 				4A26A0731CE96E7500AE0AC9 /* MJRefreshConst.m in Sources */,
 				4A52D0801CD1A91A00D2F534 /* BabyToy.m in Sources */,
 				4A32B1BA1CD0B9C20025CBA4 /* AppDelegate.m in Sources */,
+				4A6475971D0D5BA600F7119D /* MASViewConstraint.m in Sources */,
 				4A52D07C1CD1A91A00D2F534 /* BabyOptions.m in Sources */,
+				4A5CCAA71D0E4B75001C09E7 /* YCButton.m in Sources */,
+				4A6475921D0D5BA600F7119D /* MASCompositeConstraint.m in Sources */,
 				4A26A06D1CE96E7500AE0AC9 /* MJRefreshBackNormalFooter.m in Sources */,
+				4A6475991D0D5BA600F7119D /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
+				4A64759A1D0D5BA600F7119D /* View+MASAdditions.m in Sources */,
 				4A6475751D0CFF4000F7119D /* UIView+SDAutoLayout.m in Sources */,
+				4A6475951D0D5BA600F7119D /* MASLayoutConstraint.m in Sources */,
 				4A26A0701CE96E7500AE0AC9 /* MJRefreshNormalHeader.m in Sources */,
 				4A44BE561CED8C43009E2287 /* MGSwipeTableCell.m in Sources */,
 				4A4852191CE48BFA00C26A21 /* UICountingLabel.m in Sources */,
@@ -723,19 +807,23 @@
 				4A52D0961CD1DB0500D2F534 /* RTDragCellTableView.m in Sources */,
 				4A26A0671CE96E7500AE0AC9 /* MJRefreshFooter.m in Sources */,
 				4A5B073A1CD856C6001525A0 /* ConvertTool.m in Sources */,
+				4A6475961D0D5BA600F7119D /* MASViewAttribute.m in Sources */,
 				4A26A0691CE96E7500AE0AC9 /* MJRefreshAutoGifFooter.m in Sources */,
 				4A32B1B71CD0B9C20025CBA4 /* main.m in Sources */,
 				4AC9E44D1CF7EB6E002739B0 /* DisplayView.m in Sources */,
 				4A26A0761CE96E7500AE0AC9 /* UIView+MJExtension.m in Sources */,
 				4AF434001CE3037E00F4134D /* JUSTBlueToothTool.m in Sources */,
+				4A6475981D0D5BA600F7119D /* NSArray+MASAdditions.m in Sources */,
 				4A0966B71CF2D04C00F0E7FD /* BlueToothTool.m in Sources */,
 				4A26A0751CE96E7500AE0AC9 /* UIScrollView+MJRefresh.m in Sources */,
 				4A52D07F1CD1A91A00D2F534 /* BabySpeaker.m in Sources */,
 				4AFE09921CD2F93200B5517E /* SVIndefiniteAnimatedView.m in Sources */,
 				4A26A0651CE96E7500AE0AC9 /* MJRefreshBackFooter.m in Sources */,
 				4A496D811CDC6D680084E69B /* AboutViewController.m in Sources */,
+				4A64759B1D0D5BA600F7119D /* ViewController+MASAdditions.m in Sources */,
 				4A52D07E1CD1A91A00D2F534 /* BabyRhythm.m in Sources */,
 				4A26A0681CE96E7500AE0AC9 /* MJRefreshHeader.m in Sources */,
+				4A6475941D0D5BA600F7119D /* MASConstraintMaker.m in Sources */,
 				4A26A06A1CE96E7500AE0AC9 /* MJRefreshAutoNormalFooter.m in Sources */,
 				4A44BE5A1CED9F26009E2287 /* FDAlertView.m in Sources */,
 				4A26A0661CE96E7500AE0AC9 /* MJRefreshComponent.m in Sources */,
@@ -746,6 +834,7 @@
 				4A52D0911CD1B0A300D2F534 /* DeviceTableViewCell.m in Sources */,
 				4A26A06E1CE96E7500AE0AC9 /* MJRefreshBackStateFooter.m in Sources */,
 				4A26A0711CE96E7500AE0AC9 /* MJRefreshStateHeader.m in Sources */,
+				4A6475931D0D5BA600F7119D /* MASConstraint.m in Sources */,
 				4A52D07D1CD1A91A00D2F534 /* BabyPeripheralManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

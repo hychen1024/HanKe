@@ -8,6 +8,8 @@
 
 #import "DisplayView.h"
 #import "UIView+SDAutoLayout.h"
+#import "Masonry.h"
+#import "YCButton.h"
 
 
 @interface DisplayView ()
@@ -18,42 +20,84 @@
 
 + (instancetype)displayView{
     DisplayView *display = [[[NSBundle mainBundle] loadNibNamed:@"DisplayView" owner:self options:nil] firstObject];
-    CGFloat selfH = display.frame.size.height;
-    display.DisconnectView.sd_layout.topEqualToView(display).widthIs(display.frame.size.height * 0.68).heightEqualToWidth().centerXEqualToView(display);
-    display.ChangeTip.sd_layout.topEqualToView(display).widthIs(display.frame.size.height * 0.68).heightEqualToWidth().centerXEqualToView(display);
-    display.CircleProgressView.sd_layout.topEqualToView(display).widthIs(selfH * 0.68).heightEqualToWidth().centerXEqualToView(display);
-    display.CircleView.sd_layout.topSpaceToView(display,selfH * 0.057).widthIs(selfH * 0.571).heightEqualToWidth().centerXEqualToView(display);
-    display.ConsumeLb.sd_layout.topSpaceToView(display,selfH * 0.057).widthIs(selfH * 0.571).heightEqualToWidth().centerXEqualToView(display);
-    display.PercentageLb.sd_layout.widthIs(42).heightIs(26).centerXEqualToView(display).offset(20).centerYEqualToView(display.DisconnectView).offset(-35);
-    display.ResidueLb.sd_layout.widthIs(selfH * 0.286).heightIs(21).centerXEqualToView(display).centerYEqualToView(display.DisconnectView).offset(display.DisconnectView.frame.size.height * 0.16);
-    display.HydroStatus.sd_layout.widthIs(80).heightIs(32).centerXEqualToView(display).bottomSpaceToView(display,selfH * 0.05);
+
     return display;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame{
     if (self = [super initWithFrame:frame]) {
         self = [[[NSBundle mainBundle] loadNibNamed:@"DisplayView" owner:self options:nil] firstObject];
-        CGFloat selfH = self.frame.size.height;
-        self.DisconnectView.sd_layout.topEqualToView(self).widthIs(self.frame.size.height * 0.68).heightEqualToWidth().centerXEqualToView(self);
-        self.ChangeTip.sd_layout.topEqualToView(self).widthIs(self.frame.size.height * 0.68).heightEqualToWidth().centerXEqualToView(self);
-        self.CircleProgressView.sd_layout.topEqualToView(self).widthIs(selfH * 0.68).heightEqualToWidth().centerXEqualToView(self);
-        self.CircleView.sd_layout.topSpaceToView(self,selfH * 0.057).widthIs(selfH * 0.571).heightEqualToWidth().centerXEqualToView(self);
-        self.ConsumeLb.sd_layout.topSpaceToView(self,selfH * 0.057).widthIs(selfH * 0.571).heightEqualToWidth().centerXEqualToView(self);
-        self.PercentageLb.sd_layout.widthIs(42).heightIs(26).centerXEqualToView(self).offset(20).centerYEqualToView(self.DisconnectView).offset(-35);
-        self.ResidueLb.sd_layout.widthIs(selfH * 0.286).heightIs(21).centerXEqualToView(self).centerYEqualToView(self.DisconnectView).offset(self.DisconnectView.frame.size.height * 0.16);
-        self.HydroStatus.sd_layout.widthIs(80).heightIs(32).centerXEqualToView(self).bottomSpaceToView(self,selfH * 0.05);
+        
     }
     return self;
 }
 
-//布局子控件
-//- (void)layoutSubviews{
-//
-//}
+- (void)prepareUI{
+    CGFloat selfH = self.frame.size.height;
+    [self.DisconnectView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self);
+        make.centerX.equalTo(self);
+        make.size.mas_equalTo(CGSizeMake(selfH * 0.68, selfH * 0.68));
+    }];
+    
+    [self.ChangeTip mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self);
+        make.centerX.equalTo(self);
+        make.size.mas_equalTo(CGSizeMake(selfH * 0.68, selfH * 0.68));
+    }];
+    
+    [self.CircleProgressView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self);
+        make.centerX.equalTo(self);
+        make.size.mas_equalTo(CGSizeMake(selfH * 0.68, selfH * 0.68));
+    }];
+    
+    [self.CircleView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self).offset(selfH * 0.057);
+        make.size.mas_equalTo(CGSizeMake(selfH * 0.571, selfH * 0.571));
+        make.centerX.equalTo(self);
+    }];
+    
+    [self.ConsumeLb mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self).offset(selfH * 0.057);
+        make.size.mas_equalTo(CGSizeMake(selfH * 0.571, selfH * 0.571));
+        make.centerX.equalTo(self);
+    }];
+    
+    [self.PercentageLb mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(42, 26));
+        make.centerX.equalTo(self).offset(30);
+        make.centerY.equalTo(self.DisconnectView).offset(-35);
+    }];
+
+    [self.ResidueLb mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(selfH * 0.286, 21));
+        make.centerX.equalTo(self);
+        make.centerY.equalTo(self.DisconnectView).offset(self.DisconnectView.frame.size.height * 0.20);
+    }];
+
+    [self.HydroStatus mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.size.mas_equalTo(CGSizeMake(90, 32));
+//        make.centerX.equalTo(self);
+        make.top.equalTo(self.DisconnectView.mas_bottom).offset(selfH * 0.07);
+        make.height.equalTo(@28);
+        make.width.greaterThanOrEqualTo(@100);
+        make.width.lessThanOrEqualTo(@250);
+        make.centerX.equalTo(self);
+    }];
+    
+    if (IS_IPHONE_4_OR_LESS) {
+        self.ResidueLb.font = [UIFont systemFontOfSize:14];
+        [self.PercentageLb mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.size.mas_equalTo(CGSizeMake(42, 26));
+            make.centerX.equalTo(self).offset(25);
+            make.centerY.equalTo(self.DisconnectView).offset(-35);
+        }];
+    }
+}
 
 - (void)setViewType:(displayViewType)viewType{
-
-    
+    CGFloat selfH = self.frame.size.height;
     _viewType = viewType;
     if (viewType == displayViewTypeConnect) {
         // 百分比圆环
@@ -66,6 +110,31 @@
         circleNumV.percentage = [self.ConsumeLb.text floatValue] * 0.01;
         [self.CircleProgressView.superview addSubview:circleNumV];
         circleNumV.hidden = YES;
+        if (IS_IPHONE_6P) {
+            [circleNumV mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.center.equalTo(self.CircleView);
+                make.size.mas_equalTo(CGSizeMake(selfH * 0.77, selfH * 0.77));
+            }];
+        }
+        if (IS_IPHONE_6) {
+            [circleNumV mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.center.equalTo(self.CircleView);
+                make.size.mas_equalTo(CGSizeMake(selfH * 0.70, selfH * 0.70));
+            }];
+        }
+        if (IS_IPHONE_5) {
+            [circleNumV mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.center.equalTo(self.CircleView);
+                make.size.mas_equalTo(CGSizeMake(selfH * 0.59, selfH * 0.59));
+            }];
+        }
+        if (IS_IPHONE_4_OR_LESS) {
+            [circleNumV mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.center.equalTo(self.CircleView);
+                make.size.mas_equalTo(CGSizeMake(selfH * 0.50, selfH * 0.50));
+            }];
+        }
+
         self.circleNumView = circleNumV;
         
         self.ConsumeLb.format = @"%d";

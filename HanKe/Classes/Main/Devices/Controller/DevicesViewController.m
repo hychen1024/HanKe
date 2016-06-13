@@ -80,6 +80,10 @@
  *  水疗控制器
  */
 @property (nonatomic, strong) PeripheralViewController *peripheralVc;
+/**
+ *  操作指引图片
+ */
+@property (nonatomic, strong) UIImageView *coverImg;
 @end
 
 @implementation DevicesViewController
@@ -89,6 +93,7 @@
     [super viewDidLoad];
     [self init_View];
     [self initBLE];
+    [self firstRun];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -243,7 +248,7 @@
         return NO;
     }];
     
-    __block BOOL isContain = nil;
+    __block BOOL isContain = NO;
     __block Peripheral *justPeripheral = nil;
     // 设置扫描到外设的委托
     [self.BLE setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
@@ -276,6 +281,32 @@
     // 忽略同一个扫描多次
     NSDictionary *scanForPeripheralsWithOptions = @{CBCentralManagerScanOptionAllowDuplicatesKey:@YES};
     [self.BLE setBabyOptionsWithScanForPeripheralsWithOptions:scanForPeripheralsWithOptions connectPeripheralWithOptions:nil scanForPeripheralsWithServices:nil discoverWithServices:nil discoverWithCharacteristics:nil];
+}
+
+
+// 第一次启动
+- (void)firstRun{
+    BOOL isFirst = [[NSUserDefaults standardUserDefaults] boolForKey:@"firstRunIdentify"];
+    if (!isFirst) {
+        // 获取主Window
+        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+        UIImageView *coverImg = [[UIImageView alloc] initWithFrame:self.view.frame];
+        coverImg.userInteractionEnabled = YES;
+        self.coverImg = coverImg;
+        coverImg.backgroundColor = [UIColor blackColor];
+        coverImg.alpha = 0.6;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(firstRunTap:)];
+        tap.numberOfTapsRequired = 1;
+        [coverImg addGestureRecognizer:tap];
+        [window addSubview:coverImg];
+        [window bringSubviewToFront:coverImg];
+//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"firstRunIdentify"];
+    }
+}
+
+- (void)firstRunTap:(UITapGestureRecognizer *)tap{
+    [self.coverImg removeFromSuperview];
+    self.coverImg = nil;
 }
 
 #pragma mark 下拉刷新
@@ -530,21 +561,6 @@
         [_peripheralModels addObject:[Peripheral peripheralWithName:@"111" RSSI:@(-75) peripheral:nil]];
         [_peripheralModels addObject:[Peripheral peripheralWithName:@"222" RSSI:@(-75) peripheral:nil]];
         [_peripheralModels addObject:[Peripheral peripheralWithName:@"333" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"444" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"555" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"666" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"777" RSSI:@(-75) peripheral:nil]];
     }
     return _peripheralModels;
 }

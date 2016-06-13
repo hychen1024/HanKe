@@ -58,5 +58,6 @@ typedef enum{
 @property (nonatomic, assign) displayViewType viewType;
 
 + (instancetype)displayView;
+- (void)prepareUI;
 
 @end
