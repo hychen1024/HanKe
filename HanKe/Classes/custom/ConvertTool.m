@@ -261,7 +261,7 @@
     str = [str stringByReplacingOccurrencesOfString:@"<" withString:@""];
     str = [str stringByReplacingOccurrencesOfString:@">" withString:@""];
     str = [str stringByReplacingOccurrencesOfString:@" " withString:@""];
-    if (str.length == 12) { //去除格式符后的数据直接就是单组回调数据
+    if (str.length == 16) { //去除格式符后的数据直接就是单组回调数据
         return str;
     }
     if (str.length == 32 || str.length == 24) {

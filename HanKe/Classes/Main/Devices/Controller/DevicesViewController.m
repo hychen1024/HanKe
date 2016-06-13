@@ -558,9 +558,6 @@
 - (NSMutableArray *)peripheralModels{
     if (!_peripheralModels) {
         _peripheralModels = [NSMutableArray array];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"111" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"222" RSSI:@(-75) peripheral:nil]];
-        [_peripheralModels addObject:[Peripheral peripheralWithName:@"333" RSSI:@(-75) peripheral:nil]];
     }
     return _peripheralModels;
 }

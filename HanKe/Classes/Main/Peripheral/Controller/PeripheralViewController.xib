@@ -51,9 +51,9 @@
                         <button opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="LL0-2S-HiZ">
                             <rect key="frame" x="57" y="161" width="84" height="84"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
                             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            <state key="normal" title="水疗" backgroundImage="hydrotherapeutics_n">
+                            <state key="normal" title="水疗开关" backgroundImage="hydrotherapeutics_n">
                                 <color key="titleColor" red="0.78431372549019607" green="0.78431372549019607" blue="0.78431372549019607" alpha="1" colorSpace="calibratedRGB"/>
                             </state>
                             <state key="disabled" title="水疗" backgroundImage="hydrotherapeutics_d"/>
@@ -70,9 +70,9 @@
                         <button opaque="NO" tag="106" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="DNe-DF-yLj">
                             <rect key="frame" x="229" y="161" width="84" height="84"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
                             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            <state key="normal" title="消毒" backgroundImage="hydrotherapeutics_n">
+                            <state key="normal" title="消毒开关" backgroundImage="hydrotherapeutics_n">
                                 <color key="titleColor" red="0.7843137255" green="0.7843137255" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                             </state>
                             <state key="disabled" title="消毒" backgroundImage="hydrotherapeutics_d"/>
