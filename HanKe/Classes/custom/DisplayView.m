@@ -30,7 +30,7 @@
 
 + (instancetype)displayView{
     DisplayView *display = [[[NSBundle mainBundle] loadNibNamed:@"DisplayView" owner:self options:nil] firstObject];
-
+//    display.ConsumeLb.text = @"1";
     return display;
 }
 
@@ -43,13 +43,20 @@
 
 - (void)awakeFromNib{
     [super awakeFromNib];
-    CGRect circleProgressVFrame = self.CircleProgressView.frame;
-    self.CircleProgressView.lineWidth = 7;
-    self.CircleProgressView.radius = circleProgressVFrame.size.width * 0.5;
-//    self.CircleProgressView.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
-    self.CircleProgressView.progressBackgroundColor = [UIColor blackColor];
-    self.CircleProgressView.progressColor = [UIColor whiteColor];
-    self.CircleProgressView.percentage = [self.ConsumeLb.text floatValue] * 0.01;
+    // 百分比圆环
+    CGRect circleProgressVFrame = self.DisconnectView.frame;
+    THCircularProgressView *circleNumV = [[THCircularProgressView alloc] initWithFrame:circleProgressVFrame];
+    circleNumV.lineWidth = 7;
+    circleNumV.radius = circleProgressVFrame.size.width * 0.5;
+    circleNumV.progressBackgroundColor = [UIColor colorWithRed:0.13 green:0.47 blue:0.76 alpha:1.00];
+    circleNumV.progressColor = [UIColor whiteColor];
+    circleNumV.percentage = [self.ConsumeLb.text floatValue] * 0.01;
+    [self addSubview:circleNumV];
+    self.circleNumView = circleNumV;
+    circleNumV.hidden = YES;
+    
+    self.ConsumeLb.format = @"%d";
+    self.ConsumeLb.method = UILabelCountingMethodLinear;
     
     // 百分比圆环
 //    CGRect circleProgressVFrame = self.CircleProgressView.frame;
@@ -73,12 +80,6 @@
     }];
     
     [self.ChangeTip mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(self);
-        make.centerX.equalTo(self);
-        make.size.mas_equalTo(CGSizeMake(selfH * 0.68, selfH * 0.68));
-    }];
-    
-    [self.CircleProgressView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self);
         make.centerX.equalTo(self);
         make.size.mas_equalTo(CGSizeMake(selfH * 0.68, selfH * 0.68));
@@ -118,11 +119,11 @@
         make.centerX.equalTo(self);
     }];
     
-    [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(self);
-        make.centerX.equalTo(self);
-        make.size.mas_equalTo(CGSizeMake(selfH * 0.68, selfH * 0.68));
-    }];
+//    [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.mas_equalTo(self);
+//        make.centerX.equalTo(self);
+//        make.size.mas_equalTo(CGSizeMake(selfH * 0.68, selfH * 0.68));
+//    }];
     
     if (IS_IPHONE_4_OR_LESS) {
         self.ResidueLb.font = [UIFont systemFontOfSize:14];
@@ -162,8 +163,6 @@
 - (void)setViewType:(displayViewType)viewType{
     _viewType = viewType;
     if (viewType == displayViewTypeConnect) {
-        self.ConsumeLb.format = @"%d";
-        self.ConsumeLb.method = UILabelCountingMethodLinear;
         self.DisconnectView.hidden = YES;
         self.ChangeTip.hidden = YES;
 
@@ -171,7 +170,6 @@
         self.PercentageLb.hidden = NO;
         self.ConsumeLb.hidden = NO;
         self.CircleView.hidden = NO;
-        self.CircleProgressView.hidden = NO;
         self.circleNumView.hidden = NO;
     }else if (viewType == displayViewTypeExhaust){
         self.DisconnectView.hidden = YES;
@@ -181,7 +179,6 @@
         self.PercentageLb.hidden = YES;
         self.ConsumeLb.hidden = YES;
         self.CircleView.hidden = YES;
-        self.CircleProgressView.hidden = YES;
         self.circleNumView.hidden = YES;
     }else if (viewType == displayViewTypeDisconnect){
         self.DisconnectView.hidden = NO;
@@ -191,7 +188,6 @@
         self.PercentageLb.hidden = YES;
         self.ConsumeLb.hidden = YES;
         self.CircleView.hidden = YES;
-        self.CircleProgressView.hidden = YES;
         self.circleNumView.hidden = YES;
     }
 }

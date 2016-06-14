@@ -33,6 +33,8 @@
     BOOL hasVc;
     // 是否是准备状态
     BOOL hydroNoWater;
+    // 耗材数字是否变化
+    BOOL isConsume;
     
     CGFloat tmpNum;
     // 圆环动画间隔
@@ -182,12 +184,19 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     // 隐藏导航栏
     [self.navigationController setNavigationBarHidden:YES animated:YES];
+    
+    // KVO
+    [self.currDisplayView.ConsumeLb addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
+    
+    isConsume = YES;
+
 }
 
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     // 已连接状态下开启定时器
-    if (hasVc && ![self.sendTimer isValid] && self.currPeripheral.state == CBPeripheralStateConnected) {
+    // ![self.sendTimer isValid]
+    if (hasVc && self.sendTimer == nil && self.currPeripheral.state == CBPeripheralStateConnected) {
         self.sendTimer = [NSTimer scheduledTimerWithTimeInterval:self.sendInterval target:self selector:@selector(sendCheckCommand) userInfo:nil repeats:YES];
     }
     
@@ -276,10 +285,6 @@
 
     // 初始化对应的View
     [self initViewType:_isConnected];
-    
-    
-    // KVO
-    [self.currDisplayView.ConsumeLb addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
 
 }
 
@@ -479,6 +484,12 @@
     NSString *dataStr5 = [backValue substringWithRange:NSMakeRange(12, 2)];
     // 保留字
     NSString *dataStr6 = [backValue substringWithRange:NSMakeRange(14, 2)];
+#warning 忽略密码
+    if ([[ConvertTool hexStrToDecStr:dataStr2] intValue] > 3 || [[ConvertTool hexStrToDecStr:dataStr3] intValue] > 100){
+        YCLog(@"数据不匹配");
+        return;
+    }
+    
     if (![protocolSignStr isEqualToString:@"2a"] && ![protocolSignStr isEqualToString:@"2A"]) {
         YCLog(@"数据不匹配 - 协议标志字错误");
         return;
@@ -499,9 +510,16 @@
     
     
     // 耗材信息
-    NSString *newValue = [ConvertTool hexStrToDecStr:dataStr3];
-    self.currDisplayView.ConsumeLb.text = newValue;
-    [self.currDisplayView.ConsumeLb countFromCurrentValueTo:[newValue doubleValue]  withDuration:1.0];
+    if (isConsume) {
+        isConsume = NO;
+        NSString *newValue = [ConvertTool hexStrToDecStr:dataStr3];
+        self.currDisplayView.ConsumeLb.text = newValue;
+        [self.currDisplayView.ConsumeLb countFromCurrentValueTo:[newValue doubleValue]  withDuration:1.0];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            isConsume = YES;
+        });
+    }
+
     
     // 设备状态
     if ([dataStr1 isEqualToString:@"01"]) { // 关机
@@ -518,6 +536,7 @@
         self.disinfectBtn.enabled = YES;
         self.disinfectBtn.selected = NO;
         self.hydroBtn.enabled = YES;
+        self.hydroBtn.selected = YES;
         
         self.silenceBtn.selected = NO;
         [self ShowBlink:YES Type:2];
@@ -527,21 +546,24 @@
         self.disinfectBtn.enabled = YES;
         self.disinfectBtn.selected = NO;
         self.hydroBtn.enabled = YES;
-        
+        self.hydroBtn.selected = NO;
+        [self ShowBlink:NO Type:0];
         self.silenceBtn.selected = NO;
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x919191) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"水疗准备好" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"04"]){ // 水疗中
         // 关闭消毒按钮
-        self.disinfectBtn.enabled = NO;
+        self.disinfectBtn.enabled = YES;
+        self.disinfectBtn.selected = NO;
         
         self.silenceBtn.selected = NO;
-        [self ShowBlink:YES Type:4];
+        [self ShowBlink:YES Type:0];
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x0ce921) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"水疗中 00:00:00" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"05"]){ // 消毒中
         // 关闭水疗按钮
-        self.hydroBtn.enabled = NO;
+        self.hydroBtn.enabled = YES;
+        self.hydroBtn.selected = NO;
         
         self.silenceBtn.selected = NO;
         [self ShowBlink:YES Type:5];
@@ -561,6 +583,7 @@
         self.disinfectBtn.enabled = YES;
         self.disinfectBtn.selected = NO;
         self.hydroBtn.enabled = YES;
+        self.hydroBtn.selected = YES;
         
         self.silenceBtn.selected = YES;
         [self ShowBlink:YES Type:2];
@@ -570,13 +593,15 @@
         self.disinfectBtn.enabled = YES;
         self.disinfectBtn.selected = NO;
         self.hydroBtn.enabled = YES;
-        
+        self.hydroBtn.selected = NO;
+        [self ShowBlink:NO Type:0];
         self.silenceBtn.selected = YES;
         [self.currDisplayView.HydroStatus setTitleColor:RGBColor(0x919191) forState:UIControlStateNormal];
         [self.currDisplayView.HydroStatus setTitle:@"水疗准备好" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"84"]){ // 水疗中静音
         // 关闭消毒按钮
-        self.disinfectBtn.enabled = NO;
+        self.disinfectBtn.enabled = YES;
+        self.disinfectBtn.selected = NO;
 
         self.silenceBtn.selected = YES;
         [self ShowBlink:YES Type:4];
@@ -584,7 +609,8 @@
         [self.currDisplayView.HydroStatus setTitle:@"水疗中 00:00:00" forState:UIControlStateNormal];
     }else if ([dataStr1 isEqualToString:@"85"]){ // 消毒中静音
         // 关闭水疗按钮
-        self.hydroBtn.enabled = NO;
+        self.hydroBtn.enabled = YES;
+        self.hydroBtn.selected = NO;
         
         self.silenceBtn.selected = YES;
         [self ShowBlink:YES Type:5];
@@ -632,32 +658,33 @@
  *  Type 5 消毒中(按键灯1秒normal,1秒selected)
  */
 - (void)ShowBlink:(BOOL)isShow Type:(NSInteger)type{
-//    if (self.noWaterTimer) {
-//        [self.noWaterTimer invalidate];
-//        self.noWaterTimer = nil;
-//    }
     NSTimeInterval timeInterval = 0;
     if (type == 4 || type == 5) {
-        timeInterval = 2.0;
+        timeInterval = 1.0;
     }else if (type == 2){
-        timeInterval = 1;
+        timeInterval = 0.5;
     }
     if (isShow) { // 开启闪烁状态
-        hydroNoWater = NO;
-        if (!self.noWaterTimer) {
+//        hydroNoWater = NO;
+        if (self.noWaterTimer == nil) {
             if (type == 5) { // 消毒键
                 self.noWaterTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(hydroDisinfect:) userInfo:nil repeats:YES];
-                self.disinfectBtn.selected = YES;
+                [self.noWaterTimer fire];
+                    self.disinfectBtn.selected = YES;
+
             }
-            if (type == 4) {
+            if (type == 4 || type == 2) {
                 // 水疗键
                 self.noWaterTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(hydroNoWater:) userInfo:nil repeats:YES];
+                [self.noWaterTimer fire];
                 self.hydroBtn.selected = YES;
             }
         }
     }else{ // 关闭闪烁状态
-        [self.noWaterTimer invalidate];
-        self.noWaterTimer = nil;
+        if (self.noWaterTimer) {
+            [self.noWaterTimer invalidate];
+            self.noWaterTimer = nil;
+        }
         [self.hydroBtn setBackgroundImage:selectImg forState:UIControlStateSelected];
         [self.hydroBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
         [self.disinfectBtn setBackgroundImage:selectImg forState:UIControlStateSelected];
@@ -768,7 +795,7 @@
         if (sender.selected) {
             switch (sender.tag) {
                 case 101:{ // 水疗
-                    [self.currDisplayView.HydroStatus setTitle:@"水疗中 00:00:00" forState:UIControlStateNormal];
+//                    [self.currDisplayView.HydroStatus setTitle:@"水疗中 00:00:00" forState:UIControlStateNormal];
                     break;
                 }
                 case 105:{ // 静音
@@ -776,7 +803,7 @@
                     break;
                 }
                 case 106:{ // 消毒
-                    [self.currDisplayView.HydroStatus setTitle:@"消毒中 00:00:00" forState:UIControlStateNormal];
+//                    [self.currDisplayView.HydroStatus setTitle:@"消毒中 00:00:00" forState:UIControlStateNormal];
                     break;
                 }
                 default:
@@ -854,6 +881,8 @@
  */
 - (void)showExhaustTip:(BOOL)isShow{
     if (isShow) {// 显示
+        self.hydroBtn.enabled = NO;
+        
         self.pageCtrl.sd_layout.topSpaceToView(self.hydroName,7).centerXEqualToView(self.displayView).leftSpaceToView(self.displayView,100).rightSpaceToView(self.displayView,100);
         self.currDisplayView.viewType = displayViewTypeExhaust;
         
@@ -864,6 +893,8 @@
         
         self.isShowTip = YES;
     }else{// 隐藏
+        self.hydroBtn.enabled = YES;
+        
         self.currDisplayView.viewType = displayViewTypeConnect;
         
         self.changeLb.hidden = YES;
@@ -881,30 +912,32 @@
     currPer = currP;
     // 间隔时间
     interval = 0.01;
-    tmpNum = ABS(self.circleNumV.percentage - currP) * interval;
-    if (currP <= self.circleNumV.percentage) {
+    tmpNum = ABS(self.currDisplayView.circleNumView.percentage - currP) * interval * 2.2;
+    if (currP <= self.currDisplayView.circleNumView.percentage) {
         isSum = NO;
     }else{
         isSum = YES;
     }
     
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(timeFired:) userInfo:nil repeats:YES];
-    [self.timer fire];
+    if (self.timer == nil) {
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(timeFired:) userInfo:nil repeats:YES];
+        [self.timer fire];
+    }
 }
 
 - (void)timeFired:(NSTimer *)timer{
     if (isSum) {
-        self.circleNumV.percentage += tmpNum;
+        self.currDisplayView.circleNumView.percentage += tmpNum;
     }else{
-        self.circleNumV.percentage -= tmpNum;
+        self.currDisplayView.circleNumView.percentage -= tmpNum;
     }
     
-    if ((self.circleNumV.percentage - currPer) >= 0 && isSum) {
-        self.circleNumV.percentage = currPer;
+    if ((self.currDisplayView.circleNumView.percentage - currPer) >= 0 && isSum) {
+        self.currDisplayView.circleNumView.percentage = currPer;
         [self.timer invalidate];
         self.timer = nil;
     }
-    if (!isSum && (currPer - self.circleNumV.percentage) >= 0) {
+    if (!isSum && (currPer - self.currDisplayView.circleNumView.percentage) >= 0) {
         lastPer = currPer;
         [self.timer invalidate];
         self.timer = nil;
@@ -922,10 +955,11 @@
         if (![change[@"new"] isEqualToString:@"0"] && self.isShowTip) { // 关闭耗材用尽提示
             [self showExhaustTip:NO];
         }
-        if ([change[@"new"] isEqualToString:[NSString stringWithFormat:@"%f",self.circleNumV.percentage * 100]]) { // 值未改变
+        if ([change[@"new"] isEqualToString:[NSString stringWithFormat:@"%f",self.currDisplayView.circleNumView.percentage * 100]]) { // 值未改变
             return;
         }
         [self animatedChangePercentageWithCurrPer:[change[@"new"] floatValue]*0.01];
+        self.hydroBtn.enabled = YES;
     }
 }
 

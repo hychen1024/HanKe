@@ -143,12 +143,15 @@
             self.counter = [[UILabelCounterEaseInOut alloc] init];
             break;
     }
+    
+    if (self.timer == nil) {
+        self.timer = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateValue:)];
+        //    CADisplayLink *timer = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateValue:)];
+        self.timer.frameInterval = 2;
+        [self.timer addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+        [self.timer addToRunLoop:[NSRunLoop mainRunLoop] forMode:UITrackingRunLoopMode];
+    }
 
-    CADisplayLink *timer = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateValue:)];
-    timer.frameInterval = 2;
-    [timer addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-    [timer addToRunLoop:[NSRunLoop mainRunLoop] forMode:UITrackingRunLoopMode];
-    self.timer = timer;
 }
 
 - (void)countFromCurrentValueTo:(CGFloat)endValue {

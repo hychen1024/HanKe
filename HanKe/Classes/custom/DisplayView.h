@@ -46,10 +46,7 @@ typedef enum{
  *  圆环图片
  */
 @property (weak, nonatomic) IBOutlet UIImageView *CircleView;
-/**
- *  圆环动画View
- */
-@property (weak, nonatomic) IBOutlet THCircularProgressView *CircleProgressView;
+
 /**
  *  全局圆环百分比View
  */
