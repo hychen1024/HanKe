@@ -29,8 +29,6 @@
     CGFloat lastPer;
     // lastPer -> currPer 是加还是减
     BOOL isSum;
-    // 控制器是否已经存在(非第一次进入到控制器)
-    BOOL hasVc;
     // 是否是准备状态
     BOOL hydroNoWater;
     // 耗材数字是否变化
@@ -46,6 +44,9 @@
     
     UIImage *normalImg;
     UIImage *selectImg;
+    // 缓存当前页码
+    NSInteger _CurrPageIndex;
+    
 }
 /**
  *  水疗没水Timer
@@ -184,23 +185,23 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     // 隐藏导航栏
     [self.navigationController setNavigationBarHidden:YES animated:YES];
-    
-    // KVO
-    [self.currDisplayView.ConsumeLb addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationBack:) name:@"consumeLbChanged" object:nil];
     
     isConsume = YES;
-
+    _CurrPageIndex = self.index;
 }
 
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     // 已连接状态下开启定时器
     // ![self.sendTimer isValid]
-    if (hasVc && self.sendTimer == nil && self.currPeripheral.state == CBPeripheralStateConnected) {
+    if (self.sendTimer == nil && self.currPeripheral.state == CBPeripheralStateConnected) {
         self.sendTimer = [NSTimer scheduledTimerWithTimeInterval:self.sendInterval target:self selector:@selector(sendCheckCommand) userInfo:nil repeats:YES];
+        [self.sendTimer fire];
     }
     
-    if (hasVc && self.currPeripheral.state == CBPeripheralStateDisconnected) {
+    if (self.currPeripheral.state == CBPeripheralStateDisconnected) {
         [self connectPeripheral];
     }
 }
@@ -208,7 +209,7 @@
 #pragma mark - custom methods  自定义方法
 - (void)prepareUI{
     [self.displayView addSubview:self.scrollV];
-    NSInteger tmpIndex = self.index+1;
+    NSInteger tmpIndex = self.index + 1;
     // 页码赋值
     if (tmpIndex <= 5) {
         self.pageCtrl.numberOfPages = self.peripheralModels.count;
@@ -267,7 +268,6 @@
 - (void)init_View{
     self.hydroName.text = self.currPeri.name;
     lastPer = 0;
-    hasVc = NO;
     
     self.sendInterval = sendCheckCommandInterval;
     
@@ -324,11 +324,12 @@
     
     //设置设备连接成功的委托,同一个baby对象，使用不同的channel切换委托回调
     [BLE setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
-        [SVProgressHUD showSuccessWithStatus:@"连接成功" maskType:SVProgressHUDMaskTypeNone];
+//        [SVProgressHUD showSuccessWithStatus:@"连接成功" maskType:SVProgressHUDMaskTypeNone];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [SVProgressHUD showWithStatus:@"正在初始化界面" maskType:SVProgressHUDMaskTypeNone];
+            // 延迟8秒后还在初始化则返回
+            [weakSelf performSelector:@selector(delayPerform) withObject:nil afterDelay:8];
         });
-        
     }];
     
     //设置设备连接失败的委托
@@ -354,6 +355,7 @@
         weakSelf.isConnected = NO;
         [weakSelf.sendTimer invalidate];
         weakSelf.sendTimer = nil;
+        [weakSelf connectPeripheral];
     }];
     
     //设置发现设备的Services的委托
@@ -380,7 +382,9 @@
     
     //设置发现设service的Characteristics的委托
     [BLE setBlockOnDiscoverCharacteristicsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-        
+        if (error) {
+            [weakSelf connectPeripheral];
+        }
         for (CBCharacteristic *c in service.characteristics) {
 //            YCLog(@"========characteristic name:=========%@",c.UUID);
             // 获取写特征
@@ -391,13 +395,21 @@
                 // 写特征Notify回调数据
                 [weakBLE notify:weakSelf.currPeripheral characteristic:weakSelf.writeCharacteristic block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
                     
-                    YCLog(@"notify%@",[NSString stringWithFormat:@"writeCharacteristic:%@/characteristics:%@",weakSelf.writeCharacteristic.value,characteristics.value]);
-                    
+                    YCLog(@"notify%@",[NSString stringWithFormat:@"writeCharacteristic:%@",weakSelf.writeCharacteristic.value]);
+                    if (characteristics.value.length == 16) {
+                        YCLog(@"数据不匹配");
+                        return;
+                    }
                     NSString *valueStr = [NSString stringWithFormat:@"%@",characteristics.value];
                     valueStr = [ConvertTool removeTrimmingCharactersWithStr:valueStr];
                     
                     if(valueStr == nil) {
                         YCLog(@"数据不匹配 - 数据为空");
+                        return;
+                    }
+                    // 数据不符合
+                    if (valueStr.length != 16) {
+                        YCLog(@"数据不匹配 - 数据长度不符合");
                         return;
                     }
                     
@@ -410,21 +422,13 @@
         }
 
     }];
+    
+    
     //设置读取characteristics的委托
     [BLE setBlockOnReadValueForCharacteristicAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
-
-    }];
-    
-    //设置发现characteristics的descriptors的委托
-    [BLE setBlockOnDiscoverDescriptorsForCharacteristicAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBCharacteristic *characteristic, NSError *error) {
-//        for (CBDescriptor *d in characteristic.descriptors) {
-//            YCLog(@"CBDescriptor name is :%@",d.UUID);
-//        }
-    }];
-    
-    //设置读取Descriptor的委托
-    [BLE setBlockOnReadValueForDescriptorsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBDescriptor *descriptor, NSError *error) {
-//        YCLog(@"Descriptor name:%@ value is:%@",descriptor.characteristic.UUID, descriptor.value);
+        if (error) {
+            [weakSelf connectPeripheral];
+        }
     }];
     
     //设置通知状态改变的委托
@@ -438,8 +442,6 @@
     [BLE setBlockOnDidWriteValueForCharacteristicAtChannel:channelOnPeropheralView block:^(CBCharacteristic *characteristic, NSError *error) {
         YCLog(@"写入数据成功:characteristic:%@ and new value:%@",characteristic.UUID, characteristic.value);
     }];
-    
-
     
     //扫描选项->CBCentralManagerScanOptionAllowDuplicatesKey:忽略同一个Peripheral端的多个发现事件被聚合成一个发现事件
     NSDictionary *scanForPeripheralsWithOptions = @{CBCentralManagerScanOptionAllowDuplicatesKey:@YES};
@@ -456,6 +458,12 @@
 
 }
 
+- (void)delayPerform{
+    if ([SVProgressHUD isVisible] && [[SVProgressHUD getText] isEqualToString:@"正在初始化界面"]) {
+        [self backBtnDidClick:nil];
+    }
+}
+
 #pragma mark 校验数据,成功后初始化界面
 /**
  *  成功连接后 校验数据并初始化界面数据
@@ -463,11 +471,6 @@
  *  @param backValue 返回的机器信息
  */
 - (void)initDataWithSuccessedConnection:(NSString *)backValue{
-    // 数据不符合
-    if (backValue.length != 16) {
-        YCLog(@"数据不匹配 - 数据长度不符合");
-        return;
-    }
     // 协议标志字
     NSString *protocolSignStr = [backValue substringWithRange:NSMakeRange(0, 2)];
     // 命令字
@@ -501,6 +504,7 @@
         return;
     }
     
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(delayPerform) object:nil];
     [SVProgressHUD dismiss];
     
     // 显示已连接视图
@@ -514,6 +518,8 @@
         isConsume = NO;
         NSString *newValue = [ConvertTool hexStrToDecStr:dataStr3];
         self.currDisplayView.ConsumeLb.text = newValue;
+        NSDictionary *dict = @{@"consume":newValue};
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"consumeLbChanged" object:nil userInfo:dict];
         [self.currDisplayView.ConsumeLb countFromCurrentValueTo:[newValue doubleValue]  withDuration:1.0];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             isConsume = YES;
@@ -622,9 +628,11 @@
     // 水流量
     if ([dataStr2 isEqualToString:@"01"]) { // 正常水量
         self.normalWater.selected = YES;
+        self.moreWater.selected = NO;
         tmpWaterBtn = self.normalWater;
     }else if ([dataStr2 isEqualToString:@"03"]){ // 加大水量
         self.moreWater.selected = YES;
+        self.normalWater.selected = NO;
         tmpWaterBtn = self.moreWater;
     }
     
@@ -728,11 +736,7 @@
         [SVProgressHUD showErrorWithStatus:@"连接失败" maskType:SVProgressHUDMaskTypeNone];
         return;
     }
-    if (self.writeCharacteristic != nil) {
-        BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
-        return;
-    }
-    BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+    BLE.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().begin();
 }
 
 /**
@@ -774,43 +778,43 @@
 // 水疗功能按钮点击响应
 - (IBAction)hydroBtnDidClick:(UIButton *)sender {
     // 水量开关逻辑控制
-    if (sender.tag == 102 || sender.tag == 104) {
-        if (tmpWaterBtn == sender) {
-            return;
-        }
-        if (tmpWaterBtn == nil) {
-            sender.selected = YES;
-            tmpWaterBtn = sender;
-        }
-        if (tmpWaterBtn != sender) {
-            tmpWaterBtn.selected = NO;
-            sender.selected = YES;
-            tmpWaterBtn = sender;
-        }
-    }
+//    if (sender.tag == 102 || sender.tag == 104) {
+//        if (tmpWaterBtn == sender) {
+//            return;
+//        }
+//        if (tmpWaterBtn == nil) {
+//            sender.selected = YES;
+//            tmpWaterBtn = sender;
+//        }
+//        if (tmpWaterBtn != sender) {
+//            tmpWaterBtn.selected = NO;
+//            sender.selected = YES;
+//            tmpWaterBtn = sender;
+//        }
+//    }
     
     // 功能开关逻辑控制
-    if (sender.tag == 101 || sender.tag == 105 || sender.tag == 106) {
-        sender.selected = !sender.selected;
-        if (sender.selected) {
-            switch (sender.tag) {
-                case 101:{ // 水疗
-//                    [self.currDisplayView.HydroStatus setTitle:@"水疗中 00:00:00" forState:UIControlStateNormal];
-                    break;
-                }
-                case 105:{ // 静音
-                    
-                    break;
-                }
-                case 106:{ // 消毒
-//                    [self.currDisplayView.HydroStatus setTitle:@"消毒中 00:00:00" forState:UIControlStateNormal];
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-    }
+//    if (sender.tag == 101 || sender.tag == 105 || sender.tag == 106) {
+//        sender.selected = !sender.selected;
+//        if (sender.selected) {
+//            switch (sender.tag) {
+//                case 101:{ // 水疗
+////                    [self.currDisplayView.HydroStatus setTitle:@"水疗中 00:00:00" forState:UIControlStateNormal];
+//                    break;
+//                }
+//                case 105:{ // 静音
+//                    
+//                    break;
+//                }
+//                case 106:{ // 消毒
+////                    [self.currDisplayView.HydroStatus setTitle:@"消毒中 00:00:00" forState:UIControlStateNormal];
+//                    break;
+//                }
+//                default:
+//                    break;
+//            }
+//        }
+//    }
     
     [self waterBtnDidClick:sender];
   
@@ -827,11 +831,8 @@
     self.sendTimer = nil;
     [self ShowBlink:NO Type:0];
     
-    [self.currDisplayView.ConsumeLb removeObserver:self forKeyPath:@"text"];
     [self.scrollV.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
-    
-    hasVc = YES;
     [SVProgressHUD dismiss];
     [self.navigationController popViewControllerAnimated:YES];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
@@ -859,6 +860,21 @@
     [self.view addSubview:webV];
 }
 
+#pragma mark 通知回调
+- (void)notificationBack:(NSNotification *)notify{
+    // 获取耗材信息
+    if ([notify.userInfo[@"consume"] isEqualToString:@"0"]) { //显示耗材用尽提示
+        [self showExhaustTip:YES];
+    }
+    if (![notify.userInfo[@"consume"] isEqualToString:@"0"] && self.isShowTip) { // 关闭耗材用尽提示
+        [self showExhaustTip:NO];
+    }
+    if ([notify.userInfo[@"consume"] isEqualToString:[NSString stringWithFormat:@"%f",self.currDisplayView.circleNumView.percentage * 100]]) { // 值未改变
+        return;
+    }
+    [self animatedChangePercentageWithCurrPer:[notify.userInfo[@"consume"] floatValue]*0.01];
+    self.hydroBtn.enabled = YES;
+}
 
 #pragma mark 发送指令
 // 写数据 这里的数据只需要写2AXX就行 后面12位会自动补齐日期
@@ -912,7 +928,7 @@
     currPer = currP;
     // 间隔时间
     interval = 0.01;
-    tmpNum = ABS(self.currDisplayView.circleNumView.percentage - currP) * interval * 2.2;
+    tmpNum = ABS(self.currDisplayView.circleNumView.percentage - currP) * interval;
     if (currP <= self.currDisplayView.circleNumView.percentage) {
         isSum = NO;
     }else{
@@ -945,26 +961,25 @@
 }
 
 // KVO回调
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
-    
-    // 获取耗材信息
-    if ([keyPath isEqualToString:@"text"] && object == self.currDisplayView.ConsumeLb) {
-        if ([change[@"new"] isEqualToString:@"0"]) { //显示耗材用尽提示
-            [self showExhaustTip:YES];
-        }
-        if (![change[@"new"] isEqualToString:@"0"] && self.isShowTip) { // 关闭耗材用尽提示
-            [self showExhaustTip:NO];
-        }
-        if ([change[@"new"] isEqualToString:[NSString stringWithFormat:@"%f",self.currDisplayView.circleNumView.percentage * 100]]) { // 值未改变
-            return;
-        }
-        [self animatedChangePercentageWithCurrPer:[change[@"new"] floatValue]*0.01];
-        self.hydroBtn.enabled = YES;
-    }
-}
+//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
+//    
+//    // 获取耗材信息
+//    if ([keyPath isEqualToString:@"text"] && object == self.currDisplayView.ConsumeLb) {
+//        if ([change[@"new"] isEqualToString:@"0"]) { //显示耗材用尽提示
+//            [self showExhaustTip:YES];
+//        }
+//        if (![change[@"new"] isEqualToString:@"0"] && self.isShowTip) { // 关闭耗材用尽提示
+//            [self showExhaustTip:NO];
+//        }
+//        if ([change[@"new"] isEqualToString:[NSString stringWithFormat:@"%f",self.currDisplayView.circleNumView.percentage * 100]]) { // 值未改变
+//            return;
+//        }
+//        [self animatedChangePercentageWithCurrPer:[change[@"new"] floatValue]*0.01];
+//        self.hydroBtn.enabled = YES;
+//    }
+//}
 
 - (void)dealloc{
-    [self.currDisplayView.ConsumeLb removeObserver:self forKeyPath:@"text"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
@@ -1004,45 +1019,95 @@
         }
     }
 }
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
+    NSLog(@"%f",scrollView.contentOffset.x);
+    _CurrPageIndex = (scrollView.contentOffset.x+1)/(scrollView.frame.size.width);
+}
+
+//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+//    NSInteger page = (scrollView.contentOffset.x + scrollView.frame.size.width * 0.5)/(scrollView.frame.size.width);
+////    NSLog(@"page:%ld,,offset.x:%f",page,scrollView.contentOffset.x);
+//    if (page != _CurrPageIndex) {
+//        // 取消定时器
+//        [self.timer invalidate];
+//        self.timer = nil;
+//        [self.noWaterTimer invalidate];
+//        self.noWaterTimer = nil;
+//        [self.sendTimer invalidate];
+//        self.sendTimer = nil;
+//        
+//        // 重置控制按钮
+//        self.normalWater.selected = NO;
+//        self.moreWater.selected = NO;
+//        self.hydroBtn.selected = NO;
+//        self.disinfectBtn.selected = NO;
+//        
+//        NSInteger index = scrollView.contentOffset.x / kScreenW;
+//        // 获取当前的DisplayView
+//        self.currDisplayView = self.scrollV.subviews[index];
+//        
+//        // 切换视图
+//        Peripheral *currPeri = self.peripheralModels[index];
+//        self.currPeripheral = currPeri.peri;
+//        // 1.更新UI
+//        self.hydroName.text = currPeri.name;
+//        self.connectStatus.text = currPeri.isConnected ? @"(已连接)":@"(未连接)";
+//        self.coverView.hidden = NO;
+//        
+//        // 2.连接当前视图所对应的设备并断开连接
+//        [self connectPeripheral];
+//        
+//        // 3.暂时关闭返回按钮
+//        self.backBtn.enabled = NO;
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            self.backBtn.enabled = YES;
+//        });
+//        _CurrPageIndex = page;
+//    }
+//}
 
 // 滑动结束后获取当前X偏移量
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
-    // 取消定时器
-    [self.timer invalidate];
-    self.timer = nil;
-    [self.noWaterTimer invalidate];
-    self.noWaterTimer = nil;
-    [self.sendTimer invalidate];
-    self.sendTimer = nil;
+        NSInteger page = (scrollView.contentOffset.x + scrollView.frame.size.width * 0.5)/(scrollView.frame.size.width);
+        if (page != _CurrPageIndex) {
+//            [BLE cancelAllPeripheralsConnection];
+            // 取消定时器
+            [self.timer invalidate];
+            self.timer = nil;
+            [self.noWaterTimer invalidate];
+            self.noWaterTimer = nil;
+            [self.sendTimer invalidate];
+            self.sendTimer = nil;
     
-    // 重置控制按钮
-    self.normalWater.selected = NO;
-    self.moreWater.selected = NO;
-    self.hydroBtn.selected = NO;
-    self.disinfectBtn.selected = NO;
+            // 重置控制按钮
+            self.normalWater.selected = NO;
+            self.moreWater.selected = NO;
+            self.hydroBtn.selected = NO;
+            self.disinfectBtn.selected = NO;
     
-    NSInteger index = scrollView.contentOffset.x / kScreenW;
-    // 获取当前的DisplayView
-    self.currDisplayView = self.scrollV.subviews[index];
+            NSInteger index = scrollView.contentOffset.x / kScreenW;
+            // 获取当前的DisplayView
+            self.currDisplayView = self.scrollV.subviews[index];
     
-    // 切换视图
-    Peripheral *currPeri = self.peripheralModels[index];
-    self.currPeripheral = currPeri.peri;
-    // 1.更新UI
-    self.hydroName.text = currPeri.name;
-    self.connectStatus.text = currPeri.isConnected ? @"(已连接)":@"(未连接)";
-    self.coverView.hidden = NO;
+            // 切换视图
+            Peripheral *currPeri = self.peripheralModels[index];
+            self.currPeripheral = currPeri.peri;
+            // 1.更新UI
+            self.hydroName.text = currPeri.name;
+            self.connectStatus.text = currPeri.isConnected ? @"(已连接)":@"(未连接)";
+            
+            self.coverView.hidden = NO;
     
-    // 2.连接当前视图所对应的设备并断开连接
-    [self connectPeripheral];
+            // 2.连接当前视图所对应的设备并断开连接
+            [self connectPeripheral];
     
-    // 3.暂时关闭返回按钮
-    self.backBtn.enabled = NO;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        self.backBtn.enabled = YES;
-    });
-    
-    // 4.
+            // 3.暂时关闭返回按钮
+            self.backBtn.enabled = NO;
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                self.backBtn.enabled = YES;
+            });
+            _CurrPageIndex = page;
+        }
 }
 
 
@@ -1077,7 +1142,11 @@
     self.scrollV.contentSize = CGSizeMake(kScreenW * peripheralModels.count, kScreenH * 0.43);
     for (NSInteger i = 0; i < peripheralModels.count; ++i) {
         DisplayView *displayV = [DisplayView displayView];
-        displayV.viewType = displayViewTypeDisconnect;
+        if (self.isConnected) {
+            displayV.viewType = displayViewTypeConnect;
+        }else{
+            displayV.viewType = displayViewTypeDisconnect;
+        }
         displayV.frame = CGRectMake(i * kScreenW, 0, kScreenW, kScreenH * 0.43);
         [self.scrollV addSubview:displayV];
         [displayV prepareUI];

@@ -41,7 +41,7 @@ typedef NS_ENUM(NSUInteger, SVProgressHUDMaskType) {
 + (void)setViewForExtension:(UIView*)view;                  // default is nil, only used if #define SV_APP_EXTENSIONS is set
 
 #pragma mark - Show Methods
-
++ (NSString *)getText;
 + (void)show;
 + (void)showWithMaskType:(SVProgressHUDMaskType)maskType;
 + (void)showWithStatus:(NSString*)status;

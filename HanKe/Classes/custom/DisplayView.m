@@ -114,7 +114,7 @@
 //        make.centerX.equalTo(self);
         make.top.equalTo(self.DisconnectView.mas_bottom).offset(selfH * 0.07);
         make.height.equalTo(@28);
-        make.width.greaterThanOrEqualTo(@100);
+        make.width.greaterThanOrEqualTo(@50);
         make.width.lessThanOrEqualTo(@250);
         make.centerX.equalTo(self);
     }];

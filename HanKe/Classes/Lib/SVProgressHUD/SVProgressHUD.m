@@ -86,6 +86,9 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
 
 
 #pragma mark - Setters
++ (NSString *)getText{
+    return [self sharedView].stringLabel.text;
+}
 
 + (void)setStatus:(NSString *)string {
 	[[self sharedView] setStatus:string];

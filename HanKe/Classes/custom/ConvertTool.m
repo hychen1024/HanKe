@@ -190,7 +190,7 @@
     NSString *minute = [ConvertTool integerToNSString:[dateDict[@"minute"] intValue]];
     NSString *tmpStr = [NSString stringWithFormat:@"%@%@%@%@%@",year,month,day,hour,minute];
     tmpStr = [NSString stringWithFormat:@"%@%@00",str,tmpStr];
-    YCLog(@"instruct:%@",tmpStr);
+//    YCLog(@"instruct:%@",tmpStr);
     return tmpStr;
 }
 
@@ -204,7 +204,7 @@
 + (NSData *)appendDateInstructFromStrToData:(NSString *)str{
     NSString *tmpStr = [ConvertTool appendDateInstructFromStrToStr:str];
     tmpStr = [NSString stringWithFormat:@"%@%@",tmpStr,tmpStr];
-    YCLog(@"final instruct:%@",tmpStr);
+//    YCLog(@"final instruct:%@",tmpStr);
     return [ConvertTool hexToBytes:tmpStr];
 }
 

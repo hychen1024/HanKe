@@ -299,7 +299,7 @@
         [coverImg addGestureRecognizer:tap];
         [window addSubview:coverImg];
         [window bringSubviewToFront:coverImg];
-//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"firstRunIdentify"];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"firstRunIdentify"];
     }
 }
 
@@ -339,9 +339,13 @@
 - (void)receiveConnectedStatus:(NSNotification *)notice{
     BOOL connectStatus = [notice.userInfo[@"connectStatus"] boolValue];
     self.currPeripheral = notice.userInfo[@"currPeripheral"];
-    if (connectStatus) {
-        self.currPeripheral = [[self.BLE findConnectedPeripherals] firstObject];
+    if (!connectStatus) {
+        return;
     }
+
+    [self.peripheralModels makeObjectsPerformSelector:@selector(setIsConnected:) withObject:@NO];
+    
+    self.currPeripheral = [[self.BLE findConnectedPeripherals] firstObject];
     for (Peripheral *peripheral in self.peripheralModels) {
         if ([self.currPeripheral.identifier.UUIDString isEqualToString:peripheral.peri.identifier.UUIDString]) {
             connectedIndex = [self.peripheralModels indexOfObject:peripheral];
@@ -472,7 +476,7 @@
         MGSwipeButton *swipeDelBtn = [MGSwipeButton buttonWithTitle:@"移除" backgroundColor:[UIColor colorWithRed:0.84 green:0.29 blue:0.31 alpha:1.00] callback:^BOOL(MGSwipeTableCell *sender) {
             Peripheral *peri = self.peripheralModels[indexPath.row];
             NSString *identify = peri.peri.identifier.UUIDString;
-            [weakSelf.nameDict setObject:peri.name forKey:identify];
+            [weakSelf.nameDict removeObjectForKey:identify];
             // 写入存储
             [weakSelf.nameDict writeToFile:nameFilePath atomically:YES];
             
@@ -511,7 +515,6 @@
     CBPeripheral *peripheral = peri.peri;
 
     [self.tableV reloadData];
-    [self.BLE cancelAllPeripheralsConnection];
     
     // 判断当前进入的控制台页面是否是已经进入的
     if (self.currPeripheral == peripheral) {
@@ -521,6 +524,7 @@
             self.peripheralVc.isConnected = NO;
         }
     }else{
+        [self.BLE cancelAllPeripheralsConnection];
         self.currPeripheral = peripheral;
         self.peripheralVc.isConnected = NO;
         self.peripheralVc.currPeripheral = peripheral;
