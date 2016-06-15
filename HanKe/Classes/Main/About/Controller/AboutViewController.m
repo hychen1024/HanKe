@@ -8,6 +8,7 @@
 
 #import "AboutViewController.h"
 #import "UIView+SDAutoLayout.h"
+#import "Masonry.h"
 
 @interface AboutViewController ()
 
@@ -40,7 +41,7 @@
     
     // app介绍文字
     UILabel *textLb = [[UILabel alloc] init];
-    textLb.text = @"瀚科水疗是由郑州科瑞医疗器械有限公司针对该司的水疗设备提供的一款智能控制移动应用软件。它通过采用蓝牙通信的方式来动态扫描识别身边的水疗设备进行配对，进而实现远程操控，让用户通过移动终端来方便形象的展示出水疗设备当前的运行状态情况。";
+    textLb.text = @"科瑞医疗是由郑州科瑞医疗器械有限公司针对该司的水疗设备提供的一款智能控制移动应用软件。它通过采用蓝牙通信的方式来动态扫描识别身边的水疗设备进行配对，进而实现远程操控，让用户通过移动终端来方便形象的展示出水疗设备当前的运行状态情况。";
     textLb.numberOfLines = 0;
     textLb.font = [UIFont systemFontOfSize:15];
     textLb.textColor = [UIColor colorWithRed:0.55 green:0.55 blue:0.55 alpha:1.00];
@@ -51,12 +52,13 @@
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [textLb.text length])];
     textLb.attributedText = attributedString;
     [self.view addSubview:textLb];
-    CGFloat textLbH = [textLb.text boundingRectWithSize:CGSizeMake(kScreenW - 20, kScreenH * 0.4) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15],NSParagraphStyleAttributeName:paragraphStyle} context:nil].size.height;
-    textLb.sd_layout
-    .topSpaceToView(topView,0)
-    .leftSpaceToView(self.view,20)
-    .rightSpaceToView(self.view,20)
-    .heightIs(textLbH);
+    CGFloat textLbH = [textLb.text boundingRectWithSize:CGSizeMake(kScreenW - 20, kScreenH) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15],NSParagraphStyleAttributeName:paragraphStyle} context:nil].size.height;
+    textLbH += 40.0;
+//    textLb.sd_layout
+//    .topSpaceToView(topView,0)
+//    .leftSpaceToView(self.view,20)
+//    .rightSpaceToView(self.view,20)
+//    .heightIs(textLbH);
     
     // 检查更新按钮
     UIButton *checkUpdateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -75,6 +77,21 @@
     .bottomSpaceToView(self.view,70)
     .centerXEqualToView(self.view);
     
+    [textLb mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(topView.mas_bottom);
+        make.left.equalTo(self.view).offset(20);
+        make.right.equalTo(self.view).offset(-20);
+//        make.bottom.equalTo(checkUpdateBtn.mas_top);
+        make.height.equalTo(@(textLbH));
+    }];
+    
+    if (IS_IPHONE_4_OR_LESS) {
+        checkUpdateBtn.sd_layout
+        .heightIs(30)
+        .widthIs(kScreenW * 0.8)
+        .bottomSpaceToView(self.view,18)
+        .centerXEqualToView(self.view);
+    }
 }
 
 // 检车更新按钮点击响应

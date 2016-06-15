@@ -119,11 +119,11 @@
         make.centerX.equalTo(self);
     }];
     
-//    [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.mas_equalTo(self);
-//        make.centerX.equalTo(self);
-//        make.size.mas_equalTo(CGSizeMake(selfH * 0.68, selfH * 0.68));
-//    }];
+    
+    [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(self.CircleView);
+        make.size.mas_equalTo(CGSizeMake(selfH * 0.68, selfH * 0.68));
+    }];
     
     if (IS_IPHONE_4_OR_LESS) {
         self.ResidueLb.font = [UIFont systemFontOfSize:14];
@@ -133,31 +133,7 @@
             make.centerY.equalTo(self.DisconnectView).offset(-35);
         }];
     }
-    
-    if (IS_IPHONE_6P) {
-        [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.center.equalTo(self.CircleView);
-            make.size.mas_equalTo(CGSizeMake(selfH * 0.75, selfH * 0.75));
-        }];
-    }
-    if (IS_IPHONE_6) {
-        [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.center.equalTo(self.CircleView);
-            make.size.mas_equalTo(CGSizeMake(selfH * 0.67, selfH * 0.67));
-        }];
-    }
-    if (IS_IPHONE_5) {
-        [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.center.equalTo(self.CircleView);
-            make.size.mas_equalTo(CGSizeMake(selfH * 0.58, selfH * 0.58));
-        }];
-    }
-    if (IS_IPHONE_4_OR_LESS) {
-        [self.circleNumView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.center.equalTo(self.CircleView);
-            make.size.mas_equalTo(CGSizeMake(selfH * 0.50, selfH * 0.50));
-        }];
-    }
+
 }
 
 - (void)setViewType:(displayViewType)viewType{

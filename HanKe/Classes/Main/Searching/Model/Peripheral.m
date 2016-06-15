@@ -16,4 +16,8 @@
     peripheral.peri = peri;
     return peripheral;
 }
+
+- (void)setAllIsConnected:(NSNumber *)num{
+    [self setIsConnected:[num boolValue]];
+}
 @end

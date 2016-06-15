@@ -452,7 +452,7 @@
      */
     NSDictionary *connectOptions = @{CBConnectPeripheralOptionNotifyOnConnectionKey:@YES,
                                      CBConnectPeripheralOptionNotifyOnDisconnectionKey:@YES,
-                                     CBConnectPeripheralOptionNotifyOnNotificationKey:@YES};
+                                     CBConnectPeripheralOptionNotifyOnNotificationKey:@NO};
     
     [BLE setBabyOptionsAtChannel:channelOnPeropheralView scanForPeripheralsWithOptions:scanForPeripheralsWithOptions connectPeripheralWithOptions:connectOptions scanForPeripheralsWithServices:nil discoverWithServices:nil discoverWithCharacteristics:nil];
 
@@ -960,25 +960,6 @@
     }
 }
 
-// KVO回调
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
-//    
-//    // 获取耗材信息
-//    if ([keyPath isEqualToString:@"text"] && object == self.currDisplayView.ConsumeLb) {
-//        if ([change[@"new"] isEqualToString:@"0"]) { //显示耗材用尽提示
-//            [self showExhaustTip:YES];
-//        }
-//        if (![change[@"new"] isEqualToString:@"0"] && self.isShowTip) { // 关闭耗材用尽提示
-//            [self showExhaustTip:NO];
-//        }
-//        if ([change[@"new"] isEqualToString:[NSString stringWithFormat:@"%f",self.currDisplayView.circleNumView.percentage * 100]]) { // 值未改变
-//            return;
-//        }
-//        [self animatedChangePercentageWithCurrPer:[change[@"new"] floatValue]*0.01];
-//        self.hydroBtn.enabled = YES;
-//    }
-//}
-
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
@@ -1023,48 +1004,6 @@
     NSLog(@"%f",scrollView.contentOffset.x);
     _CurrPageIndex = (scrollView.contentOffset.x+1)/(scrollView.frame.size.width);
 }
-
-//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
-//    NSInteger page = (scrollView.contentOffset.x + scrollView.frame.size.width * 0.5)/(scrollView.frame.size.width);
-////    NSLog(@"page:%ld,,offset.x:%f",page,scrollView.contentOffset.x);
-//    if (page != _CurrPageIndex) {
-//        // 取消定时器
-//        [self.timer invalidate];
-//        self.timer = nil;
-//        [self.noWaterTimer invalidate];
-//        self.noWaterTimer = nil;
-//        [self.sendTimer invalidate];
-//        self.sendTimer = nil;
-//        
-//        // 重置控制按钮
-//        self.normalWater.selected = NO;
-//        self.moreWater.selected = NO;
-//        self.hydroBtn.selected = NO;
-//        self.disinfectBtn.selected = NO;
-//        
-//        NSInteger index = scrollView.contentOffset.x / kScreenW;
-//        // 获取当前的DisplayView
-//        self.currDisplayView = self.scrollV.subviews[index];
-//        
-//        // 切换视图
-//        Peripheral *currPeri = self.peripheralModels[index];
-//        self.currPeripheral = currPeri.peri;
-//        // 1.更新UI
-//        self.hydroName.text = currPeri.name;
-//        self.connectStatus.text = currPeri.isConnected ? @"(已连接)":@"(未连接)";
-//        self.coverView.hidden = NO;
-//        
-//        // 2.连接当前视图所对应的设备并断开连接
-//        [self connectPeripheral];
-//        
-//        // 3.暂时关闭返回按钮
-//        self.backBtn.enabled = NO;
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            self.backBtn.enabled = YES;
-//        });
-//        _CurrPageIndex = page;
-//    }
-//}
 
 // 滑动结束后获取当前X偏移量
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{

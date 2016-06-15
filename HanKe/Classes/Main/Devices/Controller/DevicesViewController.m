@@ -122,6 +122,8 @@
     // 间隔时间
     self.intervalTime = 5.0;
     
+    connectedIndex = 0;
+    
     // 导航栏右边关于按钮
     UIButton *aboutBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     aboutBtn.frame = CGRectMake(0, 0, 21, 21);
@@ -342,9 +344,8 @@
     if (!connectStatus) {
         return;
     }
-
-    [self.peripheralModels makeObjectsPerformSelector:@selector(setIsConnected:) withObject:@NO];
-    
+    BOOL bNo = NO;
+    [self.peripheralModels makeObjectsPerformSelector:@selector(setAllIsConnected:) withObject:[NSNumber numberWithBool:bNo]];
     self.currPeripheral = [[self.BLE findConnectedPeripherals] firstObject];
     for (Peripheral *peripheral in self.peripheralModels) {
         if ([self.currPeripheral.identifier.UUIDString isEqualToString:peripheral.peri.identifier.UUIDString]) {

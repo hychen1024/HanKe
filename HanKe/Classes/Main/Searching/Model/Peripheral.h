@@ -36,4 +36,6 @@
  *  @return Peripheral
  */
 + (instancetype)peripheralWithName:(NSString *)name RSSI:(NSNumber *)rssi peripheral:(CBPeripheral *)peri;
+
+- (void)setAllIsConnected:(NSNumber *)num;
 @end
