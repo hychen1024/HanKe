@@ -15,7 +15,7 @@
                 <outlet property="coverView" destination="cpT-tx-ESr" id="hgW-wZ-OFm"/>
                 <outlet property="disinfectBtn" destination="DNe-DF-yLj" id="Hnn-AK-eKv"/>
                 <outlet property="displayView" destination="Zrd-Rg-Xis" id="8Sg-Uo-13k"/>
-                <outlet property="hydroBtn" destination="LL0-2S-HiZ" id="Gde-mR-FuC"/>
+                <outlet property="hydroBtn" destination="LL0-2S-HiZ" id="cov-2V-sbM"/>
                 <outlet property="hydroName" destination="g19-GA-uSl" id="4v5-PK-8dx"/>
                 <outlet property="moreWater" destination="PZG-FQ-Wih" id="fPp-G3-nCJ"/>
                 <outlet property="normalWater" destination="knY-Yz-99X" id="AVz-fr-M6L"/>
@@ -48,23 +48,27 @@
                                 <action selector="hydroBtnDidClick:" destination="-1" eventType="touchUpInside" id="qKX-ry-Wzp"/>
                             </connections>
                         </button>
-                        <button opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" id="LL0-2S-HiZ">
+                        <button opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="wordWrap" id="LL0-2S-HiZ">
                             <rect key="frame" x="57" y="161" width="84" height="84"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
                             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal" backgroundImage="hydrotherapeutics_n">
                                 <string key="title">水疗
 开关</string>
                                 <color key="titleColor" red="0.78431372549019607" green="0.78431372549019607" blue="0.78431372549019607" alpha="1" colorSpace="calibratedRGB"/>
                             </state>
-                            <state key="disabled" title="水疗" backgroundImage="hydrotherapeutics_d"/>
+                            <state key="disabled" backgroundImage="hydrotherapeutics_d">
+                                <string key="title">水疗
+开关</string>
+                            </state>
                             <state key="selected" backgroundImage="hydrotherapeutics_p">
                                 <string key="title">水疗
 开关</string>
                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </state>
-                            <state key="highlighted" title="水疗" backgroundImage="hydrotherapeutics_p">
+                            <state key="highlighted" backgroundImage="hydrotherapeutics_p">
+                                <string key="title">水疗
+开关</string>
                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </state>
                             <connections>
@@ -82,12 +86,14 @@
                                 <color key="titleColor" red="0.7843137255" green="0.7843137255" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                             </state>
                             <state key="disabled" title="消毒" backgroundImage="hydrotherapeutics_d"/>
-                            <state key="selected" backgroundImage="hydrotherapeutics_p">
+                            <state key="selected" backgroundImage="hydrotherapeutics_pp">
                                 <string key="title">消毒
 开关</string>
                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </state>
-                            <state key="highlighted" title="消毒" backgroundImage="hydrotherapeutics_p">
+                            <state key="highlighted" backgroundImage="hydrotherapeutics_pp">
+                                <string key="title">消毒
+开关</string>
                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </state>
                             <connections>
@@ -204,7 +210,7 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-            <point key="canvasLocation" x="785.5" y="-1562.5"/>
+            <point key="canvasLocation" x="470.5" y="-1509.5"/>
         </view>
     </objects>
     <resources>
@@ -214,6 +220,7 @@
         <image name="hydrotherapeutics_d" width="84" height="84"/>
         <image name="hydrotherapeutics_n" width="84" height="84"/>
         <image name="hydrotherapeutics_p" width="84" height="84"/>
+        <image name="hydrotherapeutics_pp" width="84" height="84"/>
         <image name="normal_n" width="63" height="78"/>
         <image name="normal_p" width="63" height="78"/>
         <image name="silence" width="28" height="28"/>
