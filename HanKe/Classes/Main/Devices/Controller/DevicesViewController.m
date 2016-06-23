@@ -340,7 +340,9 @@
 #pragma mark 连接状态改变通知回调
 - (void)receiveConnectedStatus:(NSNotification *)notice{
     BOOL connectStatus = [notice.userInfo[@"connectStatus"] boolValue];
-    self.currPeripheral = notice.userInfo[@"currPeripheral"];
+    if (notice.userInfo[@"currPeripheral"]) {
+        self.currPeripheral = notice.userInfo[@"currPeripheral"];
+    }
     if (!connectStatus) {
         return;
     }

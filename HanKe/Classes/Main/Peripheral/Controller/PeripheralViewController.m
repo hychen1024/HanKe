@@ -254,8 +254,9 @@
     self.silenceBtn.sd_layout.rightSpaceToView(self.displayView,15).widthIs(30).heightIs(30).topSpaceToView(self.displayView,22);
     self.retryBtn.sd_layout.widthIs(46).heightIs(30).topSpaceToView(self.displayView,23).rightSpaceToView(self.displayView,7);
 //    self.hydroName.sd_layout.widthIs(80).heightIs(30).topSpaceToView(self.displayView,23).centerXEqualToView(self.displayView).offset(-40);
-    self.hydroName.sd_layout.widthIs(80).heightIs(30).topSpaceToView(self.displayView,23).centerXEqualToView(self.displayView).offset(-40);
-//    self.connectStatus.sd_layout.widthIs(60).heightIs(30).topSpaceToView(self.displayView,23).centerXEqualToView(self.displayView).offset(30);
+    [self.hydroName setSingleLineAutoResizeWithMaxWidth:130];
+    self.hydroName.sd_layout.heightIs(30).topSpaceToView(self.displayView,23).centerXEqualToView(self.view).offset(-30);
+    //    self.connectStatus.sd_layout.widthIs(60).heightIs(30).topSpaceToView(self.displayView,23).centerXEqualToView(self.displayView).offset(30);
     self.connectStatus.sd_layout.widthIs(60).heightIs(30).topSpaceToView(self.displayView,23).leftSpaceToView(self.hydroName,1);
     self.pageCtrl.sd_layout.topSpaceToView(self.hydroName,7).centerXEqualToView(self.displayView).leftSpaceToView(self.displayView,100).rightSpaceToView(self.displayView,100);
     self.changeLb.sd_layout.topSpaceToView(self.displayView,25).heightIs(22).leftSpaceToView(self.backBtn,1).rightSpaceToView(self.retryBtn,1);
@@ -361,7 +362,7 @@
         weakSelf.isConnected = NO;
         [weakSelf.sendTimer invalidate];
         weakSelf.sendTimer = nil;
-        [weakSelf connectPeripheral];
+//        [weakSelf connectPeripheral];
     }];
     
     //设置发现设备的Services的委托
@@ -401,7 +402,7 @@
                 // 写特征Notify回调数据
                 [weakBLE notify:weakSelf.currPeripheral characteristic:weakSelf.writeCharacteristic block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
                     
-                    YCLog(@"notify%@",[NSString stringWithFormat:@"writeCharacteristic:%@",weakSelf.writeCharacteristic.value]);
+                    YCLog(@"%@,,,,%@,,,,notify%@",weakSelf.currPeri.name,weakSelf.currPeri.peri.identifier.UUIDString,[NSString stringWithFormat:@"writeCharacteristic:%@",weakSelf.writeCharacteristic.value]);
                     if (characteristics.value.length == 16) {
                         YCLog(@"数据不匹配");
                         return;
