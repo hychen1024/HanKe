@@ -143,36 +143,49 @@
     bottomV.backgroundColor = [UIColor colorWithRed:0.98 green:0.98 blue:0.98 alpha:1.00];
     [self.view addSubview:bottomV];
     
-    UILabel *label1 = [[UILabel alloc] init];
-    label1.frame = CGRectMake(15, 10, 70, 10);
-    label1.text = @"版本信息";
-    label1.textColor = [UIColor colorWithRed:(142 / 255.0) green:(142 / 255.0) blue:(142 / 255.0) alpha:1.0];
-    label1.textAlignment = NSTextAlignmentCenter;
-    label1.font = [UIFont systemFontOfSize:13];
-    [bottomV addSubview:label1];
+    UILabel *tipLb = [[UILabel alloc] init];
+//    tipLb.textColor = [UIColor colorWithRed:(142 / 255.0) green:(142 / 255.0) blue:(142 / 255.0) alpha:1.0];
+    tipLb.textColor = [UIColor blackColor];
+    tipLb.font = [UIFont systemFontOfSize:14];
+    tipLb.textAlignment = NSTextAlignmentCenter;
+    tipLb.numberOfLines = 2;
+    tipLb.text = @"手指在屏幕中间向下滑动即可开始扫描水疗设备";
+    tipLb.frame = CGRectMake(0, 0, kScreenW, 44);
+    [bottomV addSubview:tipLb];
+    if (IS_IPHONE_4_OR_LESS) {
+        tipLb.font = [UIFont systemFontOfSize:13];
+    }
     
-    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+//    UILabel *label1 = [[UILabel alloc] init];
+//    label1.frame = CGRectMake(15, 10, 70, 10);
+//    label1.text = @"版本信息";
+//    label1.textColor = [UIColor colorWithRed:(142 / 255.0) green:(142 / 255.0) blue:(142 / 255.0) alpha:1.0];
+//    label1.textAlignment = NSTextAlignmentCenter;
+//    label1.font = [UIFont systemFontOfSize:13];
+//    [bottomV addSubview:label1];
     
-    UILabel *label2 = [[UILabel alloc] init];
-    label2.frame = CGRectMake(15, 28, 70, 10);
+//    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+//    
+//    UILabel *label2 = [[UILabel alloc] init];
+//    label2.frame = CGRectMake(15, 28, 70, 10);
+//    
+//    label2.text = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
+//    label2.textColor = [UIColor colorWithRed:(142 / 255.0) green:(142 / 255.0) blue:(142 / 255.0) alpha:1.0];
+//    label2.textAlignment = NSTextAlignmentCenter;
+//    label2.font = [UIFont systemFontOfSize:13];
+//    [bottomV addSubview:label2];
     
-    label2.text = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
-    label2.textColor = [UIColor colorWithRed:(142 / 255.0) green:(142 / 255.0) blue:(142 / 255.0) alpha:1.0];
-    label2.textAlignment = NSTextAlignmentCenter;
-    label2.font = [UIFont systemFontOfSize:13];
-    [bottomV addSubview:label2];
-    
-    UIButton *updateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [updateBtn setTitle:@"升级" forState:UIControlStateNormal];
-    [updateBtn setTitle:@"升级" forState:UIControlStateHighlighted];
-    [updateBtn setBackgroundImage:[UIImage imageNamed:@"upgrade_btn_n"] forState:UIControlStateNormal];
-    [updateBtn setBackgroundImage:[UIImage imageNamed:@"upgrade_btn_p"] forState:UIControlStateHighlighted];
-    [updateBtn setTitleColor:[UIColor colorWithRed:0.13 green:0.51 blue:0.85 alpha:1.00] forState:UIControlStateNormal];
-    [updateBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
-    [updateBtn addTarget:self action:@selector(updateBtnDidClick) forControlEvents:UIControlEventTouchUpInside];
-    updateBtn.titleLabel.font = [UIFont systemFontOfSize:14];;
-    [bottomV addSubview:updateBtn];
-    updateBtn.frame = CGRectMake(kScreenW - 74, 11, 48, 26);
+//    UIButton *updateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [updateBtn setTitle:@"升级" forState:UIControlStateNormal];
+//    [updateBtn setTitle:@"升级" forState:UIControlStateHighlighted];
+//    [updateBtn setBackgroundImage:[UIImage imageNamed:@"upgrade_btn_n"] forState:UIControlStateNormal];
+//    [updateBtn setBackgroundImage:[UIImage imageNamed:@"upgrade_btn_p"] forState:UIControlStateHighlighted];
+//    [updateBtn setTitleColor:[UIColor colorWithRed:0.13 green:0.51 blue:0.85 alpha:1.00] forState:UIControlStateNormal];
+//    [updateBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
+//    [updateBtn addTarget:self action:@selector(updateBtnDidClick) forControlEvents:UIControlEventTouchUpInside];
+//    updateBtn.titleLabel.font = [UIFont systemFontOfSize:14];;
+//    [bottomV addSubview:updateBtn];
+//    updateBtn.frame = CGRectMake(kScreenW - 74, 11, 48, 26);
     
     self.refreshBgV = [[UIView alloc] initWithFrame:CGRectMake(0, -kScreenH, kScreenW, kScreenH)];
     self.refreshBgV.backgroundColor = RGBColor(0xe5e5e5);
@@ -343,9 +356,9 @@
     if (notice.userInfo[@"currPeripheral"]) {
         self.currPeripheral = notice.userInfo[@"currPeripheral"];
     }
-    if (!connectStatus) {
-        return;
-    }
+//    if (!connectStatus) {
+//        return;
+//    }
     BOOL bNo = NO;
     [self.peripheralModels makeObjectsPerformSelector:@selector(setAllIsConnected:) withObject:[NSNumber numberWithBool:bNo]];
     self.currPeripheral = [[self.BLE findConnectedPeripherals] firstObject];

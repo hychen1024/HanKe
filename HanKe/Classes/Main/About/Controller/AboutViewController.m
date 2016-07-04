@@ -39,6 +39,21 @@
     cycleImageV.image = [UIImage imageNamed:@"logo"];
     [topView addSubview:cycleImageV];
     
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    // app版本号
+    NSString *app_Version = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
+    UILabel *versionLb = [[UILabel alloc] init];
+    versionLb.text = [NSString stringWithFormat:@"版本号:%@",app_Version];
+    versionLb.font = [UIFont systemFontOfSize:16];
+    versionLb.textAlignment = NSTextAlignmentCenter;
+    versionLb.textColor = [UIColor colorWithRed:0.55 green:0.55 blue:0.55 alpha:1.00];
+    [topView addSubview:versionLb];
+    [versionLb mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(100, 30));
+        make.bottom.equalTo(topView.mas_bottom).offset(-10);
+        make.centerX.equalTo(topView);
+    }];
+    
     // app介绍文字
     UILabel *textLb = [[UILabel alloc] init];
     textLb.text = @"科瑞医疗是由郑州科瑞医疗器械有限公司针对该司的水疗设备提供的一款智能控制移动应用软件。它通过采用蓝牙通信的方式来动态扫描识别身边的水疗设备进行配对，进而实现远程操控，让用户通过移动终端来方便形象的展示出水疗设备当前的运行状态情况。";
@@ -96,9 +111,45 @@
 
 // 检车更新按钮点击响应
 - (void)checkUpdateBtnDidClick{
+    UIViewController *vc = [self getCurrentVC];
     
+    UIAlertController *alertVc = [UIAlertController alertControllerWithTitle:@"" message:@"已是最新版本" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        [vc.navigationController dismissViewControllerAnimated:YES completion:nil];
+    }];
+    [alertVc addAction:ok];
+    
+    [vc presentViewController:alertVc animated:YES completion:nil];
 }
 
+- (UIViewController *)getCurrentVC
+{
+    UIViewController *result = nil;
+    
+    UIWindow * window = [[UIApplication sharedApplication] keyWindow];
+    if (window.windowLevel != UIWindowLevelNormal)
+    {
+        NSArray *windows = [[UIApplication sharedApplication] windows];
+        for(UIWindow * tmpWin in windows)
+        {
+            if (tmpWin.windowLevel == UIWindowLevelNormal)
+            {
+                window = tmpWin;
+                break;
+            }
+        }
+    }
+    
+    UIView *frontView = [[window subviews] objectAtIndex:0];
+    id nextResponder = [frontView nextResponder];
+    
+    if ([nextResponder isKindOfClass:[UIViewController class]])
+        result = nextResponder;
+    else
+        result = window.rootViewController;
+    
+    return result;
+}
 #pragma mark - sources and delegates 代理、协议方法
 
 
