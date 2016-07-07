@@ -257,7 +257,7 @@
     [self.hydroName setSingleLineAutoResizeWithMaxWidth:130];
     self.hydroName.sd_layout.heightIs(30).topSpaceToView(self.displayView,23).centerXEqualToView(self.view).offset(-30);
     //    self.connectStatus.sd_layout.widthIs(60).heightIs(30).topSpaceToView(self.displayView,23).centerXEqualToView(self.displayView).offset(30);
-    self.connectStatus.sd_layout.widthIs(70).heightIs(30).topSpaceToView(self.displayView,23).leftSpaceToView(self.hydroName,1);
+    self.connectStatus.sd_layout.widthIs(60).heightIs(30).topSpaceToView(self.displayView,23).leftSpaceToView(self.hydroName,1);
     self.pageCtrl.sd_layout.topSpaceToView(self.hydroName,7).centerXEqualToView(self.displayView).leftSpaceToView(self.displayView,100).rightSpaceToView(self.displayView,100);
     self.changeLb.sd_layout.topSpaceToView(self.displayView,25).heightIs(22).leftSpaceToView(self.backBtn,1).rightSpaceToView(self.retryBtn,1);
     self.phoneNumBtn.sd_layout.topSpaceToView(self.changeLb,1).widthIs(200).centerXEqualToView(self.displayView).heightIs(26);
@@ -314,7 +314,7 @@
             }
             
             [weakSelf.currDisplayView.HydroStatus setTitleColor:RGBColor(0x919191) forState:UIControlStateNormal];
-            [weakSelf.currDisplayView.HydroStatus setTitle:@"水疗状态" forState:UIControlStateNormal];
+            [weakSelf.currDisplayView.HydroStatus setTitle:@"连接断开" forState:UIControlStateNormal];
             
             weakSelf.moreWater.selected = NO;
             weakSelf.normalWater.selected = NO;
@@ -371,7 +371,7 @@
         }
         
         [weakSelf.currDisplayView.HydroStatus setTitleColor:RGBColor(0x919191) forState:UIControlStateNormal];
-        [weakSelf.currDisplayView.HydroStatus setTitle:@"水疗状态" forState:UIControlStateNormal];
+        [weakSelf.currDisplayView.HydroStatus setTitle:@"连接断开" forState:UIControlStateNormal];
         
         weakSelf.moreWater.selected = NO;
         weakSelf.normalWater.selected = NO;
@@ -795,7 +795,7 @@
         self.silenceBtn.hidden = NO;
         self.currDisplayView.viewType = displayViewTypeConnect;
     }else{ //未连接 隐藏某些控件
-        self.connectStatus.text = @"(断开连接)";
+        self.connectStatus.text = @"(已断开)";
         self.retryBtn.hidden = NO;
         self.coverView.hidden = NO;
         self.silenceBtn.hidden = YES;
@@ -1081,7 +1081,7 @@
             self.currPeripheral = currPeri.peri;
             // 1.更新UI
             self.hydroName.text = currPeri.name;
-            self.connectStatus.text = currPeri.isConnected ? @"(已连接)":@"(断开连接)";
+            self.connectStatus.text = currPeri.isConnected ? @"(已连接)":@"(已断开)";
             
             self.coverView.hidden = NO;
     
