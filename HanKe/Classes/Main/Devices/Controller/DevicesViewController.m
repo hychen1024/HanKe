@@ -84,6 +84,10 @@
  *  操作指引图片
  */
 @property (nonatomic, strong) UIImageView *coverImg;
+/**
+ *  提醒信息Lb
+ */
+@property (nonatomic, strong) UILabel *infoLb;
 @end
 
 @implementation DevicesViewController
@@ -144,7 +148,6 @@
     [self.view addSubview:bottomV];
     
     UILabel *tipLb = [[UILabel alloc] init];
-//    tipLb.textColor = [UIColor colorWithRed:(142 / 255.0) green:(142 / 255.0) blue:(142 / 255.0) alpha:1.0];
     tipLb.textColor = [UIColor blackColor];
     tipLb.font = [UIFont systemFontOfSize:14];
     tipLb.textAlignment = NSTextAlignmentCenter;
@@ -155,37 +158,6 @@
     if (IS_IPHONE_4_OR_LESS) {
         tipLb.font = [UIFont systemFontOfSize:13];
     }
-    
-//    UILabel *label1 = [[UILabel alloc] init];
-//    label1.frame = CGRectMake(15, 10, 70, 10);
-//    label1.text = @"版本信息";
-//    label1.textColor = [UIColor colorWithRed:(142 / 255.0) green:(142 / 255.0) blue:(142 / 255.0) alpha:1.0];
-//    label1.textAlignment = NSTextAlignmentCenter;
-//    label1.font = [UIFont systemFontOfSize:13];
-//    [bottomV addSubview:label1];
-    
-//    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
-//    
-//    UILabel *label2 = [[UILabel alloc] init];
-//    label2.frame = CGRectMake(15, 28, 70, 10);
-//    
-//    label2.text = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
-//    label2.textColor = [UIColor colorWithRed:(142 / 255.0) green:(142 / 255.0) blue:(142 / 255.0) alpha:1.0];
-//    label2.textAlignment = NSTextAlignmentCenter;
-//    label2.font = [UIFont systemFontOfSize:13];
-//    [bottomV addSubview:label2];
-    
-//    UIButton *updateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [updateBtn setTitle:@"升级" forState:UIControlStateNormal];
-//    [updateBtn setTitle:@"升级" forState:UIControlStateHighlighted];
-//    [updateBtn setBackgroundImage:[UIImage imageNamed:@"upgrade_btn_n"] forState:UIControlStateNormal];
-//    [updateBtn setBackgroundImage:[UIImage imageNamed:@"upgrade_btn_p"] forState:UIControlStateHighlighted];
-//    [updateBtn setTitleColor:[UIColor colorWithRed:0.13 green:0.51 blue:0.85 alpha:1.00] forState:UIControlStateNormal];
-//    [updateBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
-//    [updateBtn addTarget:self action:@selector(updateBtnDidClick) forControlEvents:UIControlEventTouchUpInside];
-//    updateBtn.titleLabel.font = [UIFont systemFontOfSize:14];;
-//    [bottomV addSubview:updateBtn];
-//    updateBtn.frame = CGRectMake(kScreenW - 74, 11, 48, 26);
     
     self.refreshBgV = [[UIView alloc] initWithFrame:CGRectMake(0, -kScreenH, kScreenW, kScreenH)];
     self.refreshBgV.backgroundColor = RGBColor(0xe5e5e5);
@@ -209,6 +181,16 @@
     last = 10;
     // 注册通知 接收连接状态
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveConnectedStatus:) name:@"connectStatus" object:nil];
+    
+    // 扫描提示
+    _infoLb = [[UILabel alloc] init];
+    _infoLb.frame = CGRectMake(0, kScreenH * 0.4, kScreenW, 35);
+//    _infoLb.hidden = YES;
+    _infoLb.textAlignment = NSTextAlignmentCenter;
+    _infoLb.font = [UIFont systemFontOfSize:16];
+    _infoLb.textColor = [UIColor lightGrayColor];
+    [self.view addSubview:_infoLb];
+    
 }
 /**
  *  初始化蓝牙
@@ -224,12 +206,15 @@
     [self BLEDelegate];
     
     // 扫描设备 30s停止
+    [self.tableV.mj_header beginRefreshing];
     self.BLE.scanForPeripherals().begin().stop(scanTime);
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(31 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if (isRefresh) {
             [_tableV.mj_header endRefreshing];
             isRefresh = NO;
+            _infoLb.hidden = NO;
+            _infoLb.text = @"未扫描到设备,请重试";
             [self.tableV reloadData];
         }
     });
@@ -247,10 +232,14 @@
     [self.BLE setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
         if (central.state == CBCentralManagerStatePoweredOn) {
             [SVProgressHUD showSuccessWithStatus:@"蓝牙打开成功,开始扫描设备"];
+            [weakSelf.tableV.mj_header beginRefreshing];
             [weakSelf startScanPeripherals];
         }if (central.state != CBCentralManagerStatePoweredOn) {
             [weakSelf.tableV reloadData];
+            [weakSelf.tableV.mj_header endRefreshing];
             [SVProgressHUD showErrorWithStatus:@"蓝牙已关闭"];
+            weakSelf.infoLb.hidden = NO;
+            weakSelf.infoLb.text = @"蓝牙关闭,请开启蓝牙";
         }
     }];
     
@@ -268,6 +257,7 @@
     // 设置扫描到外设的委托
     [self.BLE setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
         YCLog(@"扫描到了设备:%@,,,%f,,,",peripheral.name,[RSSI floatValue]);
+        weakSelf.infoLb.hidden = YES;
         isContain = NO;
         justPeripheral = [Peripheral peripheralWithName:nil RSSI:RSSI peripheral:peripheral];
         for (__strong Peripheral *peri in weakSelf.peripheralModels) {
@@ -325,8 +315,11 @@
 
 #pragma mark 下拉刷新
 - (void)startScanPeripherals{
+    _infoLb.hidden = YES;
     if (self.BLE.centralManager.state != CBCentralManagerStatePoweredOn) {
         [BlueToothTool showOpenBlueToothTip:(NavController *)self.navigationController tableView:self.tableV];
+        _infoLb.hidden = NO;
+        _infoLb.text = @"蓝牙关闭,请开启蓝牙";
     }
     [self.BLE cancelAllPeripheralsConnection];
     isRefresh = YES;
@@ -345,6 +338,8 @@
         if (isRefresh) {
             [_tableV.mj_header endRefreshing];
             isRefresh = NO;
+            _infoLb.hidden = NO;
+            _infoLb.text = @"未扫描到设备,请重试";
             [self.tableV reloadData];
         }
     });
