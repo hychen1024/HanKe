@@ -85,9 +85,9 @@
  */
 @property (nonatomic, strong) UIImageView *coverImg;
 /**
- *  提醒信息Lb
+ *  是否使用假数据
  */
-@property (nonatomic, strong) UILabel *infoLb;
+@property (nonatomic, assign) BOOL isFakeData;
 @end
 
 @implementation DevicesViewController
@@ -182,15 +182,6 @@
     // 注册通知 接收连接状态
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveConnectedStatus:) name:@"connectStatus" object:nil];
     
-    // 扫描提示
-    _infoLb = [[UILabel alloc] init];
-    _infoLb.frame = CGRectMake(0, kScreenH * 0.4, kScreenW, 35);
-//    _infoLb.hidden = YES;
-    _infoLb.textAlignment = NSTextAlignmentCenter;
-    _infoLb.font = [UIFont systemFontOfSize:16];
-    _infoLb.textColor = [UIColor lightGrayColor];
-    [self.view addSubview:_infoLb];
-    
 }
 /**
  *  初始化蓝牙
@@ -213,8 +204,11 @@
         if (isRefresh) {
             [_tableV.mj_header endRefreshing];
             isRefresh = NO;
-            _infoLb.hidden = NO;
-            _infoLb.text = @"未扫描到设备,请重试";
+            if (self.peripheralModels.count == 0) {
+                _isFakeData = YES;
+                Peripheral *peri = [Peripheral peripheralWithName:nil RSSI:@(-60) peripheral:nil];
+                [self.peripheralModels addObject:peri];
+            }
             [self.tableV reloadData];
         }
     });
@@ -238,8 +232,6 @@
             [weakSelf.tableV reloadData];
             [weakSelf.tableV.mj_header endRefreshing];
             [SVProgressHUD showErrorWithStatus:@"蓝牙已关闭"];
-            weakSelf.infoLb.hidden = NO;
-            weakSelf.infoLb.text = @"蓝牙关闭,请开启蓝牙";
         }
     }];
     
@@ -257,7 +249,12 @@
     // 设置扫描到外设的委托
     [self.BLE setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
         YCLog(@"扫描到了设备:%@,,,%f,,,",peripheral.name,[RSSI floatValue]);
-        weakSelf.infoLb.hidden = YES;
+        // 清除假数据
+        if (weakSelf.isFakeData) {
+            weakSelf.isFakeData = NO;
+            [weakSelf.peripheralModels removeAllObjects];
+        }
+        _isFakeData = NO;
         isContain = NO;
         justPeripheral = [Peripheral peripheralWithName:nil RSSI:RSSI peripheral:peripheral];
         for (__strong Peripheral *peri in weakSelf.peripheralModels) {
@@ -315,11 +312,8 @@
 
 #pragma mark 下拉刷新
 - (void)startScanPeripherals{
-    _infoLb.hidden = YES;
     if (self.BLE.centralManager.state != CBCentralManagerStatePoweredOn) {
         [BlueToothTool showOpenBlueToothTip:(NavController *)self.navigationController tableView:self.tableV];
-        _infoLb.hidden = NO;
-        _infoLb.text = @"蓝牙关闭,请开启蓝牙";
     }
     [self.BLE cancelAllPeripheralsConnection];
     isRefresh = YES;
@@ -338,8 +332,11 @@
         if (isRefresh) {
             [_tableV.mj_header endRefreshing];
             isRefresh = NO;
-            _infoLb.hidden = NO;
-            _infoLb.text = @"未扫描到设备,请重试";
+            if (self.peripheralModels.count == 0) {
+                _isFakeData = YES;
+                Peripheral *peri = [Peripheral peripheralWithName:nil RSSI:@(-60) peripheral:nil];
+                [self.peripheralModels addObject:peri];
+            }
             [self.tableV reloadData];
         }
     });
@@ -437,13 +434,13 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-//    DeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentify];
+
     DeviceTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     if (cell == nil) {
         cell = [DeviceTableViewCell cellWithTableView:tableView];
     }
     cell.delegate = self;
-    
+
     Peripheral *peripheral = self.peripheralModels[indexPath.row];
     NSInteger index = indexPath.row + 1;
     peripheral.name = [NSString stringWithFormat:@"设备%ld",(long)index];
